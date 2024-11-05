@@ -2,6 +2,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.hardwareMap;
+import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
 
 import com.qualcomm.hardware.rev.Rev2mDistanceSensor;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -53,6 +54,9 @@ class CRobo {
         rightRearMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         leftFrontMotor.setDirection(DcMotorSimple.Direction.FORWARD);
         leftRearMotor.setDirection(DcMotorSimple.Direction.FORWARD);
+
+        telemetry.addData("Status", "Initialized");
+        telemetry.update();
     }
 
 }
@@ -174,8 +178,8 @@ public class OPModeV1 extends OpMode {
         double ghiaraoutangle = ghiaraoutPos * 180;
         double servortireintPos = robot.servoRotireInt.getPosition();
         double servorotireangle = servortireintPos * 180;
-        telemetry.addData("Status", "Initialized");
 
+        telemetry.addData("Status", "Run Time: " + runtime.toString());
         telemetry.addData("Outtake Position", ghiaraoutPos);
         telemetry.addData("Outtake Angle", ghiaraoutangle);
         telemetry.addData("Intake Position", ghiaraintPos);

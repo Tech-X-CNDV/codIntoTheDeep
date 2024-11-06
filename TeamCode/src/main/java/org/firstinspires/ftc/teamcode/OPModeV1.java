@@ -24,17 +24,17 @@ class CRobo {
     public Servo servoGhiaraInt;
     public Servo servoRotireInt;
     // Senzori
-    public DistanceSensor dSensor;
+    public DistanceSensor dSensor = null;
     // Variabile
     static final double maxPos = 0.19;
     static final double maxPosINT = 0.5;
     static final double minPos = 0.0;
     static final double maxPosROTINT = 0.5;
     // Motoare
-    public DcMotor leftFrontMotor;
-    public DcMotor rightFrontMotor;
-    public DcMotor leftRearMotor;
-    public DcMotor rightRearMotor;
+    public DcMotor leftFrontMotor = null;
+    public DcMotor rightFrontMotor = null;
+    public DcMotor leftRearMotor = null;
+    public DcMotor rightRearMotor = null;
 
     public void init() {
         // Initializare servo si senzor
@@ -89,15 +89,19 @@ public class OPModeV1 extends OpMode {
         ToggleRotireIntake();
         ToggleIntake();
         ToggleOuttake();
-        AutoPrindere();
+        if (robot.dSensor != null) {
+            AutoPrindere();
+        }
         Roti();
         Telemetry();
     }
 
     private void ToggleRotireIntake() {
         if (gamepad2.b && !changedROTINT) {
-            // if-else compact: daca este true pune ce este inainte de : daca este fals ce este dupa :
-            robot.servoRotireInt.setPosition(robot.servoRotireInt.getPosition() == 0 ? CRobo.maxPosROTINT : CRobo.minPos);
+            // if-else compact: daca este true pune ce este inainte de : daca este fals ce
+            // este dupa :
+            robot.servoRotireInt
+                    .setPosition(robot.servoRotireInt.getPosition() == 0 ? CRobo.maxPosROTINT : CRobo.minPos);
             changedROTINT = true;
         } else if (!gamepad2.a) {
             changedROTINT = false;
@@ -107,7 +111,8 @@ public class OPModeV1 extends OpMode {
     private void ToggleIntake() {
         if (gamepad2.a && !changedINT) {
             arePiesa = false;
-            // if-else compact: daca este true pune ce este inainte de : daca este fals ce este dupa :
+            // if-else compact: daca este true pune ce este inainte de : daca este fals ce
+            // este dupa :
             robot.servoGhiaraInt.setPosition(robot.servoGhiaraInt.getPosition() == 0 ? CRobo.maxPosINT : CRobo.minPos);
             changedINT = true;
         } else if (!gamepad2.a) {
@@ -117,7 +122,8 @@ public class OPModeV1 extends OpMode {
 
     private void ToggleOuttake() {
         if (gamepad1.a && !changedOUT) {
-            // if-else compact: daca este true pune ce este inainte de : daca este fals ce este dupa :
+            // if-else compact: daca este true pune ce este inainte de : daca este fals ce
+            // este dupa :
             robot.servoGhiaraOut.setPosition(robot.servoGhiaraOut.getPosition() == 0 ? CRobo.maxPos : CRobo.minPos);
             changedOUT = true;
         } else if (!gamepad1.a) {
@@ -146,29 +152,45 @@ public class OPModeV1 extends OpMode {
         if (!gamepad2.left_bumper) {
             pressLbumper2 = true;
         }
-        double r = Math.hypot(gamepad2.left_stick_x, -gamepad2.left_stick_y);
-        double robotAngle = Math.atan2(-gamepad2.left_stick_y, gamepad2.left_stick_x) - Math.PI / 4;
-        double rightX = -gamepad2.right_stick_x;
 
-        double v1 = r * Math.cos(robotAngle) + rightX;
-        double v2 = r * Math.sin(robotAngle) - rightX;
-        double v3 = r * Math.sin(robotAngle) + rightX;
-        double v4 = r * Math.cos(robotAngle) - rightX;
+        double drive = -gamepad2.left_stick_y;
+        double strafe = gamepad2.left_stick_x;
+        double turn = gamepad2.right_stick_x;
 
+        // Apply speed limit if active
         if (speedLimit) {
-            v1 /= 2.0d;
-            v2 /= 2.0d;
-            v3 /= 2.0d;
-            v4 /= 2.0d;
+            drive /= 2.0d;
+            strafe /= 2.0d;
+            turn /= 2.0d;
         }
-        v1 = v1 - v1 * 0.75d * this.gamepad2.right_trigger;
-        v2 = v2 - v2 * 0.75d * this.gamepad2.right_trigger;
-        v3 = v3 - v3 * 0.75d * this.gamepad2.right_trigger;
-        v4 = v4 - v4 * 0.75d * this.gamepad2.right_trigger;
-        robot.leftFrontMotor.setPower(v1);
-        robot.rightFrontMotor.setPower(v2);
-        robot.leftRearMotor.setPower(v3);
-        robot.rightRearMotor.setPower(v4);
+
+        // Reduce overall speed based on right trigger
+        double speedMultiplier = 1.0 - 0.75d * this.gamepad2.right_trigger;
+        double max;
+
+        // Calculate individual motor powers (adjust signs as needed)
+        double frontLeftPower = (drive + strafe + turn) * speedMultiplier;
+        double frontRightPower = (drive - strafe - turn) * speedMultiplier;
+        double rearLeftPower = (drive - strafe + turn) * speedMultiplier;
+        double rearRightPower = (drive + strafe - turn) * speedMultiplier;
+
+        // Normalize the values so no wheel power exceeds 100%
+        // This ensures that the robot maintains the desired motion.
+        max = Math.max(Math.abs(frontLeftPower), Math.abs(frontRightPower));
+        max = Math.max(max, Math.abs(rearLeftPower));
+        max = Math.max(max, Math.abs(rearRightPower));
+
+        if (max > 1.0) {
+            frontLeftPower /= max;
+            frontRightPower /= max;
+            rearLeftPower /= max;
+            rearRightPower /= max;
+        }
+
+        robot.leftFrontMotor.setPower(frontLeftPower);
+        robot.rightFrontMotor.setPower(frontRightPower);
+        robot.leftRearMotor.setPower(rearLeftPower);
+        robot.rightRearMotor.setPower(rearRightPower);
     }
 
     private void Telemetry() {

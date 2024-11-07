@@ -1,8 +1,6 @@
 
 package org.firstinspires.ftc.teamcode;
 
-import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.hardwareMap;
-import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
 
 import com.qualcomm.hardware.rev.Rev2mDistanceSensor;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -13,16 +11,21 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.Gamepad;
+import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
+
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 class CRobo {
 
     // Servouri
-    public Servo servoGhiaraOut;
-    public Servo servoGhiaraInt;
-    public Servo servoRotireInt;
+    public Servo servoGhiaraOut = null;
+    public Servo servoGhiaraInt = null;
+    public Servo servoRotireInt = null;
+    public Servo intakeAxonLeft = null;
+    public Servo intakeAxonRight = null;
     // Senzori
     public DistanceSensor dSensor = null;
     // Variabile
@@ -36,15 +39,49 @@ class CRobo {
     public DcMotor leftRearMotor = null;
     public DcMotor rightRearMotor = null;
 
-    public void init() {
+    public void init(Telemetry telemetry, HardwareMap hardwareMap) {
         // Initializare servo si senzor
-        servoGhiaraOut = hardwareMap.get(Servo.class, "GHIARAOUTTAKE");
-        servoGhiaraInt = hardwareMap.get(Servo.class, "GHIARAINTAKE");
-        servoRotireInt = hardwareMap.get(Servo.class, "ROTIREGHIARAINTAKE");
-        servoRotireInt.setPosition(minPos);
-        servoGhiaraInt.setPosition(minPos);
-        servoGhiaraOut.setPosition(minPos);
-        dSensor = hardwareMap.get(DistanceSensor.class, "DISTANCESENSOR");
+        try {
+            servoGhiaraOut = hardwareMap.get(Servo.class, "GHIARAOUTTAKE");
+            servoGhiaraOut.setPosition(minPos);
+        } catch (IllegalArgumentException e) {
+            servoGhiaraOut = null;
+            telemetry.addData("Error", "servoGhiaraOut not found.");
+        }
+        try{
+            servoGhiaraInt = hardwareMap.get(Servo.class, "GHIARAINTAKE");
+            servoGhiaraInt.setPosition(minPos);
+        } catch(IllegalArgumentException e){
+            servoGhiaraInt = null;
+            telemetry.addData("Error", "servoGhiaraInt not found.");
+        }
+        try {
+            servoRotireInt = hardwareMap.get(Servo.class, "ROTIREGHIARAINTAKE");
+            servoRotireInt.setPosition(minPos);
+        } catch(IllegalArgumentException e) {
+            servoRotireInt = null;
+            telemetry.addData("Error", "servoRotireInt not found.");
+        }
+        try{
+            intakeAxonLeft = hardwareMap.get(Servo.class, "intakeAxonLeft");
+            intakeAxonLeft.setPosition(minPos);
+        } catch(IllegalArgumentException e){
+            intakeAxonLeft = null;
+            telemetry.addData("Error", "IntakeAxonLeft not found.");
+        }
+        try{
+            intakeAxonRight = hardwareMap.get(Servo.class, "intakeAxonRight");
+            intakeAxonRight.setPosition(minPos);
+        } catch(IllegalArgumentException e){
+            intakeAxonRight = null;
+            telemetry.addData("Error", "IntakeAxonRight not found.");
+        }
+        try{
+            dSensor = hardwareMap.get(DistanceSensor.class, "DISTANCESENSOR");
+        } catch(IllegalArgumentException e){
+            dSensor = null;
+            telemetry.addData("Error", "Distance Sensor not found");
+        }
         // Initializare roti
         leftFrontMotor = hardwareMap.get(DcMotor.class, "leftFrontMotor");
         rightFrontMotor = hardwareMap.get(DcMotor.class, "rightFrontMotor");
@@ -58,7 +95,6 @@ class CRobo {
         telemetry.addData("Status", "Initialized");
         telemetry.update();
     }
-
 }
 
 @TeleOp(name = "Basic: OPModeV1", group = "Linear OpMode")
@@ -69,7 +105,7 @@ public class OPModeV1 extends OpMode {
 
     @Override
     public void init() {
-
+        robot.init(telemetry, hardwareMap);
     }
 
     @Override
@@ -86,11 +122,20 @@ public class OPModeV1 extends OpMode {
     boolean pressLbumper2 = false;
 
     public void loop() {
-        ToggleRotireIntake();
-        ToggleIntake();
-        ToggleOuttake();
-        if (robot.dSensor != null) {
+        if (robot.servoRotireInt != null){
+            ToggleRotireIntake();
+        }
+        if(robot.servoRotireInt != null) {
+            ToggleIntake();
+        }
+        if(robot.servoGhiaraOut != null) {
+            ToggleOuttake();
+        }
+        if(robot.dSensor != null){
             AutoPrindere();
+        }
+        if(robot.intakeAxonLeft != null && robot.intakeAxonRight != null){
+            IntakeAxonMotion();
         }
         Roti();
         Telemetry();
@@ -103,7 +148,7 @@ public class OPModeV1 extends OpMode {
             robot.servoRotireInt
                     .setPosition(robot.servoRotireInt.getPosition() == 0 ? CRobo.maxPosROTINT : CRobo.minPos);
             changedROTINT = true;
-        } else if (!gamepad2.a) {
+        }else if(!gamepad2.b){
             changedROTINT = false;
         }
     }
@@ -141,6 +186,19 @@ public class OPModeV1 extends OpMode {
             if (gamepad2.a) {
                 robot.servoGhiaraInt.setPosition(CRobo.maxPosINT);
             }
+        }
+    }
+
+    private void IntakeAxonMotion(){
+        boolean axonOn = false;
+        boolean move = true;
+        if (gamepad2.x && move) {
+            robot.intakeAxonLeft.setPosition(axonOn ? 0 : 0.25);
+            robot.intakeAxonRight.setPosition(axonOn ? 0 : 0.25);
+            axonOn = !axonOn;
+            move = false;
+        }else if(!gamepad2.x){
+            move = true;
         }
     }
 
@@ -186,7 +244,6 @@ public class OPModeV1 extends OpMode {
             rearLeftPower /= max;
             rearRightPower /= max;
         }
-
         robot.leftFrontMotor.setPower(frontLeftPower);
         robot.rightFrontMotor.setPower(frontRightPower);
         robot.leftRearMotor.setPower(rearLeftPower);
@@ -194,20 +251,25 @@ public class OPModeV1 extends OpMode {
     }
 
     private void Telemetry() {
-        double ghiaraintPos = robot.servoGhiaraInt.getPosition();
-        double ghiaraintangle = ghiaraintPos * 180;
-        double ghiaraoutPos = robot.servoGhiaraOut.getPosition();
-        double ghiaraoutangle = ghiaraoutPos * 180;
-        double servortireintPos = robot.servoRotireInt.getPosition();
-        double servorotireangle = servortireintPos * 180;
-
         telemetry.addData("Status", "Run Time: " + runtime.toString());
-        telemetry.addData("Outtake Position", ghiaraoutPos);
-        telemetry.addData("Outtake Angle", ghiaraoutangle);
-        telemetry.addData("Intake Position", ghiaraintPos);
-        telemetry.addData("Intake Angle", ghiaraintangle);
-        telemetry.addData("Intake Position", servortireintPos);
-        telemetry.addData("Intake Rotation Angle", servorotireangle);
+        if (robot.servoGhiaraInt != null) {
+            double ghiaraintPos = robot.servoGhiaraInt.getPosition();
+            double ghiaraintangle = ghiaraintPos * 180;
+            telemetry.addData("Intake Position", ghiaraintPos);
+            telemetry.addData("Intake Angle", ghiaraintangle);
+        }
+        if (robot.servoGhiaraOut != null){
+            double ghiaraoutPos = robot.servoGhiaraOut.getPosition();
+            double ghiaraoutangle = ghiaraoutPos * 180;
+            telemetry.addData("Outtake Position", ghiaraoutPos);
+            telemetry.addData("Outtake Angle", ghiaraoutangle);
+        }
+        if(robot.servoRotireInt != null){
+            double servortireintPos = robot.servoRotireInt.getPosition();
+            double servorotireangle = servortireintPos * 180;
+            telemetry.addData("Intake Position", servortireintPos);
+            telemetry.addData("Intake Rotation Angle", servorotireangle);
+        }
 
         telemetry.update();
     }

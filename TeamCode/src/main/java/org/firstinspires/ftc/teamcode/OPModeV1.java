@@ -35,11 +35,14 @@ class CRobo {
     static final double maxPosINT = 0.5;
     static final double minPos = 0.0;
     static final double maxPosROTINT = 0.5;
+    static final double maxOuttakeSliderSpeed = 1.0;
     // Motoare
     public DcMotor leftFrontMotor = null;
     public DcMotor rightFrontMotor = null;
     public DcMotor leftRearMotor = null;
     public DcMotor rightRearMotor = null;
+    public DcMotor outtakeSliderUp = null;
+    public DcMotor outtakeSliderDown = null;
 
     public void init(Telemetry telemetry, HardwareMap hardwareMap) {
         // Initializare servo si senzor
@@ -91,6 +94,22 @@ class CRobo {
         } catch(IllegalArgumentException e){
             outtakeAxonRight = null;
             telemetry.addData("Error", "OuttakeAxonRight not found.");
+        }
+        try{
+            outtakeSliderUp = hardwareMap.get(DcMotor.class, "outtakeSliderUp");
+            outtakeSliderUp.setDirection(DcMotorSimple.Direction.FORWARD);
+            
+        } catch(IllegalArgumentException e){
+            outtakeSliderUp = null;
+            telemetry.addData("Error", "OuttakeSliderUp not found.");
+        }
+        try{
+            outtakeSliderDown = hardwareMap.get(DcMotor.class, "outtakeSliderDown");
+            outtakeSliderUp.setDirection(DcMotorSimple.Direction.REVERSE);
+            
+        } catch(IllegalArgumentException e){
+            outtakeSliderDown = null;
+            telemetry.addData("Error", "OuttakeSliderDown not found.");
         }
         try{
             dSensor = hardwareMap.get(DistanceSensor.class, "distanceSensor");
@@ -156,6 +175,9 @@ public class OPModeV1 extends OpMode {
         if(robot.intakeAxonLeft != null && robot.intakeAxonRight != null){
             IntakeAxonMotion();
         }
+        if(robot.outtakeSliderUp != null && robot.outtakeSliderDown != null){
+            OuttakeSliderMotion();
+        }
         Roti();
         Telemetry();
     }
@@ -193,6 +215,22 @@ public class OPModeV1 extends OpMode {
         } else if (!gamepad2.a) {
             changedOUT = false;
         }
+    }
+
+    private void OuttakeSliderMotion(){
+        boolean move = false;
+        boolean sliderUp = false;
+        double power = 0.0;
+        if(gamepad2.x && move){
+            power = sliderUp ? -1.0 : 1.0;
+            move = false;
+        }else if(!gamepad2.x){
+            sliderUp = true;
+            move = true;
+            power = 0.0;
+        }
+        robot.outtakeSliderUp.setPower(power);
+        robot.outtakeSliderDown.setPower(power);
     }
 
     private void AutoPrindere() {

@@ -26,6 +26,8 @@ class CRobo {
     public Servo servoRotireInt = null;
     public Servo intakeAxonLeft = null;
     public Servo intakeAxonRight = null;
+    public Servo outtakeAxonLeft = null;
+    public Servo outtakeAxonRight = null;
     // Senzori
     public DistanceSensor dSensor = null;
     // Variabile
@@ -42,21 +44,21 @@ class CRobo {
     public void init(Telemetry telemetry, HardwareMap hardwareMap) {
         // Initializare servo si senzor
         try {
-            servoGhiaraOut = hardwareMap.get(Servo.class, "GHIARAOUTTAKE");
+            servoGhiaraOut = hardwareMap.get(Servo.class, "ghiaraOuttake");
             servoGhiaraOut.setPosition(minPos);
         } catch (IllegalArgumentException e) {
             servoGhiaraOut = null;
             telemetry.addData("Error", "servoGhiaraOut not found.");
         }
         try{
-            servoGhiaraInt = hardwareMap.get(Servo.class, "GHIARAINTAKE");
+            servoGhiaraInt = hardwareMap.get(Servo.class, "ghiaraIntake");
             servoGhiaraInt.setPosition(minPos);
         } catch(IllegalArgumentException e){
             servoGhiaraInt = null;
             telemetry.addData("Error", "servoGhiaraInt not found.");
         }
         try {
-            servoRotireInt = hardwareMap.get(Servo.class, "ROTIREGHIARAINTAKE");
+            servoRotireInt = hardwareMap.get(Servo.class, "rotireGhiaraIntake");
             servoRotireInt.setPosition(minPos);
         } catch(IllegalArgumentException e) {
             servoRotireInt = null;
@@ -77,7 +79,21 @@ class CRobo {
             telemetry.addData("Error", "IntakeAxonRight not found.");
         }
         try{
-            dSensor = hardwareMap.get(DistanceSensor.class, "DISTANCESENSOR");
+            outtakeAxonLeft = hardwareMap.get(Servo.class, "outtakeAxonLeft");
+            outtakeAxonLeft.setPosition(minPos);
+        } catch(IllegalArgumentException e){
+            outtakeAxonLeft = null;
+            telemetry.addData("Error", "OuttakeAxonLeft not found.");
+        }
+        try{
+            outtakeAxonRight = hardwareMap.get(Servo.class, "outtakeAxonRight");
+            outtakeAxonRight.setPosition(minPos);
+        } catch(IllegalArgumentException e){
+            outtakeAxonRight = null;
+            telemetry.addData("Error", "OuttakeAxonRight not found.");
+        }
+        try{
+            dSensor = hardwareMap.get(DistanceSensor.class, "distanceSensor");
         } catch(IllegalArgumentException e){
             dSensor = null;
             telemetry.addData("Error", "Distance Sensor not found");
@@ -134,6 +150,9 @@ public class OPModeV1 extends OpMode {
         if(robot.dSensor != null){
             AutoPrindere();
         }
+        if(robot.outtakeAxonLeft != null && robot.outtakeAxonRight != null){
+            OuttakeAxonMotion();
+        }
         if(robot.intakeAxonLeft != null && robot.intakeAxonRight != null){
             IntakeAxonMotion();
         }
@@ -142,36 +161,36 @@ public class OPModeV1 extends OpMode {
     }
 
     private void ToggleRotireIntake() {
-        if (gamepad2.b && !changedROTINT) {
+        if (gamepad1.b && !changedROTINT) {
             // if-else compact: daca este true pune ce este inainte de : daca este fals ce
             // este dupa :
             robot.servoRotireInt
                     .setPosition(robot.servoRotireInt.getPosition() == 0 ? CRobo.maxPosROTINT : CRobo.minPos);
             changedROTINT = true;
-        }else if(!gamepad2.b){
+        }else if(!gamepad1.b){
             changedROTINT = false;
         }
     }
 
     private void ToggleIntake() {
-        if (gamepad2.a && !changedINT) {
+        if (gamepad1.a && !changedINT) {
             arePiesa = false;
             // if-else compact: daca este true pune ce este inainte de : daca este fals ce
             // este dupa :
             robot.servoGhiaraInt.setPosition(robot.servoGhiaraInt.getPosition() == 0 ? CRobo.maxPosINT : CRobo.minPos);
             changedINT = true;
-        } else if (!gamepad2.a) {
+        } else if (!gamepad1.a) {
             changedINT = false;
         }
     }
 
     private void ToggleOuttake() {
-        if (gamepad1.a && !changedOUT) {
+        if (gamepad2.a && !changedOUT) {
             // if-else compact: daca este true pune ce este inainte de : daca este fals ce
             // este dupa :
             robot.servoGhiaraOut.setPosition(robot.servoGhiaraOut.getPosition() == 0 ? CRobo.maxPos : CRobo.minPos);
             changedOUT = true;
-        } else if (!gamepad1.a) {
+        } else if (!gamepad2.a) {
             changedOUT = false;
         }
     }
@@ -183,21 +202,42 @@ public class OPModeV1 extends OpMode {
         if (val < 3.7) {
             robot.servoGhiaraInt.setPosition(0);
             arePiesa = true;
-            if (gamepad2.a) {
+            if (gamepad1.a) {
                 robot.servoGhiaraInt.setPosition(CRobo.maxPosINT);
             }
         }
     }
 
+    private void OuttakeAxonMotion(){
+        double val = 0.5;
+        if(gamepad2.right_stick_y > 0 && val < 1){
+            val += 0.01;
+        }
+        if(gamepad2.right_stick_y < 0 && val > 0){
+            val -= 0.01;
+        }
+        if(gamepad2.dpad_up){
+            val = 1;
+        }
+        if(gamepad2.dpad_down){
+            val = 0;
+        }
+        if(gamepad2.dpad_right){
+            val = 0.3;
+        }
+        robot.outtakeAxonRight.setPosition(val);
+        robot.outtakeAxonLeft.setPosition(val);
+    }
+
     private void IntakeAxonMotion(){
         boolean axonOn = false;
-        boolean move = true;
-        if (gamepad2.x && move) {
-            robot.intakeAxonLeft.setPosition(axonOn ? 0 : 0.25);
-            robot.intakeAxonRight.setPosition(axonOn ? 0 : 0.25);
+        boolean move = false;
+        if(gamepad1.y && move){
+            robot.intakeAxonLeft.setPosition(axonOn ? 0 : 0.21);
+            robot.intakeAxonRight.setPosition(axonOn ? 0 : 0.21);
             axonOn = !axonOn;
             move = false;
-        }else if(!gamepad2.x){
+        } else if(!gamepad1.y){
             move = true;
         }
     }
@@ -269,6 +309,26 @@ public class OPModeV1 extends OpMode {
             double servorotireangle = servortireintPos * 180;
             telemetry.addData("Intake Position", servortireintPos);
             telemetry.addData("Intake Rotation Angle", servorotireangle);
+        }
+        if(robot.intakeAxonLeft != null && robot.intakeAxonRight != null){
+            double intakeAxonLeftPos = robot.intakeAxonLeft.getPosition();
+            double intakeAxonLeftAngle = intakeAxonLeftPos * 180;
+            double intakeAxonRightPos = robot.intakeAxonRight.getPosition();
+            double intakeAxonRightAngle = intakeAxonRightPos * 180;
+            telemetry.addData("AxonIntakeLeft Position", intakeAxonLeftPos);
+            telemetry.addData("AxonIntakeLeft Rotation Angle", intakeAxonLeftAngle);
+            telemetry.addData("AxonIntakeRight Position", intakeAxonRightPos);
+            telemetry.addData("AxonIntakeRight Rotation Angle", intakeAxonRightAngle);
+        }
+        if(robot.outtakeAxonLeft != null && robot.outtakeAxonRight != null){
+            double outtakeAxonLeftPos = robot.outtakeAxonLeft.getPosition();
+            double outtakeAxonLeftAngle = outtakeAxonLeftPos * 180;
+            double outtakeAxonRightPos = robot.outtakeAxonRight.getPosition();
+            double outtakeAxonRightAngle = outtakeAxonRightPos * 180;
+            telemetry.addData("AxonOuttakeLeft Position", outtakeAxonLeftPos);
+            telemetry.addData("AxonOuttakeLeft Rotation Angle", outtakeAxonLeftAngle);
+            telemetry.addData("AxonOuttakeRight Position", outtakeAxonRightPos);
+            telemetry.addData("AxonOuttakeRight Rotation Angle", outtakeAxonRightAngle);
         }
 
         telemetry.update();

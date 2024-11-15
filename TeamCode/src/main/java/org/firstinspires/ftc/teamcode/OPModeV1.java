@@ -34,7 +34,7 @@ class CRobo {
     static final double maxPos = 0.19;
     static final double maxPosINT = 0.5;
     static final double minPos = 0.0;
-    static final double maxPosROTINT = 0.5;
+    static final double maxPosROTINT = 0.46;
     static final double maxOuttakeSliderSpeed = 1.0;
     // Motoare
     public DcMotor leftFrontMotor = null;
@@ -246,7 +246,7 @@ public class OPModeV1 extends OpMode {
         if(gamepad2.x && sliderMove){
             sliderPower = sliderUp ? -1.0 : 1.0;
             sliderMove = false;
-        }else if(!gamepad2.x){
+        }else if(!gamepad2.x && !sliderMove){
             sliderUp = !sliderUp;
             sliderMove = true;
             sliderPower = 0.0;

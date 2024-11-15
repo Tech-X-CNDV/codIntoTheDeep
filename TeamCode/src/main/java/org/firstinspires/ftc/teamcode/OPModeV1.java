@@ -118,14 +118,34 @@ class CRobo {
             telemetry.addData("Error", "Distance Sensor not found");
         }
         // Initializare roti
-        leftFrontMotor = hardwareMap.get(DcMotor.class, "leftFrontMotor");
-        rightFrontMotor = hardwareMap.get(DcMotor.class, "rightFrontMotor");
-        leftRearMotor = hardwareMap.get(DcMotor.class, "leftRearMotor");
-        rightRearMotor = hardwareMap.get(DcMotor.class, "rightRearMotor");
-        rightFrontMotor.setDirection(DcMotorSimple.Direction.REVERSE);
-        rightRearMotor.setDirection(DcMotorSimple.Direction.REVERSE);
-        leftFrontMotor.setDirection(DcMotorSimple.Direction.FORWARD);
-        leftRearMotor.setDirection(DcMotorSimple.Direction.FORWARD);
+        try{
+            leftFrontMotor = hardwareMap.get(DcMotor.class, "leftFrontMotor");
+            leftFrontMotor.setDirection(DcMotorSimple.Direction.FORWARD);
+        } catch(IllegalArgumentException e){
+            leftFrontMotor = null;
+            telemetry.addData("Error", "LeftFrontMotor not found");
+        }
+        try{
+            rightFrontMotor = hardwareMap.get(DcMotor.class, "rightFrontMotor");
+            rightFrontMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        } catch(IllegalArgumentException e){
+            rightFrontMotor = null;
+            telemetry.addData("Error", "RightFrontMotor not found");
+        }
+        try{
+            leftRearMotor = hardwareMap.get(DcMotor.class, "leftRearMotor");
+            leftRearMotor.setDirection(DcMotorSimple.Direction.FORWARD);
+        } catch(IllegalArgumentException e){
+            leftRearMotor = null;
+            telemetry.addData("Error", "LeftRearMotor not found");
+        }
+        try{
+            rightRearMotor = hardwareMap.get(DcMotor.class, "rightRearMotor");
+            rightRearMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        } catch(IllegalArgumentException e){
+            rightRearMotor = null;
+            telemetry.addData("Error", "RightRearMotor not found");
+        }
 
         telemetry.addData("Status", "Initialized");
         telemetry.update();
@@ -155,6 +175,9 @@ public class OPModeV1 extends OpMode {
     boolean arePiesa = false;
     boolean speedLimit = false;
     boolean pressLbumper2 = false;
+    boolean sliderMove = true;
+    boolean sliderUp = false;
+    double sliderPower = 0.0;
 
     public void loop() {
         if (robot.servoRotireInt != null){
@@ -178,7 +201,9 @@ public class OPModeV1 extends OpMode {
         if(robot.outtakeSliderUp != null && robot.outtakeSliderDown != null){
             OuttakeSliderMotion();
         }
-        Roti();
+        if(robot.leftFrontMotor != null && robot.rightFrontMotor != null && robot.leftRearMotor != null && robot.rightRearMotor != null) {
+            Roti();
+        }
         Telemetry();
     }
 
@@ -218,19 +243,16 @@ public class OPModeV1 extends OpMode {
     }
 
     private void OuttakeSliderMotion(){
-        boolean move = false;
-        boolean sliderUp = false;
-        double power = 0.0;
-        if(gamepad2.x && move){
-            power = sliderUp ? -1.0 : 1.0;
-            move = false;
+        if(gamepad2.x && sliderMove){
+            sliderPower = sliderUp ? -1.0 : 1.0;
+            sliderMove = false;
         }else if(!gamepad2.x){
-            sliderUp = true;
-            move = true;
-            power = 0.0;
+            sliderUp = !sliderUp;
+            sliderMove = true;
+            sliderPower = 0.0;
         }
-        robot.outtakeSliderUp.setPower(power);
-        robot.outtakeSliderDown.setPower(power);
+        robot.outtakeSliderUp.setPower(sliderPower);
+        robot.outtakeSliderDown.setPower(sliderPower);
     }
 
     private void AutoPrindere() {
@@ -368,7 +390,9 @@ public class OPModeV1 extends OpMode {
             telemetry.addData("AxonOuttakeRight Position", outtakeAxonRightPos);
             telemetry.addData("AxonOuttakeRight Rotation Angle", outtakeAxonRightAngle);
         }
-
+        if(robot.outtakeSliderUp != null && robot.outtakeSliderDown != null){
+            telemetry.addData("sliderPower", sliderPower);
+        }
         telemetry.update();
     }
 

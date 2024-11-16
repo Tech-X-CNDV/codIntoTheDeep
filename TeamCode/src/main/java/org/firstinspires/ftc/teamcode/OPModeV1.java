@@ -31,9 +31,10 @@ class CRobo {
     // Senzori
     public DistanceSensor dSensor = null;
     // Variabile
-    static final double maxPos = 0.19;
+    static final double maxPos = 0.3;
     static final double maxPosINT = 0.5;
     static final double minPos = 0.0;
+    static final double axonMinPos = 0.3;
     static final double maxPosROTINT = 0.46;
     static final double maxOuttakeSliderSpeed = 1.0;
     // Motoare
@@ -43,12 +44,13 @@ class CRobo {
     public DcMotor rightRearMotor = null;
     public DcMotor outtakeSliderUp = null;
     public DcMotor outtakeSliderDown = null;
+    public DcMotor intakeSlider = null;
 
     public void init(Telemetry telemetry, HardwareMap hardwareMap) {
         // Initializare servo si senzor
         try {
             servoGhiaraOut = hardwareMap.get(Servo.class, "ghiaraOuttake");
-            servoGhiaraOut.setPosition(minPos);
+            servoGhiaraOut.setPosition(maxPos);
         } catch (IllegalArgumentException e) {
             servoGhiaraOut = null;
             telemetry.addData("Error", "servoGhiaraOut not found.");
@@ -83,14 +85,14 @@ class CRobo {
         }
         try{
             outtakeAxonLeft = hardwareMap.get(Servo.class, "outtakeAxonLeft");
-            outtakeAxonLeft.setPosition(minPos);
+            outtakeAxonLeft.setPosition(axonMinPos);
         } catch(IllegalArgumentException e){
             outtakeAxonLeft = null;
             telemetry.addData("Error", "OuttakeAxonLeft not found.");
         }
         try{
             outtakeAxonRight = hardwareMap.get(Servo.class, "outtakeAxonRight");
-            outtakeAxonRight.setPosition(minPos);
+            outtakeAxonRight.setPosition(axonMinPos);
         } catch(IllegalArgumentException e){
             outtakeAxonRight = null;
             telemetry.addData("Error", "OuttakeAxonRight not found.");
@@ -110,6 +112,14 @@ class CRobo {
         } catch(IllegalArgumentException e){
             outtakeSliderDown = null;
             telemetry.addData("Error", "OuttakeSliderDown not found.");
+        }
+        try{
+            intakeSlider = hardwareMap.get(DcMotor.class, "intakeSlider");
+            intakeSlider.setDirection(DcMotorSimple.Direction.FORWARD);
+
+        } catch(IllegalArgumentException e){
+            intakeSlider = null;
+            telemetry.addData("Error", "IntakeSlider not found.");
         }
         try{
             dSensor = hardwareMap.get(DistanceSensor.class, "distanceSensor");
@@ -175,9 +185,9 @@ public class OPModeV1 extends OpMode {
     boolean arePiesa = false;
     boolean speedLimit = false;
     boolean pressLbumper2 = false;
-    boolean sliderMove = true;
-    boolean sliderUp = false;
-    double sliderPower = 0.0;
+    boolean intakeAxonOn = false;
+    boolean intakeAxonMove = false;
+    double outtakeAxonVal = 0.5;
 
     public void loop() {
         if (robot.servoRotireInt != null){
@@ -200,6 +210,9 @@ public class OPModeV1 extends OpMode {
         }
         if(robot.outtakeSliderUp != null && robot.outtakeSliderDown != null){
             OuttakeSliderMotion();
+        }
+        if(robot.intakeSlider != null){
+            IntakeSliderMotion();
         }
         if(robot.leftFrontMotor != null && robot.rightFrontMotor != null && robot.leftRearMotor != null && robot.rightRearMotor != null) {
             Roti();
@@ -243,16 +256,16 @@ public class OPModeV1 extends OpMode {
     }
 
     private void OuttakeSliderMotion(){
-        if(gamepad2.x && sliderMove){
-            sliderPower = sliderUp ? -1.0 : 1.0;
-            sliderMove = false;
-        }else if(!gamepad2.x && !sliderMove){
-            sliderUp = !sliderUp;
-            sliderMove = true;
-            sliderPower = 0.0;
+        robot.outtakeSliderUp.setPower(gamepad2.left_stick_y);
+        robot.outtakeSliderDown.setPower(gamepad2.left_stick_y);
+    }
+
+    private void IntakeSliderMotion(){
+        if(gamepad1.right_trigger != 0 && gamepad1.left_trigger == 0){
+            robot.intakeSlider.setPower(gamepad1.right_trigger);
+        } else{
+            robot.intakeSlider.setPower(-gamepad1.left_trigger);
         }
-        robot.outtakeSliderUp.setPower(sliderPower);
-        robot.outtakeSliderDown.setPower(sliderPower);
     }
 
     private void AutoPrindere() {
@@ -269,36 +282,33 @@ public class OPModeV1 extends OpMode {
     }
 
     private void OuttakeAxonMotion(){
-        double val = 0.5;
-        if(gamepad2.right_stick_y > 0 && val < 1){
-            val += 0.01;
+        if(gamepad2.right_stick_y < 0 && outtakeAxonVal < 1){
+            outtakeAxonVal += 0.01;
         }
-        if(gamepad2.right_stick_y < 0 && val > 0){
-            val -= 0.01;
+        if(gamepad2.right_stick_y > 0 && outtakeAxonVal > 0){
+            outtakeAxonVal -= 0.01;
         }
         if(gamepad2.dpad_up){
-            val = 1;
+            outtakeAxonVal = 1;
         }
         if(gamepad2.dpad_down){
-            val = 0;
+            outtakeAxonVal = 0;
         }
         if(gamepad2.dpad_right){
-            val = 0.3;
+            outtakeAxonVal = 0.3;
         }
-        robot.outtakeAxonRight.setPosition(val);
-        robot.outtakeAxonLeft.setPosition(val);
+        robot.outtakeAxonRight.setPosition(outtakeAxonVal);
+        robot.outtakeAxonLeft.setPosition(outtakeAxonVal);
     }
 
     private void IntakeAxonMotion(){
-        boolean axonOn = false;
-        boolean move = false;
-        if(gamepad1.y && move){
-            robot.intakeAxonLeft.setPosition(axonOn ? 0 : 0.21);
-            robot.intakeAxonRight.setPosition(axonOn ? 0 : 0.21);
-            axonOn = !axonOn;
-            move = false;
+        if(gamepad1.y && intakeAxonMove){
+            robot.intakeAxonLeft.setPosition(intakeAxonOn ? 0 : 0.21);
+            robot.intakeAxonRight.setPosition(intakeAxonOn ? 0 : 0.21);
+            intakeAxonOn = !intakeAxonOn;
+            intakeAxonMove = false;
         } else if(!gamepad1.y){
-            move = true;
+            intakeAxonMove = true;
         }
     }
 
@@ -391,7 +401,11 @@ public class OPModeV1 extends OpMode {
             telemetry.addData("AxonOuttakeRight Rotation Angle", outtakeAxonRightAngle);
         }
         if(robot.outtakeSliderUp != null && robot.outtakeSliderDown != null){
-            telemetry.addData("sliderPower", sliderPower);
+            telemetry.addData("OuttakeSliderPowerUp", robot.outtakeSliderUp.getPower());
+            telemetry.addData("OuttakeSliderPowerDown", robot.outtakeSliderDown.getPower());
+        }
+        if(robot.intakeSlider != null){
+            telemetry.addData("IntakeSliderPower", robot.intakeSlider.getPower());
         }
         telemetry.update();
     }

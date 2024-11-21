@@ -130,28 +130,28 @@ class CRobo {
         // Initializare roti
         try{
             leftFrontMotor = hardwareMap.get(DcMotor.class, "leftFrontMotor");
-            leftFrontMotor.setDirection(DcMotorSimple.Direction.FORWARD);
+            leftFrontMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         } catch(IllegalArgumentException e){
             leftFrontMotor = null;
             telemetry.addData("Error", "LeftFrontMotor not found");
         }
         try{
             rightFrontMotor = hardwareMap.get(DcMotor.class, "rightFrontMotor");
-            rightFrontMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+            rightFrontMotor.setDirection(DcMotorSimple.Direction.FORWARD);
         } catch(IllegalArgumentException e){
             rightFrontMotor = null;
             telemetry.addData("Error", "RightFrontMotor not found");
         }
         try{
             leftRearMotor = hardwareMap.get(DcMotor.class, "leftRearMotor");
-            leftRearMotor.setDirection(DcMotorSimple.Direction.FORWARD);
+            leftRearMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         } catch(IllegalArgumentException e){
             leftRearMotor = null;
             telemetry.addData("Error", "LeftRearMotor not found");
         }
         try{
             rightRearMotor = hardwareMap.get(DcMotor.class, "rightRearMotor");
-            rightRearMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+            rightRearMotor.setDirection(DcMotorSimple.Direction.FORWARD);
         } catch(IllegalArgumentException e){
             rightRearMotor = null;
             telemetry.addData("Error", "RightRearMotor not found");
@@ -179,6 +179,14 @@ public class OPModeV1 extends OpMode {
         runtime.reset();
     }
 
+    double maxMotorSpeed = 0.0;
+    double frontLeftPower = 0.0;
+    double rearLeftPower = 0.0;
+    double frontRightPower = 0.0;
+    double rearRightPower = 0.0;
+    double driveMotor = 0.0;
+    double strafeMotor = 0.0;
+    double turnMotor = 0.0;
     boolean changedOUT = false;
     boolean changedINT = false;
     boolean changedROTINT = false;
@@ -187,17 +195,17 @@ public class OPModeV1 extends OpMode {
     boolean pressLbumper2 = false;
     boolean intakeAxonOn = false;
     boolean intakeAxonMove = false;
-    double outtakeAxonVal = 0.5;
+    double outtakeAxonVal = 0.3;
 
     public void loop() {
         if (robot.servoRotireInt != null){
-            ToggleRotireIntake();
+            ToggleGhiaraRotireIntake();
         }
         if(robot.servoRotireInt != null) {
-            ToggleIntake();
+            ToggleGhiaraIntake();
         }
         if(robot.servoGhiaraOut != null) {
-            ToggleOuttake();
+            ToggleGhiaraOuttake();
         }
         if(robot.dSensor != null){
             AutoPrindere();
@@ -220,7 +228,7 @@ public class OPModeV1 extends OpMode {
         Telemetry();
     }
 
-    private void ToggleRotireIntake() {
+    private void ToggleGhiaraRotireIntake() {
         if (gamepad1.b && !changedROTINT) {
             // if-else compact: daca este true pune ce este inainte de : daca este fals ce
             // este dupa :
@@ -232,7 +240,7 @@ public class OPModeV1 extends OpMode {
         }
     }
 
-    private void ToggleIntake() {
+    private void ToggleGhiaraIntake() {
         if (gamepad1.a && !changedINT) {
             arePiesa = false;
             // if-else compact: daca este true pune ce este inainte de : daca este fals ce
@@ -244,7 +252,7 @@ public class OPModeV1 extends OpMode {
         }
     }
 
-    private void ToggleOuttake() {
+    private void ToggleGhiaraOuttake() {
         if (gamepad2.a && !changedOUT) {
             // if-else compact: daca este true pune ce este inainte de : daca este fals ce
             // este dupa :
@@ -303,8 +311,8 @@ public class OPModeV1 extends OpMode {
 
     private void IntakeAxonMotion(){
         if(gamepad1.y && intakeAxonMove){
-            robot.intakeAxonLeft.setPosition(intakeAxonOn ? 0 : 0.21);
-            robot.intakeAxonRight.setPosition(intakeAxonOn ? 0 : 0.21);
+            robot.intakeAxonLeft.setPosition(intakeAxonOn ? 0 : 0.25);
+            robot.intakeAxonRight.setPosition(intakeAxonOn ? 0 : 0.25);
             intakeAxonOn = !intakeAxonOn;
             intakeAxonMove = false;
         } else if(!gamepad1.y){
@@ -313,46 +321,41 @@ public class OPModeV1 extends OpMode {
     }
 
     private void Roti() {
-        if (gamepad2.left_bumper && pressLbumper2) {
+        if (gamepad1.left_bumper && pressLbumper2) {
             speedLimit = !speedLimit;
             pressLbumper2 = false;
-        }
-        if (!gamepad2.left_bumper) {
+        } else if (!gamepad1.left_bumper) {
             pressLbumper2 = true;
         }
 
-        double drive = -gamepad2.left_stick_y;
-        double strafe = gamepad2.left_stick_x;
-        double turn = gamepad2.right_stick_x;
+        driveMotor = -gamepad1.left_stick_y;
+        strafeMotor = gamepad1.left_stick_x;
+        turnMotor = gamepad1.right_stick_x;
 
         // Apply speed limit if active
         if (speedLimit) {
-            drive /= 2.0d;
-            strafe /= 2.0d;
-            turn /= 2.0d;
+            driveMotor /= 2.0d;
+            strafeMotor /= 2.0d;
+            turnMotor /= 2.0d;
         }
 
-        // Reduce overall speed based on right trigger
-        double speedMultiplier = 1.0 - 0.75d * this.gamepad2.right_trigger;
-        double max;
-
         // Calculate individual motor powers (adjust signs as needed)
-        double frontLeftPower = (drive + strafe + turn) * speedMultiplier;
-        double frontRightPower = (drive - strafe - turn) * speedMultiplier;
-        double rearLeftPower = (drive - strafe + turn) * speedMultiplier;
-        double rearRightPower = (drive + strafe - turn) * speedMultiplier;
+        frontLeftPower = (driveMotor + strafeMotor + turnMotor);
+        frontRightPower = (driveMotor - strafeMotor - turnMotor);
+        rearLeftPower = (driveMotor - strafeMotor + turnMotor);
+        rearRightPower = (driveMotor + strafeMotor - turnMotor);
 
         // Normalize the values so no wheel power exceeds 100%
         // This ensures that the robot maintains the desired motion.
-        max = Math.max(Math.abs(frontLeftPower), Math.abs(frontRightPower));
-        max = Math.max(max, Math.abs(rearLeftPower));
-        max = Math.max(max, Math.abs(rearRightPower));
+        maxMotorSpeed = Math.max(Math.abs(frontLeftPower), Math.abs(frontRightPower));
+        maxMotorSpeed = Math.max(maxMotorSpeed, Math.abs(rearLeftPower));
+        maxMotorSpeed = Math.max(maxMotorSpeed, Math.abs(rearRightPower));
 
-        if (max > 1.0) {
-            frontLeftPower /= max;
-            frontRightPower /= max;
-            rearLeftPower /= max;
-            rearRightPower /= max;
+        if (maxMotorSpeed > 1.0) {
+            frontLeftPower /= maxMotorSpeed;
+            frontRightPower /= maxMotorSpeed;
+            rearLeftPower /= maxMotorSpeed;
+            rearRightPower /= maxMotorSpeed;
         }
         robot.leftFrontMotor.setPower(frontLeftPower);
         robot.rightFrontMotor.setPower(frontRightPower);
@@ -362,6 +365,9 @@ public class OPModeV1 extends OpMode {
 
     private void Telemetry() {
         telemetry.addData("Status", "Run Time: " + runtime.toString());
+        if(speedLimit){
+            telemetry.addData("Motor", "SpeedLimit enabled.");
+        }
         if (robot.servoGhiaraInt != null) {
             double ghiaraintPos = robot.servoGhiaraInt.getPosition();
             double ghiaraintangle = ghiaraintPos * 180;

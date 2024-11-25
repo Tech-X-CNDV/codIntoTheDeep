@@ -195,6 +195,8 @@ public class OPModeV1 extends OpMode {
     boolean pressLbumper2 = false;
     boolean intakeAxonOn = false;
     boolean intakeAxonMove = false;
+    boolean intakeMidAxonMove = false;
+    boolean intakeMidAxonOn = false;
     double outtakeAxonVal = 0.3;
 
     public void loop() {
@@ -291,10 +293,10 @@ public class OPModeV1 extends OpMode {
 
     private void OuttakeAxonMotion(){
         if(gamepad2.right_stick_y < 0 && outtakeAxonVal < 1){
-            outtakeAxonVal += 0.01;
+            outtakeAxonVal += 0.001;
         }
         if(gamepad2.right_stick_y > 0 && outtakeAxonVal > 0){
-            outtakeAxonVal -= 0.01;
+            outtakeAxonVal -= 0.001;
         }
         if(gamepad2.dpad_up){
             outtakeAxonVal = 1;
@@ -310,9 +312,17 @@ public class OPModeV1 extends OpMode {
     }
 
     private void IntakeAxonMotion(){
-        if(gamepad1.y && intakeAxonMove){
-            robot.intakeAxonLeft.setPosition(intakeAxonOn ? 0 : 0.25);
-            robot.intakeAxonRight.setPosition(intakeAxonOn ? 0 : 0.25);
+        if(gamepad1.x && intakeMidAxonMove){
+            robot.intakeAxonLeft.setPosition(intakeMidAxonOn ? 0 : 0.15);
+            robot.intakeAxonRight.setPosition(intakeMidAxonOn ? 0 : 0.15);
+            intakeMidAxonOn = !intakeMidAxonOn;
+            intakeMidAxonMove = false;
+        }else if(!gamepad1.x){
+            intakeMidAxonMove = true;
+        }
+        if(gamepad1.y && intakeAxonMove && intakeMidAxonOn){
+            robot.intakeAxonLeft.setPosition(intakeAxonOn ? 0.15 : 0.25);
+            robot.intakeAxonRight.setPosition(intakeAxonOn ? 0.15 : 0.25);
             intakeAxonOn = !intakeAxonOn;
             intakeAxonMove = false;
         } else if(!gamepad1.y){

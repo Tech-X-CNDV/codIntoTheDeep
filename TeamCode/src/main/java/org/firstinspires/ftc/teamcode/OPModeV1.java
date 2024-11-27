@@ -40,7 +40,6 @@ class CRobo {
     static final int outtakeSliderRetractPosition = 0;
     static final int intakeSliderExtendPosition = 2000;
     static final int intakeSliderRetractPosition = 0;
-    static final double maxOuttakeSliderSpeed = 1.0;
     // Motoare
     public DcMotor leftFrontMotor = null;
     public DcMotor rightFrontMotor = null;
@@ -199,26 +198,6 @@ public class OPModeV1 extends OpMode {
         runtime.reset();
     }
 
-    double maxMotorSpeed = 0.0;
-    double frontLeftPower = 0.0;
-    double rearLeftPower = 0.0;
-    double frontRightPower = 0.0;
-    double rearRightPower = 0.0;
-    double driveMotor = 0.0;
-    double strafeMotor = 0.0;
-    double turnMotor = 0.0;
-    boolean changedOUT = false;
-    boolean changedINT = false;
-    boolean changedROTINT = false;
-    boolean arePiesa = false;
-    boolean speedLimit = false;
-    boolean pressLbumper2 = false;
-    boolean intakeAxonOn = false;
-    boolean intakeAxonMove = false;
-    boolean intakeMidAxonMove = false;
-    boolean intakeMidAxonOn = false;
-    double outtakeAxonVal = 0.3;
-
     public void loop() {
         if (robot.servoRotireInt != null){
             ToggleGhiaraRotireIntake();
@@ -250,6 +229,8 @@ public class OPModeV1 extends OpMode {
         Telemetry();
     }
 
+    boolean changedROTINT = false;
+
     private void ToggleGhiaraRotireIntake() {
         if (gamepad1.b && !changedROTINT) {
             // if-else compact: daca este true pune ce este inainte de : daca este fals ce
@@ -262,6 +243,8 @@ public class OPModeV1 extends OpMode {
         }
     }
 
+    boolean changedINT = false;
+
     private void ToggleGhiaraIntake() {
         if (gamepad1.a && !changedINT) {
             arePiesa = false;
@@ -273,6 +256,8 @@ public class OPModeV1 extends OpMode {
             changedINT = false;
         }
     }
+
+    boolean changedOUT = false;
 
     private void ToggleGhiaraOuttake() {
         if (gamepad2.a && !changedOUT) {
@@ -317,6 +302,8 @@ public class OPModeV1 extends OpMode {
         }
     }
 
+    boolean arePiesa = false;
+
     private void AutoPrindere() {
         double val = robot.dSensor.getDistance(DistanceUnit.CM);
         telemetry.addData("Distance: ", val);
@@ -329,6 +316,8 @@ public class OPModeV1 extends OpMode {
             }
         }
     }
+
+    double outtakeAxonVal = 0.3;
 
     private void OuttakeAxonMotion(){
         if(gamepad2.right_stick_y < 0 && outtakeAxonVal < 1){
@@ -350,6 +339,11 @@ public class OPModeV1 extends OpMode {
         robot.outtakeAxonLeft.setPosition(outtakeAxonVal);
     }
 
+    boolean intakeAxonOn = false;
+    boolean intakeAxonMove = false;
+    boolean intakeMidAxonMove = false;
+    boolean intakeMidAxonOn = false;
+
     private void IntakeAxonMotion(){
         if(gamepad1.x && intakeMidAxonMove && !intakeAxonOn){
             robot.intakeAxonLeft.setPosition(intakeMidAxonOn ? 0 : 0.15);
@@ -368,6 +362,17 @@ public class OPModeV1 extends OpMode {
             intakeAxonMove = true;
         }
     }
+
+    double maxMotorSpeed = 0.0;
+    double frontLeftPower = 0.0;
+    double rearLeftPower = 0.0;
+    double frontRightPower = 0.0;
+    double rearRightPower = 0.0;
+    double driveMotor = 0.0;
+    double strafeMotor = 0.0;
+    double turnMotor = 0.0;
+    boolean speedLimit = false;
+    boolean pressLbumper2 = false;
 
     private void Roti() {
         if (gamepad1.left_bumper && pressLbumper2) {

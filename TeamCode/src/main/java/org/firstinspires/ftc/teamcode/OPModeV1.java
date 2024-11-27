@@ -36,9 +36,9 @@ class CRobo {
     static final double minPos = 0.0;
     static final double axonMinPos = 0.3;
     static final double maxPosROTINT = 0.46;
-    static final int outtakeSliderExtendPosition = 1500;
+    static final int outtakeSliderExtendPosition = 4500;
     static final int outtakeSliderRetractPosition = 0;
-    static final int intakeSliderExtendPosition = 1000;
+    static final int intakeSliderExtendPosition = 2000;
     static final int intakeSliderRetractPosition = 0;
     static final double maxOuttakeSliderSpeed = 1.0;
     // Motoare
@@ -112,7 +112,6 @@ class CRobo {
         try{
             outtakeSliderDown = hardwareMap.get(DcMotor.class, "outtakeSliderDown");
             outtakeSliderDown.setDirection(DcMotorSimple.Direction.REVERSE);
-            
         } catch(IllegalArgumentException e){
             outtakeSliderDown = null;
             telemetry.addData("Error", "OuttakeSliderDown not found.");
@@ -287,17 +286,19 @@ public class OPModeV1 extends OpMode {
     }
 
     private void OuttakeSliderMotion(){
-        if(gamepad2.right_stick_y < 0.0){
+        if(gamepad2.left_stick_y < 0.0){
             robot.outtakeSliderUp.setTargetPosition(CRobo.outtakeSliderExtendPosition);
             robot.outtakeSliderDown.setTargetPosition(CRobo.outtakeSliderExtendPosition);
-            robot.outtakeSliderUp.setPower(-gamepad2.right_stick_y);
+            robot.outtakeSliderUp.setPower(-gamepad2.left_stick_y);
+            robot.outtakeSliderDown.setPower(-gamepad2.left_stick_y);
         }
-        if(gamepad2.right_stick_y > 0.0){
+        if(gamepad2.left_stick_y > 0.0){
             robot.outtakeSliderUp.setTargetPosition(CRobo.outtakeSliderRetractPosition);
             robot.outtakeSliderDown.setTargetPosition(CRobo.outtakeSliderRetractPosition);
-            robot.outtakeSliderUp.setPower(-gamepad2.right_stick_y);
+            robot.outtakeSliderUp.setPower(gamepad2.left_stick_y);
+            robot.outtakeSliderDown.setPower(gamepad2.left_stick_y);
         }
-        if(gamepad2.right_stick_y == 0.0){
+        if(gamepad2.left_stick_y == 0.0){
             robot.outtakeSliderUp.setPower(0.0);
             robot.outtakeSliderDown.setPower(0.0);
         }
@@ -311,6 +312,8 @@ public class OPModeV1 extends OpMode {
         } else if(gamepad1.left_trigger != 0){
             robot.intakeSlider.setTargetPosition(CRobo.intakeSliderRetractPosition);
             robot.intakeSlider.setPower(gamepad1.left_trigger);
+        } else {
+            robot.intakeSlider.setPower(0.0);
         }
     }
 
@@ -329,10 +332,10 @@ public class OPModeV1 extends OpMode {
 
     private void OuttakeAxonMotion(){
         if(gamepad2.right_stick_y < 0 && outtakeAxonVal < 1){
-            outtakeAxonVal += 0.001;
+            outtakeAxonVal += 0.005;
         }
         if(gamepad2.right_stick_y > 0 && outtakeAxonVal > 0){
-            outtakeAxonVal -= 0.001;
+            outtakeAxonVal -= 0.005;
         }
         if(gamepad2.dpad_up){
             outtakeAxonVal = 1;
@@ -357,8 +360,8 @@ public class OPModeV1 extends OpMode {
             intakeMidAxonMove = true;
         }
         if(gamepad1.y && intakeAxonMove && intakeMidAxonOn){
-            robot.intakeAxonLeft.setPosition(intakeAxonOn ? 0.15 : 0.23);
-            robot.intakeAxonRight.setPosition(intakeAxonOn ? 0.15 : 0.23);
+            robot.intakeAxonLeft.setPosition(intakeAxonOn ? 0.15 : 0.235);
+            robot.intakeAxonRight.setPosition(intakeAxonOn ? 0.15 : 0.235);
             intakeAxonOn = !intakeAxonOn;
             intakeAxonMove = false;
         } else if(!gamepad1.y){

@@ -418,7 +418,7 @@ public class OPModeV1 extends OpMode {
     }
 
     private void Telemetry() {
-        telemetry.addData("Status", "Run Time: " + runtime.toString());
+        telemetry.addData("Status", "Run Time: " + String.format("%d:%02d", runtime.seconds() / 60, runtime.seconds() % 60));
         if(speedLimit){
             telemetry.addData("Motor", "SpeedLimit enabled.");
         }

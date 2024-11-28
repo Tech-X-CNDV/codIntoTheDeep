@@ -1,57 +1,167 @@
 package org.firstinspires.ftc.teamcode;
- 
+
+import com.acmerobotics.dashboard.config.Config;
+import androidx.annotation.NonNull;
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.Pose2d;
+import com.acmerobotics.roadrunner.SequentialAction;
+import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DistanceSensor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
- 
+import com.qualcomm.robotcore.hardware.HardwareMap;
+
 @Autonomous(name = "autoRED_COS")
 public class autonomieRED_COS extends LinearOpMode{
-    CRobo robot = new CRobo();
+
+    public class OuttakeSliders {
+        private DcMotor outtakeSliderUp;
+        private DcMotor outtakeSliderDown;
+
+        public OuttakeSliders(HardwareMap hardwareMap) {
+            outtakeSliderUp = hardwareMap.get(DcMotor.class, "outtakeSliderUp");
+            outtakeSliderDown = hardwareMap.get(DcMotor.class, "outtakeSliderDown");
+            outtakeSliderUp.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            outtakeSliderDown.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            outtakeSliderUp.setDirection(DcMotorSimple.Direction.FORWARD);
+            outtakeSliderDown.setDirection(DcMotorSimple.Direction.REVERSE);
+        }
+
+        public class SlidersUp implements Action {
+            private boolean initialized = false;
+
+            @Override
+            public boolean run(@NonNull TelemetryPacket packet) {
+                if (!initialized) {
+                    outtakeSliderUp.setPower(1);
+                    outtakeSliderDown.setPower(1);
+                    initialized = true;
+                }
+                // checks lift's current position
+                double pos = outtakeSliderUp.getCurrentPosition();
+                packet.put("outtakePos", pos);
+                if (pos < 4500.0) {
+                    // true causes the action to rerun
+                    return true;
+                } else {
+                    // false stops action rerun
+                    outtakeSliderUp.setPower(0);
+                    outtakeSliderDown.setPower(0);
+                    return false;
+                }
+            }
+        }
+        public Action slidersUp() {
+            return new SlidersUp();
+        }
+
+        public class SlidersDown implements Action {
+            private boolean initialized = false;
+
+            @Override
+            public boolean run(@NonNull TelemetryPacket packet) {
+                if (!initialized) {
+                    outtakeSliderUp.setPower(-1);
+                    outtakeSliderDown.setPower(-1);
+                    initialized = true;
+                }
+
+                double pos = outtakeSliderUp.getCurrentPosition();
+                packet.put("outtakePos", pos);
+                if (pos > 1.0) {
+                    return true;
+                } else {
+                    outtakeSliderUp.setPower(0);
+                    outtakeSliderDown.setPower(0);
+                    return false;
+                }
+            }
+        }
+        public Action slidersDown(){
+            return new SlidersDown();
+        }
+    }
+
+    public class OuttakeClaw {
+        private Servo claw;
+
+        public OuttakeClaw(HardwareMap hardwareMap) {
+            claw = hardwareMap.get(Servo.class, "ghiaraOuttake");
+        }
+
+        public class CloseClaw implements Action {
+            @Override
+            public boolean run(@NonNull TelemetryPacket packet) {
+                claw.setPosition(0.3);
+                return false;
+            }
+        }
+        public Action closeClaw() {
+            return new CloseClaw();
+        }
+
+        public class OpenClaw implements Action {
+            @Override
+            public boolean run(@NonNull TelemetryPacket packet) {
+                claw.setPosition(0);
+                return false;
+            }
+        }
+        public Action openClaw() {
+            return new OpenClaw();
+        }
+    }
+
     @Override
     public void runOpMode() throws InterruptedException {
-        robot.outtakeAxonRight.setPosition(1);
-        robot.outtakeAxonLeft.setPosition(1);
-        robot.servoGhiaraOut.setPosition(0.3);
-        robot.outtakeSliderUp.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        robot.outtakeSliderUp.setTargetPosition(0);
-        robot.outtakeSliderUp.setMode(DcMotor.RunMode.RUN_TO_POSITION);
- 
-        robot.outtakeSliderDown.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        robot.outtakeSliderDown.setTargetPosition(0);
-        robot.outtakeSliderDown.setMode(DcMotor.RunMode.RUN_TO_POSITION);
- 
-        robot.outtakeSliderUp.setPower(1);
-        robot.outtakeSliderDown.setPower(1);
         MecanumDrive drive = new MecanumDrive(hardwareMap,new Pose2d(0,0,0));
-        Actions.runBlocking(
-                drive.actionBuilder(new Pose2d(-36, -56, Math.toRadians(90)))
-                        .turn(Math.toRadians(-45))
-                        .strafeTo(new Vector2d(-46.7,-45.7))
-                        .build()
-        );
-        robot.outtakeSliderUp.setTargetPosition(1500);
-        robot.outtakeSliderDown.setTargetPosition(1500);
-        if(1500-robot.outtakeSliderUp.getCurrentPosition()<2) {
-            robot.servoGhiaraOut.setPosition(0);
-            robot.outtakeSliderUp.setTargetPosition(0);
-            robot.outtakeSliderDown.setTargetPosition(0);
+        Pose2d initialPose = new Pose2d(-36, -56, Math.toRadians(90));
+        OuttakeSliders outtakeSliders = new OuttakeSliders(hardwareMap);
+        OuttakeClaw outtakeClaw = new OuttakeClaw(hardwareMap);
+
+        TrajectoryActionBuilder tab1 = drive.actionBuilder(initialPose)
+                .turn(Math.toRadians(-45))
+                .strafeTo(new Vector2d(-46.7,-45.7));
+
+        TrajectoryActionBuilder tab2 = tab1.endTrajectory().fresh()
+                .turn(Math.toRadians(45))
+                .strafeTo(new Vector2d(-47.3,-40.2));
+
+        Action trajectoryActionCloseOut = tab2.endTrajectory().fresh()
+                .strafeTo(new Vector2d(-36, -56))
+                .build();
+
+        int visionOutputPosition = 1; // dummy value (temporary)
+
+        Actions.runBlocking(outtakeSliders.slidersDown());
+        Actions.runBlocking(outtakeClaw.closeClaw());
+
+        while (!isStopRequested() && !opModeIsActive()) { // these lines until waitforstart() can be ignored.
+            int position = visionOutputPosition;
+            telemetry.addData("Position during Init", position);
+            telemetry.update();
         }
-        //de la cos sa ia a treia piesa
- 
+        int startPosition = visionOutputPosition;
+        telemetry.addData("Starting Position", startPosition);
+        telemetry.update();
+        waitForStart();
+
+        if (isStopRequested()) return;
+
         Actions.runBlocking(
-                drive.actionBuilder(new Pose2d(-36, -56, Math.toRadians(90)))
-                        .turn(Math.toRadians(45))
-                        .strafeTo(new Vector2d(-47.3,-40.2))
-                        .build()
+                new SequentialAction(
+                        tab1.build(),
+                        outtakeSliders.slidersUp(),
+                        outtakeClaw.openClaw(),
+                        outtakeSliders.slidersDown(),
+                        tab2.build(),
+                        trajectoryActionCloseOut
+                )
         );
-        //cobora axonul si prinde piesa
-        robot.intakeAxonLeft.setPosition();
-        robot.intakeAxonRight.setPosition();
     }
 }

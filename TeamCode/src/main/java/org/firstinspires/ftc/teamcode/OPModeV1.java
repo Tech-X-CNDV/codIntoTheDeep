@@ -18,6 +18,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
+import java.util.Locale;
+
 class CRobo {
 
     // Servouri
@@ -38,7 +40,7 @@ class CRobo {
     static final double maxPosROTINT = 0.46;
     static final int outtakeSliderExtendPosition = 4500;
     static final int outtakeSliderRetractPosition = 0;
-    static final int intakeSliderExtendPosition = 2000;
+    static final int intakeSliderExtendPosition = 680;
     static final int intakeSliderRetractPosition = 0;
     // Motoare
     public DcMotor leftFrontMotor = null;
@@ -346,16 +348,16 @@ public class OPModeV1 extends OpMode {
 
     private void IntakeAxonMotion(){
         if(gamepad1.x && intakeMidAxonMove && !intakeAxonOn){
-            robot.intakeAxonLeft.setPosition(intakeMidAxonOn ? 0 : 0.15);
-            robot.intakeAxonRight.setPosition(intakeMidAxonOn ? 0 : 0.15);
+            robot.intakeAxonLeft.setPosition(intakeMidAxonOn ? 0 : 0.20);
+            robot.intakeAxonRight.setPosition(intakeMidAxonOn ? 0 : 0.20);
             intakeMidAxonOn = !intakeMidAxonOn;
             intakeMidAxonMove = false;
         }else if(!gamepad1.x){
             intakeMidAxonMove = true;
         }
         if(gamepad1.y && intakeAxonMove && intakeMidAxonOn){
-            robot.intakeAxonLeft.setPosition(intakeAxonOn ? 0.15 : 0.235);
-            robot.intakeAxonRight.setPosition(intakeAxonOn ? 0.15 : 0.235);
+            robot.intakeAxonLeft.setPosition(intakeAxonOn ? 0.20 : 0.27);
+            robot.intakeAxonRight.setPosition(intakeAxonOn ? 0.20 : 0.27);
             intakeAxonOn = !intakeAxonOn;
             intakeAxonMove = false;
         } else if(!gamepad1.y){
@@ -418,7 +420,7 @@ public class OPModeV1 extends OpMode {
     }
 
     private void Telemetry() {
-        telemetry.addData("Status", "Run Time: " + String.format("%d:%02d", runtime.seconds() / 60, runtime.seconds() % 60));
+        telemetry.addData("Status", "Run Time: " + String.format(Locale.US, "%d:%.2f", (int)(runtime.seconds() / 60), runtime.seconds() % 60));
         if(speedLimit){
             telemetry.addData("Motor", "SpeedLimit enabled.");
         }
@@ -468,6 +470,7 @@ public class OPModeV1 extends OpMode {
         }
         if(robot.intakeSlider != null){
             telemetry.addData("IntakeSliderPower", robot.intakeSlider.getPower());
+            telemetry.addData("IntakeSliderPos", robot.intakeSlider.getCurrentPosition());
         }
         telemetry.update();
     }

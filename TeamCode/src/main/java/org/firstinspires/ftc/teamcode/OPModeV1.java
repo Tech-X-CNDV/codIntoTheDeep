@@ -36,9 +36,9 @@ class CRobo {
     static final double maxPos = 0.3;
     static final double maxPosINT = 0.5;
     static final double minPos = 0.0;
-    static final double axonMinPos = 0.3;
+    static final double axonMinPos = 0.4;
     static final double maxPosROTINT = 0.46;
-    static final int outtakeSliderExtendPosition = 4500;
+    static final int outtakeSliderExtendPosition = 4150;
     static final int outtakeSliderRetractPosition = 0;
     static final int intakeSliderExtendPosition = 680;
     static final int intakeSliderRetractPosition = 0;
@@ -204,7 +204,7 @@ public class OPModeV1 extends OpMode {
         if (robot.servoRotireInt != null){
             ToggleGhiaraRotireIntake();
         }
-        if(robot.servoRotireInt != null) {
+        if(robot.servoGhiaraInt != null) {
             ToggleGhiaraIntake();
         }
         if(robot.servoGhiaraOut != null) {
@@ -319,7 +319,7 @@ public class OPModeV1 extends OpMode {
         }
     }
 
-    double outtakeAxonVal = 0.3;
+    double outtakeAxonVal = 0.4;
 
     private void OuttakeAxonMotion(){
         if(gamepad2.right_stick_y < 0 && outtakeAxonVal < 1){
@@ -332,10 +332,10 @@ public class OPModeV1 extends OpMode {
             outtakeAxonVal = 1;
         }
         if(gamepad2.dpad_down){
-            outtakeAxonVal = 0;
+            outtakeAxonVal = 0.1;
         }
         if(gamepad2.dpad_right){
-            outtakeAxonVal = 0.3;
+            outtakeAxonVal = 0.4;
         }
         robot.outtakeAxonRight.setPosition(outtakeAxonVal);
         robot.outtakeAxonLeft.setPosition(outtakeAxonVal);

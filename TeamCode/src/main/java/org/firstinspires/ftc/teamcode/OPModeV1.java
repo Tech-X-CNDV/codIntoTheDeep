@@ -231,6 +231,17 @@ public class OPModeV1 extends OpMode {
         Telemetry();
     }
 
+    boolean autoSlider = false;
+
+    public void SlidersMotionAction(double power,int position, boolean auto){
+        if(auto) {
+            autoSlider = true;
+        }
+        robot.outtakeSliderDown.setTargetPosition(position);
+        robot.outtakeSliderUp.setTargetPosition(position);
+        robot.outtakeSliderUp.setPower(power);
+        robot.outtakeSliderDown.setPower(power);
+    }
     boolean changedROTINT = false;
 
     private void ToggleGhiaraRotireIntake() {
@@ -267,25 +278,22 @@ public class OPModeV1 extends OpMode {
             // este dupa :
             robot.servoGhiaraOut.setPosition(robot.servoGhiaraOut.getPosition() == 0 ? CRobo.maxPos : CRobo.minPos);
             changedOUT = true;
+            if(autoSlider){
+                autoSlider = false;
+            }
         } else if (!gamepad2.a) {
             changedOUT = false;
         }
     }
 
     private void OuttakeSliderMotion(){
-        if(gamepad2.left_stick_y < 0.0){
-            robot.outtakeSliderUp.setTargetPosition(CRobo.outtakeSliderExtendPosition);
-            robot.outtakeSliderDown.setTargetPosition(CRobo.outtakeSliderExtendPosition);
-            robot.outtakeSliderUp.setPower(-gamepad2.left_stick_y);
-            robot.outtakeSliderDown.setPower(-gamepad2.left_stick_y);
+        if(gamepad2.left_stick_y < 0.0 && !autoSlider){
+            SlidersMotionAction(-gamepad2.left_stick_y, CRobo.outtakeSliderExtendPosition, false);
         }
-        if(gamepad2.left_stick_y > 0.0){
-            robot.outtakeSliderUp.setTargetPosition(CRobo.outtakeSliderRetractPosition);
-            robot.outtakeSliderDown.setTargetPosition(CRobo.outtakeSliderRetractPosition);
-            robot.outtakeSliderUp.setPower(gamepad2.left_stick_y);
-            robot.outtakeSliderDown.setPower(gamepad2.left_stick_y);
+        if(gamepad2.left_stick_y > 0.0 && !autoSlider){
+            SlidersMotionAction(gamepad2.left_stick_y, CRobo.outtakeSliderRetractPosition, false);
         }
-        if(gamepad2.left_stick_y == 0.0){
+        if(gamepad2.left_stick_y == 0.0 && !autoSlider){
             robot.outtakeSliderUp.setPower(0.0);
             robot.outtakeSliderDown.setPower(0.0);
         }
@@ -320,7 +328,6 @@ public class OPModeV1 extends OpMode {
     }
 
     double outtakeAxonVal = 0.4;
-
     private void OuttakeAxonMotion(){
         if(gamepad2.right_stick_y < 0 && outtakeAxonVal < 1){
             outtakeAxonVal += 0.005;
@@ -329,6 +336,7 @@ public class OPModeV1 extends OpMode {
             outtakeAxonVal -= 0.005;
         }
         if(gamepad2.dpad_up){
+            SlidersMotionAction(1,CRobo.outtakeSliderExtendPosition, true);
             outtakeAxonVal = 1;
         }
         if(gamepad2.dpad_down){

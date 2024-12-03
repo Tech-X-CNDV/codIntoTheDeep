@@ -34,13 +34,13 @@ class CRobo {
     public DistanceSensor dSensor = null;
     // Variabile
     static final double maxPos = 0.3;
-    static final double maxPosINT = 0.5;
+    static final double maxPosINT = 0.35;
     static final double minPos = 0.0;
     static final double axonMinPos = 0.4;
     static final double maxPosROTINT = 0.46;
     static final int outtakeSliderExtendPosition = 4150;
     static final int outtakeSliderRetractPosition = 0;
-    static final int intakeSliderExtendPosition = 680;
+    static final int intakeSliderExtendPosition = 650;
     static final int intakeSliderRetractPosition = 0;
     // Motoare
     public DcMotor leftFrontMotor = null;
@@ -231,16 +231,26 @@ public class OPModeV1 extends OpMode {
         Telemetry();
     }
 
-    boolean autoSlider = false;
+    boolean outtakeAutoSlider = false;
 
-    public void SlidersMotionAction(double power,int position, boolean auto){
+    public void OuttakeSlidersMotionAction(double power,int position, boolean auto){
         if(auto) {
-            autoSlider = true;
+            outtakeAutoSlider = true;
         }
         robot.outtakeSliderDown.setTargetPosition(position);
         robot.outtakeSliderUp.setTargetPosition(position);
         robot.outtakeSliderUp.setPower(power);
         robot.outtakeSliderDown.setPower(power);
+    }
+
+    boolean intakeAutoSlider = false;
+
+    public void IntakeSlidersMotionAction(double power, int position, boolean auto){
+        if(auto){
+            intakeAutoSlider = true;
+        }
+        robot.intakeSlider.setTargetPosition(position);
+        robot.intakeSlider.setPower(1);
     }
     boolean changedROTINT = false;
 
@@ -264,6 +274,17 @@ public class OPModeV1 extends OpMode {
             // if-else compact: daca este true pune ce este inainte de : daca este fals ce
             // este dupa :
             robot.servoGhiaraInt.setPosition(robot.servoGhiaraInt.getPosition() == 0 ? CRobo.maxPosINT : CRobo.minPos);
+            double currentTime = getRuntime();
+            while(getRuntime() - currentTime < 0.2);
+            if(intakeAxonOn){
+                IntakeSlidersMotionAction(1, CRobo.intakeSliderRetractPosition, true);
+                robot.intakeAxonLeft.setPosition(0);
+                robot.intakeAxonRight.setPosition(0);
+                intakeMidAxonOn = false;
+                intakeAxonOn = false;
+            }else if(intakeAutoSlider){
+                intakeAutoSlider = false;
+            }
             changedINT = true;
         } else if (!gamepad1.a) {
             changedINT = false;
@@ -278,8 +299,8 @@ public class OPModeV1 extends OpMode {
             // este dupa :
             robot.servoGhiaraOut.setPosition(robot.servoGhiaraOut.getPosition() == 0 ? CRobo.maxPos : CRobo.minPos);
             changedOUT = true;
-            if(autoSlider){
-                autoSlider = false;
+            if(outtakeAutoSlider){
+                outtakeAutoSlider = false;
             }
         } else if (!gamepad2.a) {
             changedOUT = false;
@@ -287,13 +308,15 @@ public class OPModeV1 extends OpMode {
     }
 
     private void OuttakeSliderMotion(){
-        if(gamepad2.left_stick_y < 0.0 && !autoSlider){
-            SlidersMotionAction(-gamepad2.left_stick_y, CRobo.outtakeSliderExtendPosition, false);
+        if(gamepad2.left_stick_y < 0.0){
+            outtakeAutoSlider = false;
+            OuttakeSlidersMotionAction(-gamepad2.left_stick_y, CRobo.outtakeSliderExtendPosition, false);
         }
-        if(gamepad2.left_stick_y > 0.0 && !autoSlider){
-            SlidersMotionAction(gamepad2.left_stick_y, CRobo.outtakeSliderRetractPosition, false);
+        if(gamepad2.left_stick_y > 0.0){
+            outtakeAutoSlider = false;
+            OuttakeSlidersMotionAction(gamepad2.left_stick_y, CRobo.outtakeSliderRetractPosition, false);
         }
-        if(gamepad2.left_stick_y == 0.0 && !autoSlider){
+        if(gamepad2.left_stick_y == 0.0 && !outtakeAutoSlider){
             robot.outtakeSliderUp.setPower(0.0);
             robot.outtakeSliderDown.setPower(0.0);
         }
@@ -302,12 +325,16 @@ public class OPModeV1 extends OpMode {
 
     private void IntakeSliderMotion(){
         if(gamepad1.right_trigger != 0 && gamepad1.left_trigger == 0){
+            intakeAutoSlider = false;
             robot.intakeSlider.setTargetPosition(CRobo.intakeSliderExtendPosition);
             robot.intakeSlider.setPower(gamepad1.right_trigger);
+            IntakeSlidersMotionAction(gamepad1.right_trigger, CRobo.intakeSliderExtendPosition, false);
         } else if(gamepad1.left_trigger != 0){
+            intakeAutoSlider = false;
             robot.intakeSlider.setTargetPosition(CRobo.intakeSliderRetractPosition);
             robot.intakeSlider.setPower(gamepad1.left_trigger);
-        } else {
+            IntakeSlidersMotionAction(gamepad1.right_trigger, CRobo.intakeSliderRetractPosition, false);
+        } else if(!intakeAutoSlider) {
             robot.intakeSlider.setPower(0.0);
         }
     }
@@ -336,7 +363,7 @@ public class OPModeV1 extends OpMode {
             outtakeAxonVal -= 0.005;
         }
         if(gamepad2.dpad_up){
-            SlidersMotionAction(1,CRobo.outtakeSliderExtendPosition, true);
+            OuttakeSlidersMotionAction(1,CRobo.outtakeSliderExtendPosition, true);
             outtakeAxonVal = 1;
         }
         if(gamepad2.dpad_down){

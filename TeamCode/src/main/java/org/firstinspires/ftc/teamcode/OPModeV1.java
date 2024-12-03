@@ -250,7 +250,7 @@ public class OPModeV1 extends OpMode {
             intakeAutoSlider = true;
         }
         robot.intakeSlider.setTargetPosition(position);
-        robot.intakeSlider.setPower(1);
+        robot.intakeSlider.setPower(power);
     }
     boolean changedROTINT = false;
 

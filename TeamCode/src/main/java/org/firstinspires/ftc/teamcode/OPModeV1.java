@@ -41,6 +41,9 @@ class CRobo {
     static final double intakeUpPos = 0;
     static final double intakeMiddlePos = 0.20;
     static final double intakeDownPos = 0.27;
+    static final double outtakeUpPos = 1;
+    static final double outtakeMidPos = 0.4;
+    static final double outtakeBehindPos = 0.1;
     static final int outtakeSliderExtendPosition = 4160;
     static final int outtakeSliderRetractPosition = 0;
     static final int intakeSliderExtendPosition = 650;
@@ -258,15 +261,15 @@ public class OPModeV1 extends OpMode {
 
     public void IntakeToOuttake(double currentTime){
         while(getRuntime() - currentTime < 0.2);
-        IntakeSlidersMotionAction(1, CRobo.intakeSliderRetractPosition, true);
         robot.intakeAxonLeft.setPosition(CRobo.intakeUpPos);
         robot.intakeAxonRight.setPosition(CRobo.intakeUpPos);
         intakeMidAxonOn = false;
         intakeAxonOn = false;
-        while(robot.intakeSlider.getCurrentPosition() > 1);
-        robot.servoGhiaraInt.setPosition(CRobo.maxPosINT);
         currentTime = getRuntime();
         while(getRuntime() - currentTime < 0.2);
+        robot.servoGhiaraInt.setPosition(CRobo.maxPosINT);
+        while(robot.intakeSlider.getCurrentPosition() > 0.2);
+        IntakeSlidersMotionAction(1, CRobo.intakeSliderRetractPosition, true);
         robot.intakeAxonLeft.setPosition(CRobo.intakeMiddlePos);
         robot.intakeAxonRight.setPosition(CRobo.intakeMiddlePos);
         intakeMidAxonOn = true;
@@ -308,11 +311,15 @@ public class OPModeV1 extends OpMode {
     boolean changedOUT = false;
 
     private void ToggleGhiaraOuttake() {
-        if (gamepad2.a && !changedOUT) {
+        if ((gamepad2.a || gamepad2.right_bumper) && !changedOUT) {
             // if-else compact: daca este true pune ce este inainte de : daca este fals ce
             // este dupa :
             robot.servoGhiaraOut.setPosition(robot.servoGhiaraOut.getPosition() == 0 ? CRobo.maxPos : CRobo.minPos);
             changedOUT = true;
+            if(robot.outtakeSliderUp.getCurrentPosition() > CRobo.outtakeSliderExtendPosition - 100){
+                outtakeAxonVal = CRobo.outtakeMidPos;
+                OuttakeSlidersMotionAction(1, CRobo.outtakeSliderRetractPosition, true);
+            }
             if(outtakeAutoSlider){
                 outtakeAutoSlider = false;
             }
@@ -373,15 +380,15 @@ public class OPModeV1 extends OpMode {
             outtakeAxonVal -= 0.005;
         }
         if(gamepad2.dpad_up){
-            outtakeAxonVal = 1;
+            outtakeAxonVal = CRobo.outtakeUpPos;
             if(robot.servoGhiaraOut.getPosition() == CRobo.minPos)
                 OuttakeSlidersMotionAction(1,CRobo.outtakeSliderExtendPosition, true);
         }
         if(gamepad2.dpad_down){
-            outtakeAxonVal = 0.1;
+            outtakeAxonVal = CRobo.outtakeMidPos;
         }
-        if(gamepad2.dpad_right){
-            outtakeAxonVal = 0.4;
+        if(gamepad2.dpad_left){
+            outtakeAxonVal = CRobo.outtakeBehindPos;
         }
         robot.outtakeAxonRight.setPosition(outtakeAxonVal);
         robot.outtakeAxonLeft.setPosition(outtakeAxonVal);

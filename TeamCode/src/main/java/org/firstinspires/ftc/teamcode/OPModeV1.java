@@ -34,13 +34,13 @@ class CRobo {
     public DistanceSensor dSensor = null;
     // Variabile
     static final double maxPos = 0.3;
-    static final double maxPosINT = 0.35;
+    static final double maxPosINT = 0.42;
     static final double minPos = 0.0;
     static final double axonMinPos = 0.4;
     static final double maxPosROTINT = 0.46;
     static final double intakeUpPos = 0;
-    static final double intakeMiddlePos = 0.20;
-    static final double intakeDownPos = 0.27;
+    static final double intakeMiddlePos = 0.22;
+    static final double intakeDownPos = 0.25;
     static final double outtakeUpPos = 1;
     static final double outtakeMidPos = 0.4;
     static final double outtakeBehindPos = 0.1;
@@ -263,13 +263,14 @@ public class OPModeV1 extends OpMode {
         while(getRuntime() - currentTime < 0.2);
         robot.intakeAxonLeft.setPosition(CRobo.intakeUpPos);
         robot.intakeAxonRight.setPosition(CRobo.intakeUpPos);
+        robot.servoRotireInt.setPosition(CRobo.minPos);
         intakeMidAxonOn = false;
         intakeAxonOn = false;
         currentTime = getRuntime();
         while(getRuntime() - currentTime < 0.2);
         robot.servoGhiaraInt.setPosition(CRobo.maxPosINT);
         currentTime = getRuntime();
-        while(getRuntime() - currentTime < 0.2);
+        while(getRuntime() - currentTime < 0.4);
         IntakeSlidersMotionAction(1, CRobo.intakeSliderRetractPosition, true);
         robot.intakeAxonLeft.setPosition(CRobo.intakeMiddlePos);
         robot.intakeAxonRight.setPosition(CRobo.intakeMiddlePos);

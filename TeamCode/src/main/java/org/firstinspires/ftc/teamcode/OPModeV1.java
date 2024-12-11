@@ -259,18 +259,18 @@ public class OPModeV1 extends OpMode {
         robot.intakeSlider.setPower(power);
     }
 
-    public void IntakeToOuttake(double currentTime){
-        while(getRuntime() - currentTime < 0.2);
+    public void IntakeToOuttake(ElapsedTime timer){
+        while(timer.time() < 0.2);
         robot.intakeAxonLeft.setPosition(CRobo.intakeUpPos);
         robot.intakeAxonRight.setPosition(CRobo.intakeUpPos);
         robot.servoRotireInt.setPosition(CRobo.minPos);
         intakeMidAxonOn = false;
         intakeAxonOn = false;
-        currentTime = getRuntime();
-        while(getRuntime() - currentTime < 0.2);
+        timer.reset();
+        while(timer.time() < 0.2);
         robot.servoGhiaraInt.setPosition(CRobo.maxPosINT);
-        currentTime = getRuntime();
-        while(getRuntime() - currentTime < 0.4);
+        timer.reset();
+        while(timer.time() < 0.4);
         IntakeSlidersMotionAction(1, CRobo.intakeSliderRetractPosition, true);
         robot.intakeAxonLeft.setPosition(CRobo.intakeMiddlePos);
         robot.intakeAxonRight.setPosition(CRobo.intakeMiddlePos);
@@ -299,9 +299,9 @@ public class OPModeV1 extends OpMode {
             // if-else compact: daca este true pune ce este inainte de : daca este fals ce
             // este dupa :
             robot.servoGhiaraInt.setPosition(robot.servoGhiaraInt.getPosition() == 0 ? CRobo.maxPosINT : CRobo.minPos);
-            double currentTime = getRuntime();
             if(intakeAxonOn){
-                IntakeToOuttake(currentTime);
+                ElapsedTime timer = new ElapsedTime();
+                IntakeToOuttake(timer);
             }
         } else if (!gamepad1.a) {
             changedINT = false;
@@ -317,8 +317,8 @@ public class OPModeV1 extends OpMode {
             // este dupa :
             robot.servoGhiaraOut.setPosition(robot.servoGhiaraOut.getPosition() == 0 ? CRobo.maxPos : CRobo.minPos);
             if(robot.outtakeSliderUp.getCurrentPosition() > CRobo.outtakeSliderExtendPosition - 100){
-                double currentTime = getRuntime();
-                while(getRuntime() - currentTime < 0.3);
+                ElapsedTime timer = new ElapsedTime();
+                while(timer.time() < 0.3);
                 outtakeAxonVal = CRobo.outtakeMidPos;
                 OuttakeSlidersMotionAction(1, CRobo.outtakeSliderRetractPosition, true);
             }

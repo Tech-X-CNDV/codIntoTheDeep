@@ -279,10 +279,12 @@ public class autonomieRED_COS extends LinearOpMode{
         }
     }
 
+    int xPos = -57;
+
     @Override
     public void runOpMode() throws InterruptedException {
         MecanumDrive drive = new MecanumDrive(hardwareMap,new Pose2d(0,0,0));
-        Pose2d initialPose = new Pose2d(-36, -56, Math.toRadians(90));
+        Pose2d initialPose = new Pose2d(-12, 61, Math.toRadians(90));
         OuttakeSliders outtakeSliders = new OuttakeSliders(hardwareMap);
         IntakeSliders intakeSliders = new IntakeSliders(hardwareMap);
         OuttakeClaw outtakeClaw = new OuttakeClaw(hardwareMap);
@@ -290,15 +292,32 @@ public class autonomieRED_COS extends LinearOpMode{
         OuttakeAxon outtakeAxon = new OuttakeAxon(hardwareMap);
         IntakeAxon intakeAxon = new IntakeAxon(hardwareMap);
 
-        TrajectoryActionBuilder tab1 = drive.actionBuilder(initialPose)
-                .turn(Math.toRadians(-45))
-                .strafeTo(new Vector2d(-46.7,-45.7));
+        TrajectoryActionBuilder StartToSub = drive.actionBuilder(initialPose)
+                .strafeTo(new Vector2d(-6.8,34));
 
-        TrajectoryActionBuilder tab2 = tab1.endTrajectory().fresh()
-                .turn(Math.toRadians(45))
-                .strafeTo(new Vector2d(-47.3,-40.2));
+        TrajectoryActionBuilder PrepareForMoveToHPlayer = StartToSub.endTrajectory().fresh()
+                .splineToSplineHeading(new Pose2d(-35, 40.3, Math.toRadians(-90)), Math.toRadians(180))
+                .strafeTo(new Vector2d(-37,11))
+                .strafeTo(new Vector2d(-45,11));
 
-        Action trajectoryActionCloseOut = tab2.endTrajectory().fresh()
+        TrajectoryActionBuilder MovePartsToHPlayer = PrepareForMoveToHPlayer.endTrajectory().fresh()
+                .setTangent(Math.toRadians(90))
+                .lineToY(50)
+                .lineToY(11)
+                .strafeTo(new Vector2d(xPos,11));
+
+        TrajectoryActionBuilder PrepareForSub = MovePartsToHPlayer.endTrajectory().fresh()
+                .setTangent(Math.toRadians(90))
+                .lineToY(50)
+                .splineToSplineHeading(new Pose2d(-47.1,59, Math.toRadians(-90)), Math.toRadians(130));
+        
+        TrajectoryActionBuilder GoToSub = PrepareForSub.endTrajectory().fresh()
+                .splineToSplineHeading(new Pose2d(-6.8,34, Math.toRadians(89.9)), Math.toRadians(350));
+
+        TrajectoryActionBuilder GoToHPlayer = GoToSub.endTrajectory().fresh()
+                .splineToSplineHeading(new Pose2d(-47.1,59, Math.toRadians(-90)), Math.toRadians(130));
+
+        Action trajectoryActionCloseOut = MovePartsToHPlayer.endTrajectory().fresh()
                 .strafeTo(new Vector2d(-36, -56))
                 .build();
 
@@ -329,13 +348,29 @@ public class autonomieRED_COS extends LinearOpMode{
 
         Actions.runBlocking(
                 new SequentialAction(
-                        tab1.build(),
-                        outtakeSliders.slidersUp(),
-                        outtakeClaw.openClaw(),
-                        outtakeSliders.slidersDown(),
-                        tab2.build(),
-                        trajectoryActionCloseOut
+                        StartToSub.build(),
+                        // TODO add the outtake and claw actions
+                        PrepareForMoveToHPlayer.build()
                 )
         );
+        for (int i = 0; i < 2; i++) {
+            Actions.runBlocking(
+                    MovePartsToHPlayer.build()
+            );
+            xPos -= 5;
+        }
+        Actions.runBlocking(
+                // TODO add the outtake and claw actions
+                PrepareForSub.build()
+        );
+        for (int i = 0; i < 3; i++) {
+            Actions.runBlocking(
+                    new SequentialAction(
+                            GoToSub.build(),
+                            // TODO Add the outtake and claw actions
+                            GoToHPlayer.build()
+                    )
+            );
+        }
     }
 }

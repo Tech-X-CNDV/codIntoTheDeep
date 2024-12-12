@@ -2,6 +2,8 @@
 package org.firstinspires.ftc.teamcode;
 
 
+import static java.lang.Thread.sleep;
+
 import com.qualcomm.hardware.rev.Rev2mDistanceSensor;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
@@ -66,10 +68,10 @@ class CRobo {
             servoGhiaraOut = null;
             telemetry.addData("Error", "servoGhiaraOut not found.");
         }
-        try{
+        try {
             servoGhiaraInt = hardwareMap.get(Servo.class, "ghiaraIntake");
             servoGhiaraInt.setPosition(minPos);
-        } catch(IllegalArgumentException e){
+        } catch(IllegalArgumentException e) {
             servoGhiaraInt = null;
             telemetry.addData("Error", "servoGhiaraInt not found.");
         }
@@ -80,89 +82,89 @@ class CRobo {
             servoRotireInt = null;
             telemetry.addData("Error", "servoRotireInt not found.");
         }
-        try{
+        try {
             intakeAxonLeft = hardwareMap.get(Servo.class, "intakeAxonLeft");
             intakeAxonLeft.setPosition(minPos);
-        } catch(IllegalArgumentException e){
+        } catch(IllegalArgumentException e) {
             intakeAxonLeft = null;
             telemetry.addData("Error", "IntakeAxonLeft not found.");
         }
-        try{
+        try {
             intakeAxonRight = hardwareMap.get(Servo.class, "intakeAxonRight");
             intakeAxonRight.setPosition(minPos);
-        } catch(IllegalArgumentException e){
+        } catch(IllegalArgumentException e) {
             intakeAxonRight = null;
             telemetry.addData("Error", "IntakeAxonRight not found.");
         }
-        try{
+        try {
             outtakeAxonLeft = hardwareMap.get(Servo.class, "outtakeAxonLeft");
             outtakeAxonLeft.setPosition(axonMinPos);
-        } catch(IllegalArgumentException e){
+        } catch(IllegalArgumentException e) {
             outtakeAxonLeft = null;
             telemetry.addData("Error", "OuttakeAxonLeft not found.");
         }
-        try{
+        try {
             outtakeAxonRight = hardwareMap.get(Servo.class, "outtakeAxonRight");
             outtakeAxonRight.setPosition(axonMinPos);
-        } catch(IllegalArgumentException e){
+        } catch(IllegalArgumentException e) {
             outtakeAxonRight = null;
             telemetry.addData("Error", "OuttakeAxonRight not found.");
         }
-        try{
+        try {
             outtakeSliderUp = hardwareMap.get(DcMotor.class, "outtakeSliderUp");
             outtakeSliderUp.setDirection(DcMotorSimple.Direction.FORWARD);
             
-        } catch(IllegalArgumentException e){
+        } catch(IllegalArgumentException e) {
             outtakeSliderUp = null;
             telemetry.addData("Error", "OuttakeSliderUp not found.");
         }
-        try{
+        try {
             outtakeSliderDown = hardwareMap.get(DcMotor.class, "outtakeSliderDown");
             outtakeSliderDown.setDirection(DcMotorSimple.Direction.REVERSE);
-        } catch(IllegalArgumentException e){
+        } catch(IllegalArgumentException e) {
             outtakeSliderDown = null;
             telemetry.addData("Error", "OuttakeSliderDown not found.");
         }
-        try{
+        try {
             intakeSlider = hardwareMap.get(DcMotor.class, "intakeSlider");
             intakeSlider.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        } catch(IllegalArgumentException e){
+        } catch(IllegalArgumentException e) {
             intakeSlider = null;
             telemetry.addData("Error", "IntakeSlider not found.");
         }
-        try{
+        try {
             dSensor = hardwareMap.get(DistanceSensor.class, "distanceSensor");
-        } catch(IllegalArgumentException e){
+        } catch(IllegalArgumentException e) {
             dSensor = null;
             telemetry.addData("Error", "Distance Sensor not found");
         }
         // Initializare roti
-        try{
+        try {
             leftFrontMotor = hardwareMap.get(DcMotor.class, "leftFrontMotor");
             leftFrontMotor.setDirection(DcMotorSimple.Direction.REVERSE);
-        } catch(IllegalArgumentException e){
+        } catch(IllegalArgumentException e) {
             leftFrontMotor = null;
             telemetry.addData("Error", "LeftFrontMotor not found");
         }
-        try{
+        try {
             rightFrontMotor = hardwareMap.get(DcMotor.class, "rightFrontMotor");
             rightFrontMotor.setDirection(DcMotorSimple.Direction.FORWARD);
-        } catch(IllegalArgumentException e){
+        } catch(IllegalArgumentException e) {
             rightFrontMotor = null;
             telemetry.addData("Error", "RightFrontMotor not found");
         }
-        try{
+        try {
             leftRearMotor = hardwareMap.get(DcMotor.class, "leftRearMotor");
             leftRearMotor.setDirection(DcMotorSimple.Direction.REVERSE);
-        } catch(IllegalArgumentException e){
+        } catch(IllegalArgumentException e) {
             leftRearMotor = null;
             telemetry.addData("Error", "LeftRearMotor not found");
         }
-        try{
+        try {
             rightRearMotor = hardwareMap.get(DcMotor.class, "rightRearMotor");
             rightRearMotor.setDirection(DcMotorSimple.Direction.FORWARD);
-        } catch(IllegalArgumentException e){
+        } catch(IllegalArgumentException e) {
             rightRearMotor = null;
             telemetry.addData("Error", "RightRearMotor not found");
         }
@@ -207,7 +209,7 @@ public class OPModeV1 extends OpMode {
     }
 
     public void loop() {
-        if (robot.servoRotireInt != null){
+        if (robot.servoRotireInt != null) {
             ToggleGhiaraRotireIntake();
         }
         if(robot.servoGhiaraInt != null) {
@@ -216,25 +218,33 @@ public class OPModeV1 extends OpMode {
         if(robot.servoGhiaraOut != null) {
             ToggleGhiaraOuttake();
         }
-        if(robot.dSensor != null){
+        if(robot.dSensor != null) {
             AutoPrindere();
         }
-        if(robot.outtakeAxonLeft != null && robot.outtakeAxonRight != null){
+        if(robot.outtakeAxonLeft != null && robot.outtakeAxonRight != null) {
             OuttakeAxonMotion();
         }
-        if(robot.intakeAxonLeft != null && robot.intakeAxonRight != null){
+        if(robot.intakeAxonLeft != null && robot.intakeAxonRight != null) {
             IntakeAxonMotion();
         }
-        if(robot.outtakeSliderUp != null && robot.outtakeSliderDown != null){
+        if(robot.outtakeSliderUp != null && robot.outtakeSliderDown != null) {
             OuttakeSliderMotion();
         }
-        if(robot.intakeSlider != null){
+        if(robot.intakeSlider != null) {
             IntakeSliderMotion();
         }
         if(robot.leftFrontMotor != null && robot.rightFrontMotor != null && robot.leftRearMotor != null && robot.rightRearMotor != null) {
             Roti();
         }
         Telemetry();
+    }
+
+    public void sleep(long milliseconds) {
+        try {
+            Thread.sleep(milliseconds);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
     }
 
     boolean outtakeAutoSlider = false;
@@ -252,25 +262,23 @@ public class OPModeV1 extends OpMode {
     boolean intakeAutoSlider = false;
 
     public void IntakeSlidersMotionAction(double power, int position, boolean auto){
-        if(auto){
+        if(auto) {
             intakeAutoSlider = true;
         }
         robot.intakeSlider.setTargetPosition(position);
         robot.intakeSlider.setPower(power);
     }
 
-    public void IntakeToOuttake(ElapsedTime timer){
-        while(timer.time() < 0.2);
+    public void IntakeToOuttake() {
+        sleep(200);
         robot.intakeAxonLeft.setPosition(CRobo.intakeUpPos);
         robot.intakeAxonRight.setPosition(CRobo.intakeUpPos);
         robot.servoRotireInt.setPosition(CRobo.minPos);
         intakeMidAxonOn = false;
         intakeAxonOn = false;
-        timer.reset();
-        while(timer.time() < 0.2);
+        sleep(200);
         robot.servoGhiaraInt.setPosition(CRobo.maxPosINT);
-        timer.reset();
-        while(timer.time() < 0.4);
+        sleep(400);
         IntakeSlidersMotionAction(1, CRobo.intakeSliderRetractPosition, true);
         robot.intakeAxonLeft.setPosition(CRobo.intakeMiddlePos);
         robot.intakeAxonRight.setPosition(CRobo.intakeMiddlePos);
@@ -285,7 +293,7 @@ public class OPModeV1 extends OpMode {
             robot.servoRotireInt
                     .setPosition(robot.servoRotireInt.getPosition() == 0 ? CRobo.maxPosROTINT : CRobo.minPos);
             changedROTINT = true;
-        }else if(!gamepad1.b){
+        }else if(!gamepad1.b) {
             changedROTINT = false;
         }
     }
@@ -299,9 +307,8 @@ public class OPModeV1 extends OpMode {
             // if-else compact: daca este true pune ce este inainte de : daca este fals ce
             // este dupa :
             robot.servoGhiaraInt.setPosition(robot.servoGhiaraInt.getPosition() == 0 ? CRobo.maxPosINT : CRobo.minPos);
-            if(intakeAxonOn){
-                ElapsedTime timer = new ElapsedTime();
-                IntakeToOuttake(timer);
+            if(intakeAxonOn) {
+                IntakeToOuttake();
             }
         } else if (!gamepad1.a) {
             changedINT = false;
@@ -316,9 +323,8 @@ public class OPModeV1 extends OpMode {
             // if-else compact: daca este true pune ce este inainte de : daca este fals ce
             // este dupa :
             robot.servoGhiaraOut.setPosition(robot.servoGhiaraOut.getPosition() == 0 ? CRobo.maxPos : CRobo.minPos);
-            if(robot.outtakeSliderUp.getCurrentPosition() > CRobo.outtakeSliderExtendPosition - 100){
-                ElapsedTime timer = new ElapsedTime();
-                while(timer.time() < 0.3);
+            if(robot.outtakeSliderUp.getCurrentPosition() > CRobo.outtakeSliderExtendPosition - 100) {
+                sleep(300);
                 outtakeAxonVal = CRobo.outtakeMidPos;
                 OuttakeSlidersMotionAction(1, CRobo.outtakeSliderRetractPosition, true);
             }
@@ -328,26 +334,21 @@ public class OPModeV1 extends OpMode {
     }
 
     private void OuttakeSliderMotion(){
-        if(gamepad2.left_stick_y < 0.0){
+        if (gamepad2.left_stick_y != 0.0) {
             outtakeAutoSlider = false;
-            OuttakeSlidersMotionAction(-gamepad2.left_stick_y, CRobo.outtakeSliderExtendPosition, false);
-        }
-        if(gamepad2.left_stick_y > 0.0){
-            outtakeAutoSlider = false;
-            OuttakeSlidersMotionAction(gamepad2.left_stick_y, CRobo.outtakeSliderRetractPosition, false);
-        }
-        if(gamepad2.left_stick_y == 0.0 && !outtakeAutoSlider){
+            OuttakeSlidersMotionAction(Math.abs(gamepad2.left_stick_y),
+                    gamepad2.left_stick_y < 0 ? CRobo.outtakeSliderExtendPosition : CRobo.outtakeSliderRetractPosition, false);
+        } else if (!outtakeAutoSlider) {
             robot.outtakeSliderUp.setPower(0.0);
             robot.outtakeSliderDown.setPower(0.0);
         }
-
     }
 
     private void IntakeSliderMotion(){
-        if(gamepad1.right_trigger != 0 && gamepad1.left_trigger == 0){
+        if(gamepad1.right_trigger != 0 && gamepad1.left_trigger == 0) {
             intakeAutoSlider = false;
             IntakeSlidersMotionAction(gamepad1.right_trigger, CRobo.intakeSliderExtendPosition, false);
-        } else if(gamepad1.left_trigger != 0){
+        } else if(gamepad1.left_trigger != 0) {
             intakeAutoSlider = false;
             IntakeSlidersMotionAction(gamepad1.left_trigger, CRobo.intakeSliderRetractPosition, false);
         } else if(!intakeAutoSlider) {
@@ -372,21 +373,18 @@ public class OPModeV1 extends OpMode {
 
     double outtakeAxonVal = 0.4;
     private void OuttakeAxonMotion(){
-        if(gamepad2.right_stick_y < 0 && outtakeAxonVal < 1){
+        if (gamepad2.right_stick_y < 0 && outtakeAxonVal < 1) {
             outtakeAxonVal += 0.005;
-        }
-        if(gamepad2.right_stick_y > 0 && outtakeAxonVal > 0){
+        } else if (gamepad2.right_stick_y > 0 && outtakeAxonVal > 0) {
             outtakeAxonVal -= 0.005;
-        }
-        if(gamepad2.dpad_up){
+        } else if (gamepad2.dpad_up) {
             outtakeAxonVal = CRobo.outtakeUpPos;
-            if(robot.servoGhiaraOut.getPosition() == CRobo.minPos)
-                OuttakeSlidersMotionAction(1,CRobo.outtakeSliderExtendPosition, true);
-        }
-        if(gamepad2.dpad_down){
+            if (robot.servoGhiaraOut.getPosition() == CRobo.minPos) {
+                OuttakeSlidersMotionAction(1, CRobo.outtakeSliderExtendPosition, true);
+            }
+        } else if (gamepad2.dpad_down) {
             outtakeAxonVal = CRobo.outtakeMidPos;
-        }
-        if(gamepad2.dpad_left){
+        } else if (gamepad2.dpad_left) {
             outtakeAxonVal = CRobo.outtakeBehindPos;
         }
         robot.outtakeAxonRight.setPosition(outtakeAxonVal);
@@ -399,15 +397,15 @@ public class OPModeV1 extends OpMode {
     boolean intakeMidAxonOn = false;
 
     private void IntakeAxonMotion(){
-        if(gamepad1.x && intakeMidAxonMove && !intakeAxonOn){
+        if(gamepad1.x && intakeMidAxonMove && !intakeAxonOn) {
             robot.intakeAxonLeft.setPosition(intakeMidAxonOn ? CRobo.intakeUpPos : CRobo.intakeMiddlePos);
             robot.intakeAxonRight.setPosition(intakeMidAxonOn ? CRobo.intakeUpPos : CRobo.intakeMiddlePos);
             intakeMidAxonOn = !intakeMidAxonOn;
             intakeMidAxonMove = false;
-        }else if(!gamepad1.x){
+        }else if(!gamepad1.x) {
             intakeMidAxonMove = true;
         }
-        if(gamepad1.y && intakeAxonMove && intakeMidAxonOn){
+        if(gamepad1.y && intakeAxonMove && intakeMidAxonOn) {
             robot.intakeAxonLeft.setPosition(intakeAxonOn ? CRobo.intakeMiddlePos : CRobo.intakeDownPos);
             robot.intakeAxonRight.setPosition(intakeAxonOn ? CRobo.intakeMiddlePos : CRobo.intakeDownPos);
             intakeAxonOn = !intakeAxonOn;

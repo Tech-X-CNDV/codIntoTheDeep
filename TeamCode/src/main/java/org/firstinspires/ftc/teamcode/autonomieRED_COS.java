@@ -283,8 +283,8 @@ public class autonomieRED_COS extends LinearOpMode{
 
     @Override
     public void runOpMode() throws InterruptedException {
-        MecanumDrive drive = new MecanumDrive(hardwareMap,new Pose2d(0,0,0));
         Pose2d initialPose = new Pose2d(-12, 61, Math.toRadians(90));
+        MecanumDrive drive = new MecanumDrive(hardwareMap, initialPose);
         OuttakeSliders outtakeSliders = new OuttakeSliders(hardwareMap);
         IntakeSliders intakeSliders = new IntakeSliders(hardwareMap);
         OuttakeClaw outtakeClaw = new OuttakeClaw(hardwareMap);
@@ -298,13 +298,19 @@ public class autonomieRED_COS extends LinearOpMode{
         TrajectoryActionBuilder PrepareForMoveToHPlayer = StartToSub.endTrajectory().fresh()
                 .splineToSplineHeading(new Pose2d(-35, 40.3, Math.toRadians(-90)), Math.toRadians(180))
                 .strafeTo(new Vector2d(-37,11))
-                .strafeTo(new Vector2d(-45,11));
+                .strafeTo(new Vector2d(-48,11));
 
         TrajectoryActionBuilder MovePartsToHPlayer = PrepareForMoveToHPlayer.endTrajectory().fresh()
                 .setTangent(Math.toRadians(90))
                 .lineToY(50)
                 .lineToY(11)
-                .strafeTo(new Vector2d(xPos,11));
+                .strafeTo(new Vector2d(-57,11))
+                .setTangent(Math.toRadians(90))
+                .lineToY(50)
+                .lineToY(11)
+                .strafeTo(new Vector2d(-63,11))
+                .setTangent(Math.toRadians(90))
+                .lineToY(50);
 
         TrajectoryActionBuilder PrepareForSub = MovePartsToHPlayer.endTrajectory().fresh()
                 .setTangent(Math.toRadians(90))
@@ -321,18 +327,22 @@ public class autonomieRED_COS extends LinearOpMode{
                 .strafeTo(new Vector2d(-36, -56))
                 .build();
 
-        int visionOutputPosition = 1; // dummy value (temporary)
+        TrajectoryActionBuilder Test = StartToSub.endTrajectory().fresh()
+                .turn(90);
 
-        Actions.runBlocking(
-                new SequentialAction(
-                        outtakeSliders.slidersDown(),
-                        intakeSliders.slidersDown(),
-                        outtakeClaw.closeClaw(),
-                        intakeClaw.closeClaw(),
-                        outtakeAxon.axonDown(),
-                        intakeAxon.axonUp()
-                )
-        );
+        int visionOutputPosition = 1; // dummy value (temporary)
+        drive.updatePoseEstimate();
+//
+//        Actions.runBlocking(
+//                new SequentialAction(
+//                        outtakeSliders.slidersDown(),
+//                        intakeSliders.slidersDown(),
+//                        outtakeClaw.closeClaw(),
+//                        intakeClaw.closeClaw(),
+//                        outtakeAxon.axonDown(),
+//                        intakeAxon.axonUp()
+//                )
+//        );
 
         while (!isStopRequested() && !opModeIsActive()) { // these lines until waitforstart() can be ignored.
             int position = visionOutputPosition;
@@ -346,31 +356,49 @@ public class autonomieRED_COS extends LinearOpMode{
 
         if (isStopRequested()) return;
 
+//        Actions.runBlocking(
+//                new SequentialAction(
+//                        StartToSub.build(),
+//                        Test.build()
+//                )
+//        );
         Actions.runBlocking(
                 new SequentialAction(
                         StartToSub.build(),
-                        // TODO add the outtake and claw actions
-                        PrepareForMoveToHPlayer.build()
+                        PrepareForMoveToHPlayer.build(),
+                        MovePartsToHPlayer.build(),
+                        PrepareForSub.build(),
+                        GoToSub.build(),
+                        GoToHPlayer.build()
                 )
         );
-        for (int i = 0; i < 2; i++) {
-            Actions.runBlocking(
-                    MovePartsToHPlayer.build()
-            );
-            xPos -= 5;
-        }
-        Actions.runBlocking(
-                // TODO add the outtake and claw actions
-                PrepareForSub.build()
-        );
-        for (int i = 0; i < 3; i++) {
-            Actions.runBlocking(
-                    new SequentialAction(
-                            GoToSub.build(),
-                            // TODO Add the outtake and claw actions
-                            GoToHPlayer.build()
-                    )
-            );
-        }
+        sleep(100000);
+
+//        Actions.runBlocking(
+//                new SequentialAction(
+//                        StartToSub.build(),
+//                        // TODO add the outtake and claw actions
+//                        PrepareForMoveToHPlayer.build()
+//                )
+//        );
+//        for (int i = 0; i < 2; i++) {
+//            Actions.runBlocking(
+//                    MovePartsToHPlayer.build()
+//            );
+//            xPos -= 5;
+//        }
+//        Actions.runBlocking(
+//                // TODO add the outtake and claw actions
+//                PrepareForSub.build()
+//        );
+//        for (int i = 0; i < 3; i++) {
+//            Actions.runBlocking(
+//                    new SequentialAction(
+//                            GoToSub.build(),
+//                            // TODO Add the outtake and claw actions
+//                            GoToHPlayer.build()
+//                    )
+//            );
+//        }
     }
 }

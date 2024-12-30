@@ -65,6 +65,7 @@ public class OPModeV2 extends OpMode {
         OuttakeSliderMotion();
         IntakeSliderMotion();
         Roti();
+        HPlayerToggler();
         Telemetry();
     }
 
@@ -74,6 +75,18 @@ public class OPModeV2 extends OpMode {
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         }
+    }
+
+    boolean hPlayer = false;
+    boolean lBmpPressed = false;
+
+    public void HPlayerToggler(){
+        if(gamepad2.left_bumper && !lBmpPressed) {
+            lBmpPressed = true;
+            hPlayer = !hPlayer;
+        }
+        else if(!gamepad2.left_bumper)
+            lBmpPressed = false;
     }
 
     boolean outtakeAutoSlider = false;
@@ -117,7 +130,7 @@ public class OPModeV2 extends OpMode {
                 claw.openIntakeClaw();
             else
                 claw.closeIntakeClaw();
-            if(intakeAxonOn) {
+            if(intakeAxonOn && !hPlayer) {
                 IntakeToOuttake();
             }
         } else if (!gamepad1.a) {
@@ -216,6 +229,9 @@ public class OPModeV2 extends OpMode {
 
     private void Telemetry() {
         telemetry.addData("Status", "Run Time: " + String.format(Locale.US, "%d:%.2f", (int)(runtime.seconds() / 60), runtime.seconds() % 60));
+        // HPlayer telemetry
+        if(hPlayer)
+            telemetry.addData("HPlayerMode", "On");
         // Pedro telemetry
         telemetry.addData("X", follower.getPose().getX());
         telemetry.addData("Y", follower.getPose().getY());

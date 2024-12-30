@@ -33,10 +33,10 @@ public class autonomieBLUEPedro extends OpMode {
 
 
     /** Start Pose of our robot */
-    private final Pose startPose = new Pose(6, 60, Math.toRadians(180));
+    private final Pose startPose = new Pose(8, 60, Math.toRadians(180));
 
     // Scor la specimen
-    private final Pose scorePose = new Pose(41, 66, Math.toRadians(180));
+    private final Pose scorePose = new Pose(40, 66, Math.toRadians(180));
 
     // Pregatire pentru specimene
     private final Pose specimenReadyPos = new Pose(62, 36, Math.toRadians(0));
@@ -44,15 +44,15 @@ public class autonomieBLUEPedro extends OpMode {
 
     // Specimen 1
     private final Pose specimen1Pos = new Pose(62, 23, Math.toRadians(0));
-    private final Pose specimen1HPlayer = new Pose(8, 23, Math.toRadians(0));
+    private final Pose specimen1HPlayer = new Pose(10, 23, Math.toRadians(0));
 
     // Specimen 2
     private final Pose specimen2Pos = new Pose(62, 13, Math.toRadians(0));
-    private final Pose specimen2HPlayer = new Pose(8, 13, Math.toRadians(0));
+    private final Pose specimen2HPlayer = new Pose(10, 13, Math.toRadians(0));
 
     // Specimen 3
-    private final Pose specimen3Pos = new Pose(62, 7, Math.toRadians(0));
-    private final Pose specimen3HPlayer = new Pose(8, 7, Math.toRadians(0));
+    private final Pose specimen3Pos = new Pose(62, 6, Math.toRadians(0));
+    private final Pose specimen3HPlayer = new Pose(10, 6, Math.toRadians(0));
 
     // Pozitia de parcare
     private final Pose parkPose = new Pose(65, 95, Math.toRadians(180));
@@ -70,7 +70,7 @@ public class autonomieBLUEPedro extends OpMode {
 
         /* Aici ne pregatim pentru a impinge specimenele. Folosim BezierCurve pentru o linie curbata. */
         specimenReady = follower.pathBuilder()
-                .addPath(new BezierCurve(new Point(scorePose), new Point(specimenReadyControl) ,new Point(specimenReadyPos)))
+                .addPath(new BezierCurve(new Point(scorePose), new Point(specimenReadyControl), new Point(specimenReadyPos)))
                 .setLinearHeadingInterpolation(scorePose.getHeading(), specimenReadyPos.getHeading())
                 .build();
 
@@ -105,8 +105,8 @@ public class autonomieBLUEPedro extends OpMode {
                 .build();
 
         hPlayer = follower.pathBuilder()
-                .addPath(new BezierLine(new Point(scorePose), new Point(specimen3Pos)))
-                .setLinearHeadingInterpolation(scorePose.getHeading(), specimen3Pos.getHeading())
+                .addPath(new BezierLine(new Point(scorePose), new Point(specimen3HPlayer)))
+                .setLinearHeadingInterpolation(scorePose.getHeading(), specimen3HPlayer.getHeading())
                 .build();
 
         park = new Path(new BezierCurve(new Point(scorePose), /* Control Point */ new Point(parkControlPose), new Point(parkPose)));
@@ -156,7 +156,7 @@ public class autonomieBLUEPedro extends OpMode {
                 break;
             case 5:
                 /* Urmatoarea miscare incepe doar dupa ce robotul este la 1inch dinstanta de cealalta */
-                if(follower.getPose().getX() > (specimen3Pos.getX() - 1) && follower.getPose().getY() > (specimen3Pos.getY() - 1)) {
+                if(follower.getPose().getX() > (specimen3HPlayer.getX() - 1) && follower.getPose().getY() > (specimen3HPlayer.getY() - 1)) {
                     claw.closeOuttakeClaw();
                     //TODO make specimen extend slider
                     slider.MoveOuttakeSlider(RobotConstants.outtakeSliderExtendPosition, 1);
@@ -176,7 +176,7 @@ public class autonomieBLUEPedro extends OpMode {
                 break;
             case 7:
                 /* Urmatoarea miscare incepe doar dupa ce robotul este la 1inch dinstanta de cealalta */
-                if(follower.getPose().getX() > (specimen3Pos.getX() - 1) && follower.getPose().getY() > (specimen3Pos.getY() - 1)) {
+                if(follower.getPose().getX() > (specimen3HPlayer.getX() - 1) && follower.getPose().getY() > (specimen3HPlayer.getY() - 1)) {
                     claw.closeOuttakeClaw();
                     //TODO make specimen extend slider
                     slider.MoveOuttakeSlider(RobotConstants.outtakeSliderExtendPosition, 1);
@@ -196,7 +196,7 @@ public class autonomieBLUEPedro extends OpMode {
                 break;
             case 9:
                 /* Urmatoarea miscare incepe doar dupa ce robotul este la 1inch dinstanta de cealalta */
-                if(follower.getPose().getX() > (specimen3Pos.getX() - 1) && follower.getPose().getY() > (specimen3Pos.getY() - 1)) {
+                if(follower.getPose().getX() > (specimen3HPlayer.getX() - 1) && follower.getPose().getY() > (specimen3HPlayer.getY() - 1)) {
                     claw.closeOuttakeClaw();
                     //TODO make specimen extend slider
                     slider.MoveOuttakeSlider(RobotConstants.outtakeSliderExtendPosition, 1);

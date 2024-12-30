@@ -77,28 +77,7 @@ public class OPModeV2 extends OpMode {
     }
 
     boolean outtakeAutoSlider = false;
-
-    public void OuttakeSlidersMotionAction(double power, int position, boolean auto){
-        if(auto) {
-            outtakeAutoSlider = true;
-        }
-        if(position == RobotConstants.outtakeSliderRetractPosition)
-            slider.RetractOuttakeSlider(power);
-        else
-            slider.ExtendOuttakeSlider(power);
-    }
-
     boolean intakeAutoSlider = false;
-
-    public void IntakeSlidersMotionAction(double power, int position, boolean auto){
-        if(auto) {
-            intakeAutoSlider = true;
-        }
-        if(position == RobotConstants.intakeSliderRetractPosition)
-            slider.RetractIntakeSlider(power);
-        else
-            slider.ExtendIntakeSlider(power);
-    }
 
     public void IntakeToOuttake() {
         sleep(200);
@@ -109,10 +88,12 @@ public class OPModeV2 extends OpMode {
         sleep(200);
         claw.openIntakeClaw();
         sleep(400);
-        IntakeSlidersMotionAction(1, RobotConstants.intakeSliderRetractPosition, true);
+        intakeAutoSlider = true;
+        slider.MoveIntakeSlider(RobotConstants.intakeSliderRetractPosition, 1);
         axon.SetIntakeAxonPosition(RobotConstants.intakeMiddlePos);
         intakeMidAxonOn = true;
     }
+
     boolean changedROTINT = false;
 
     private void ToggleGhiaraRotireIntake() {
@@ -156,7 +137,8 @@ public class OPModeV2 extends OpMode {
             if(slider.getSliderUpOuttakePosition() > RobotConstants.outtakeSliderExtendPosition - 100) {
                 sleep(300);
                 outtakeAxonVal = RobotConstants.outtakeMidPos;
-                OuttakeSlidersMotionAction(1, RobotConstants.outtakeSliderRetractPosition, true);
+                outtakeAutoSlider = true;
+                slider.MoveOuttakeSlider(RobotConstants.outtakeSliderRetractPosition, 1);
             }
         } else if (!gamepad2.a) {
             changedOUT = false;
@@ -166,8 +148,7 @@ public class OPModeV2 extends OpMode {
     private void OuttakeSliderMotion(){
         if (gamepad2.left_stick_y != 0.0) {
             outtakeAutoSlider = false;
-            OuttakeSlidersMotionAction(Math.abs(gamepad2.left_stick_y),
-                    gamepad2.left_stick_y < 0 ? RobotConstants.outtakeSliderExtendPosition : RobotConstants.outtakeSliderRetractPosition, false);
+            slider.MoveOuttakeSlider(gamepad2.left_stick_y < 0 ? RobotConstants.outtakeSliderExtendPosition : RobotConstants.outtakeSliderRetractPosition, Math.abs(gamepad2.left_stick_y));
         } else if (!outtakeAutoSlider) {
             slider.StopOuttakeSlider();
         }
@@ -176,10 +157,10 @@ public class OPModeV2 extends OpMode {
     private void IntakeSliderMotion(){
         if(gamepad1.right_trigger != 0 && gamepad1.left_trigger == 0) {
             intakeAutoSlider = false;
-            IntakeSlidersMotionAction(gamepad1.right_trigger, RobotConstants.intakeSliderExtendPosition, false);
+            slider.MoveIntakeSlider(RobotConstants.intakeSliderExtendPosition, gamepad1.right_trigger);
         } else if(gamepad1.left_trigger != 0) {
             intakeAutoSlider = false;
-            IntakeSlidersMotionAction(gamepad1.left_trigger, RobotConstants.intakeSliderRetractPosition, false);
+            slider.MoveIntakeSlider(RobotConstants.intakeSliderRetractPosition, gamepad1.left_trigger);
         } else if(!intakeAutoSlider) {
             slider.StopIntakeSlider();
         }
@@ -194,7 +175,8 @@ public class OPModeV2 extends OpMode {
         } else if (gamepad2.dpad_up) {
             outtakeAxonVal = RobotConstants.outtakeUpPos;
             if (claw.getGrabOuttakePosition() == RobotConstants.closePos) {
-                OuttakeSlidersMotionAction(1, RobotConstants.outtakeSliderExtendPosition, true);
+                outtakeAutoSlider = true;
+                slider.MoveOuttakeSlider(RobotConstants.outtakeSliderExtendPosition, 1);
             }
         } else if (gamepad2.dpad_down) {
             outtakeAxonVal = RobotConstants.outtakeMidPos;

@@ -37,13 +37,8 @@ public class SliderSubsystem {
 
     //------------------------------IntakeSlider------------------------------//
 
-    public void ExtendIntakeSlider(double power) {
-        intakeSlider.setTargetPosition(RobotConstants.intakeSliderExtendPosition);
-        intakeSlider.setPower(power);
-    }
-
-    public void RetractIntakeSlider(double power) {
-        intakeSlider.setTargetPosition(RobotConstants.intakeSliderRetractPosition);
+    public void MoveIntakeSlider(int position, double power){
+        intakeSlider.setTargetPosition(position);
         intakeSlider.setPower(power);
     }
 
@@ -53,16 +48,9 @@ public class SliderSubsystem {
 
     //------------------------------OuttakeSlider------------------------------//
 
-    public void ExtendOuttakeSlider(double power) {
-        outtakeSliderUp.setTargetPosition(RobotConstants.outtakeSliderExtendPosition);
-        outtakeSliderDown.setTargetPosition(RobotConstants.outtakeSliderExtendPosition);
-        outtakeSliderUp.setPower(power);
-        outtakeSliderDown.setPower(power);
-    }
-
-    public void RetractOuttakeSlider(double power) {
-        outtakeSliderUp.setTargetPosition(RobotConstants.outtakeSliderRetractPosition);
-        outtakeSliderDown.setTargetPosition(RobotConstants.outtakeSliderRetractPosition);
+    public void MoveOuttakeSlider(int position, double power){
+        outtakeSliderUp.setTargetPosition(position);
+        outtakeSliderDown.setTargetPosition(position);
         outtakeSliderUp.setPower(power);
         outtakeSliderDown.setPower(power);
     }

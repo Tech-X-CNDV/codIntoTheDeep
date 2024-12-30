@@ -118,7 +118,7 @@ public class autonomieBLUEPedro extends OpMode {
             case 0:
                 claw.closeOuttakeClaw();
                 //TODO make specimen extend slider
-                slider.ExtendOuttakeSlider(1);
+                slider.MoveOuttakeSlider(RobotConstants.outtakeSliderExtendPosition, 1);
                 axon.SetOuttakeAxonPosition(RobotConstants.outtakeBehindPos);
                 follower.followPath(scorePreload);
                 setPathState(1);
@@ -127,7 +127,7 @@ public class autonomieBLUEPedro extends OpMode {
                 /* Urmatoarea miscare incepe doar dupa ce robotul este la 1inch dinstanta de cealalta */
                 if(follower.getPose().getX() > (scorePose.getX() - 1) && follower.getPose().getY() > (scorePose.getY() - 1)) {
                     // TODO make specimen retract slider
-                    slider.RetractOuttakeSlider(1);
+                    slider.MoveOuttakeSlider(RobotConstants.outtakeSliderRetractPosition, 1);
                     claw.openOuttakeClaw();
                     follower.followPath(specimenReady,true);
                     setPathState(2);
@@ -159,7 +159,7 @@ public class autonomieBLUEPedro extends OpMode {
                 if(follower.getPose().getX() > (specimen3Pos.getX() - 1) && follower.getPose().getY() > (specimen3Pos.getY() - 1)) {
                     claw.closeOuttakeClaw();
                     //TODO make specimen extend slider
-                    slider.ExtendOuttakeSlider(1);
+                    slider.MoveOuttakeSlider(RobotConstants.outtakeSliderExtendPosition, 1);
                     follower.followPath(subScore,true);
                     setPathState(6);
                 }
@@ -168,7 +168,7 @@ public class autonomieBLUEPedro extends OpMode {
                 /* Urmatoarea miscare incepe doar dupa ce robotul este la 1inch dinstanta de cealalta */
                 if(follower.getPose().getX() > (scorePose.getX() - 1) && follower.getPose().getY() > (scorePose.getY() - 1)) {
                     // TODO make specimen retract slider
-                    slider.RetractOuttakeSlider(1);
+                    slider.MoveOuttakeSlider(RobotConstants.outtakeSliderRetractPosition, 1);
                     claw.openOuttakeClaw();
                     follower.followPath(hPlayer, true);
                     setPathState(7);
@@ -179,7 +179,7 @@ public class autonomieBLUEPedro extends OpMode {
                 if(follower.getPose().getX() > (specimen3Pos.getX() - 1) && follower.getPose().getY() > (specimen3Pos.getY() - 1)) {
                     claw.closeOuttakeClaw();
                     //TODO make specimen extend slider
-                    slider.ExtendOuttakeSlider(1);
+                    slider.MoveOuttakeSlider(RobotConstants.outtakeSliderExtendPosition, 1);
                     follower.followPath(subScore,true);
                     setPathState(8);
                 }
@@ -188,7 +188,7 @@ public class autonomieBLUEPedro extends OpMode {
                 /* Urmatoarea miscare incepe doar dupa ce robotul este la 1inch dinstanta de cealalta */
                 if(follower.getPose().getX() > (scorePose.getX() - 1) && follower.getPose().getY() > (scorePose.getY() - 1)) {
                     // TODO make specimen retract slider
-                    slider.RetractOuttakeSlider(1);
+                    slider.MoveOuttakeSlider(RobotConstants.outtakeSliderRetractPosition, 1);
                     claw.openOuttakeClaw();
                     follower.followPath(hPlayer, true);
                     setPathState(9);
@@ -199,7 +199,7 @@ public class autonomieBLUEPedro extends OpMode {
                 if(follower.getPose().getX() > (specimen3Pos.getX() - 1) && follower.getPose().getY() > (specimen3Pos.getY() - 1)) {
                     claw.closeOuttakeClaw();
                     //TODO make specimen extend slider
-                    slider.ExtendOuttakeSlider(1);
+                    slider.MoveOuttakeSlider(RobotConstants.outtakeSliderExtendPosition, 1);
                     follower.followPath(subScore,true);
                     setPathState(10);
                 }
@@ -208,7 +208,7 @@ public class autonomieBLUEPedro extends OpMode {
                 /* Urmatoarea miscare incepe doar dupa ce robotul este la 1inch dinstanta de cealalta */
                 if(follower.getPose().getX() > (scorePose.getX() - 1) && follower.getPose().getY() > (scorePose.getY() - 1)) {
                     // TODO make specimen retract slider
-                    slider.RetractOuttakeSlider(1);
+                    slider.MoveOuttakeSlider(RobotConstants.outtakeSliderRetractPosition, 1);
                     claw.openOuttakeClaw();
                     follower.followPath(park,true);
                     setPathState(11);

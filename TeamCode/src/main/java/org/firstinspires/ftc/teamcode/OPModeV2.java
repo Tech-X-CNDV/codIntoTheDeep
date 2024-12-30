@@ -14,7 +14,7 @@ import org.firstinspires.ftc.teamcode.config.RobotConstants;
 
 import java.util.Locale;
 
-@TeleOp(name = "Basic: OPModeV1", group = "Linear OpMode")
+@TeleOp(name = "Basic: OPModeV2", group = "Linear OpMode")
 public class OPModeV2 extends OpMode {
     public ElapsedTime runtime = new ElapsedTime();
 

@@ -214,15 +214,15 @@ public class Follower {
         driveVectorScaler = new DriveVectorScaler(FollowerConstants.frontLeftVector);
         poseUpdater = new PoseUpdater(hardwareMap, localizer);
 
-        rightFront = hardwareMap.get(DcMotorEx.class, "rightFrontMotor");
-        rightRear = hardwareMap.get(DcMotorEx.class, "rightRearMotor");
-        leftFront = hardwareMap.get(DcMotorEx.class, "leftFrontMotor");
-        leftRear = hardwareMap.get(DcMotorEx.class, "leftRearMotor");
+//        rightFront = hardwareMap.get(DcMotorEx.class, "rightFrontMotor");
+//        rightRear = hardwareMap.get(DcMotorEx.class, "rightRearMotor");
+//        leftFront = hardwareMap.get(DcMotorEx.class, "leftFrontMotor");
+//        leftRear = hardwareMap.get(DcMotorEx.class, "leftRearMotor");
 
-        // leftFront = hardwareMap.get(DcMotorEx.class, leftFrontMotorName);
-        // leftRear = hardwareMap.get(DcMotorEx.class, leftRearMotorName);
-        // rightRear = hardwareMap.get(DcMotorEx.class, rightRearMotorName);
-        // rightFront = hardwareMap.get(DcMotorEx.class, rightFrontMotorName);
+         leftFront = hardwareMap.get(DcMotorEx.class, leftFrontMotorName);
+         leftRear = hardwareMap.get(DcMotorEx.class, leftRearMotorName);
+         rightRear = hardwareMap.get(DcMotorEx.class, rightRearMotorName);
+         rightFront = hardwareMap.get(DcMotorEx.class, rightFrontMotorName);
 
         leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
         leftRear.setDirection(DcMotorSimple.Direction.REVERSE);

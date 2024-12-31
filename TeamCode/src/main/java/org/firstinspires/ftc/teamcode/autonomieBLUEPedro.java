@@ -43,7 +43,7 @@ public class autonomieBLUEPedro extends OpMode {
 
     // Pregatire pentru specimene
     private final Pose specimenReadyPos = new Pose(62, 36, Math.toRadians(0));
-    private final Pose specimenReadyControl = new Pose(20, 33, Math.toRadians(0));
+    private final Pose specimenReadyControl = new Pose(20, 33);
 
     // Specimen 1
     private final Pose specimen1Pos = new Pose(62, 23, Math.toRadians(0));

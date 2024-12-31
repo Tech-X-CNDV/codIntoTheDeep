@@ -15,6 +15,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import org.firstinspires.ftc.teamcode.RR.MecanumDrive;
 
 @Autonomous(name = "autoRED_COS")
 public class autonomieRED_COS extends LinearOpMode{

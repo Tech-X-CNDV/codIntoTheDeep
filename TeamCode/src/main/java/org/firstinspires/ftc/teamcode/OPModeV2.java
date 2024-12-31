@@ -237,30 +237,20 @@ public class OPModeV2 extends OpMode {
         telemetry.addData("Y", follower.getPose().getY());
         telemetry.addData("Heading in Degrees", Math.toDegrees(follower.getPose().getHeading()));
         // Ghiara intake telemetry
-        double ghiaraintPos = claw.getGrabIntakePosition();
-        double ghiaraintangle = ghiaraintPos * 180;
-        telemetry.addData("Intake Position", ghiaraintPos);
-        telemetry.addData("Intake Angle", ghiaraintangle);
+        telemetry.addData("Intake Position", claw.getGrabIntakePosition());
+        telemetry.addData("Intake Angle", claw.getGrabIntakePosition() * 180);
         // Ghiara outtake telemetry
-        double ghiaraoutPos = claw.getGrabOuttakePosition();
-        double ghiaraoutangle = ghiaraoutPos * 180;
-        telemetry.addData("Outtake Position", ghiaraoutPos);
-        telemetry.addData("Outtake Angle", ghiaraoutangle);
+        telemetry.addData("Outtake Position", claw.getGrabOuttakePosition());
+        telemetry.addData("Outtake Angle", claw.getGrabOuttakePosition() * 180);
         // Rotire ghiara intake telemetry
-        double servortireintPos = claw.getPivotIntakePosition();
-        double servorotireangle = servortireintPos * 180;
-        telemetry.addData("Intake Position", servortireintPos);
-        telemetry.addData("Intake Rotation Angle", servorotireangle);
+        telemetry.addData("Intake Rotation Position", claw.getPivotIntakePosition());
+        telemetry.addData("Intake Rotation Angle", claw.getPivotIntakePosition() * 180);
         // Intake axon telemetry
-        double intakeAxonPos = axon.getAxonIntakePosition();
-        double intakeAxonLeftAngle = intakeAxonPos * 180;
-        telemetry.addData("AxonIntake Position", intakeAxonPos);
-        telemetry.addData("AxonIntake Rotation Angle", intakeAxonLeftAngle);
+        telemetry.addData("AxonIntake Position", axon.getAxonIntakePosition());
+        telemetry.addData("AxonIntake Rotation Angle", axon.getAxonIntakePosition() * 180);
         // Outtake axon telemetry
-        double outtakeAxonLeftPos = axon.getAxonOuttakePosition();
-        double outtakeAxonLeftAngle = outtakeAxonLeftPos * 180;
-        telemetry.addData("AxonOuttake Position", outtakeAxonLeftPos);
-        telemetry.addData("AxonOuttake Rotation Angle", outtakeAxonLeftAngle);
+        telemetry.addData("AxonOuttake Position", axon.getAxonOuttakePosition());
+        telemetry.addData("AxonOuttake Rotation Angle", axon.getAxonOuttakePosition() * 180);
         // Outtake slider telemetry
         telemetry.addData("OuttakeSliderPowerUp", slider.getSliderUpOuttakePower());
         telemetry.addData("OuttakeSliderPowerDown", slider.getSliderDownOuttakePower());

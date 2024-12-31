@@ -259,6 +259,14 @@ public class autonomieREDPedro extends OpMode {
         telemetry.addData("x", follower.getPose().getX());
         telemetry.addData("y", follower.getPose().getY());
         telemetry.addData("heading", follower.getPose().getHeading());
+        // Ghiara outtake telemetry
+        telemetry.addData("Outtake Position", claw.getGrabOuttakePosition());
+        telemetry.addData("Outtake Angle", claw.getGrabOuttakePosition() * 180);
+        // Outtake slider telemetry
+        telemetry.addData("OuttakeSliderPowerUp", slider.getSliderUpOuttakePower());
+        telemetry.addData("OuttakeSliderPowerDown", slider.getSliderDownOuttakePower());
+        telemetry.addData("OuttakeSliderPositionUp", slider.getSliderUpOuttakePosition());
+        telemetry.addData("OuttakeSliderPositionDown", slider.getSliderDownOuttakePosition());
         telemetry.update();
     }
 

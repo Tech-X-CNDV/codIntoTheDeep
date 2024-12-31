@@ -64,7 +64,7 @@ public class autonomieSpecimenPedro extends OpMode {
 
     // Aici stocam traiectoriile robotului
     private Path scorePreload, park;
-    private PathChain specimenReady, specimen1, specimen2, specimen3, subScore1, subScore2, subScore3, hPlayer1, hPlayer2;
+    private PathChain specimenReady, specimen, subScore1, subScore2, subScore3, hPlayer1, hPlayer2;
 
     public void buildPaths() {
 
@@ -78,25 +78,19 @@ public class autonomieSpecimenPedro extends OpMode {
                 .setLinearHeadingInterpolation(scorePosePreLoad.getHeading(), specimenReadyPos.getHeading())
                 .build();
 
-        specimen1 = follower.pathBuilder()
+        specimen = follower.pathBuilder()
                 .addPath(new BezierLine(new Point(specimenReadyPos), new Point(specimen1Pos)))
                 .setConstantHeadingInterpolation(specimen1Pos.getHeading())
                 .addPath(new BezierLine(new Point(specimen1Pos), new Point(specimen1HPlayer)))
                 .setConstantHeadingInterpolation(specimen1Pos.getHeading())
                 .addPath(new BezierLine(new Point(specimen1HPlayer), new Point(specimen1Pos)))
                 .setConstantHeadingInterpolation(specimen1Pos.getHeading())
-                .build();
-
-        specimen2 = follower.pathBuilder()
                 .addPath(new BezierLine(new Point(specimen1Pos), new Point(specimen2Pos)))
                 .setConstantHeadingInterpolation(specimen2Pos.getHeading())
                 .addPath(new BezierLine(new Point(specimen2Pos), new Point(specimen2HPlayer)))
                 .setConstantHeadingInterpolation(specimen2Pos.getHeading())
                 .addPath(new BezierLine(new Point(specimen2HPlayer), new Point(specimen2Pos)))
                 .setConstantHeadingInterpolation(specimen2Pos.getHeading())
-                .build();
-
-        specimen3 = follower.pathBuilder()
                 .addPath(new BezierLine(new Point(specimen2Pos), new Point(specimen3Pos)))
                 .setConstantHeadingInterpolation(specimen3Pos.getHeading())
                 .addPath(new BezierLine(new Point(specimen3Pos), new Point(specimen3HPlayer)))
@@ -155,21 +149,27 @@ public class autonomieSpecimenPedro extends OpMode {
             case 2:
                 /* Urmatoarea miscare incepe doar dupa ce robotul este la 1inch dinstanta de cealalta */
                 if (follower.getPose().getX() > (specimenReadyPos.getX() - 1) && follower.getPose().getY() < (specimenReadyPos.getY() + 1)) {
-                    follower.followPath(specimen1, true);
+                    follower.followPath(specimen, true);
                     setPathState(3);
                 }
                 break;
             case 3:
                 /* Urmatoarea miscare incepe doar dupa ce robotul este la 1inch dinstanta de cealalta */
-                if (follower.getPose().getX() > (specimen1Pos.getX() - 1) && follower.getPose().getY() < (specimen1Pos.getY() + 1)) {
-                    follower.followPath(specimen2, true);
+                if (follower.getPose().getX() < (specimen3HPlayer.getX() + 1) && follower.getPose().getY() < (specimen3HPlayer.getY() + 1)) {
+                    claw.closeOuttakeClaw();
+                    //TODO make specimen extend slider
+                    slider.MoveOuttakeSlider(RobotConstants.outtakeSliderExtendPosition, 1);
+                    follower.followPath(subScore1, true);
                     setPathState(4);
                 }
                 break;
             case 4:
                 /* Urmatoarea miscare incepe doar dupa ce robotul este la 1inch dinstanta de cealalta */
-                if (follower.getPose().getX() > (specimen2Pos.getX() - 1) && follower.getPose().getY() < (specimen2Pos.getY() + 1)) {
-                    follower.followPath(specimen3, true);
+                if (follower.getPose().getX() > (scorePose1.getX() - 1) && follower.getPose().getY() > (scorePose1.getY() - 1)) {
+                    // TODO make specimen retract slider
+                    slider.MoveOuttakeSlider(RobotConstants.outtakeSliderRetractPosition, 1);
+                    claw.openOuttakeClaw();
+                    follower.followPath(hPlayer1, true);
                     setPathState(5);
                 }
                 break;
@@ -179,17 +179,17 @@ public class autonomieSpecimenPedro extends OpMode {
                     claw.closeOuttakeClaw();
                     //TODO make specimen extend slider
                     slider.MoveOuttakeSlider(RobotConstants.outtakeSliderExtendPosition, 1);
-                    follower.followPath(subScore1, true);
+                    follower.followPath(subScore2, true);
                     setPathState(6);
                 }
                 break;
             case 6:
                 /* Urmatoarea miscare incepe doar dupa ce robotul este la 1inch dinstanta de cealalta */
-                if (follower.getPose().getX() > (scorePose1.getX() - 1) && follower.getPose().getY() > (scorePose1.getY() - 1)) {
+                if (follower.getPose().getX() > (scorePose2.getX() - 1) && follower.getPose().getY() > (scorePose2.getY() - 1)) {
                     // TODO make specimen retract slider
                     slider.MoveOuttakeSlider(RobotConstants.outtakeSliderRetractPosition, 1);
                     claw.openOuttakeClaw();
-                    follower.followPath(hPlayer1, true);
+                    follower.followPath(hPlayer2, true);
                     setPathState(7);
                 }
                 break;
@@ -199,41 +199,21 @@ public class autonomieSpecimenPedro extends OpMode {
                     claw.closeOuttakeClaw();
                     //TODO make specimen extend slider
                     slider.MoveOuttakeSlider(RobotConstants.outtakeSliderExtendPosition, 1);
-                    follower.followPath(subScore2, true);
+                    follower.followPath(subScore3, true);
                     setPathState(8);
                 }
                 break;
             case 8:
-                /* Urmatoarea miscare incepe doar dupa ce robotul este la 1inch dinstanta de cealalta */
-                if (follower.getPose().getX() > (scorePose2.getX() - 1) && follower.getPose().getY() > (scorePose2.getY() - 1)) {
-                    // TODO make specimen retract slider
-                    slider.MoveOuttakeSlider(RobotConstants.outtakeSliderRetractPosition, 1);
-                    claw.openOuttakeClaw();
-                    follower.followPath(hPlayer2, true);
-                    setPathState(9);
-                }
-                break;
-            case 9:
-                /* Urmatoarea miscare incepe doar dupa ce robotul este la 1inch dinstanta de cealalta */
-                if (follower.getPose().getX() < (specimen3HPlayer.getX() + 1) && follower.getPose().getY() < (specimen3HPlayer.getY() + 1)) {
-                    claw.closeOuttakeClaw();
-                    //TODO make specimen extend slider
-                    slider.MoveOuttakeSlider(RobotConstants.outtakeSliderExtendPosition, 1);
-                    follower.followPath(subScore3, true);
-                    setPathState(10);
-                }
-                break;
-            case 10:
                 /* Urmatoarea miscare incepe doar dupa ce robotul este la 1inch dinstanta de cealalta */
                 if (follower.getPose().getX() > (scorePose3.getX() - 1) && follower.getPose().getY() > (scorePose3.getY() - 1)) {
                     // TODO make specimen retract slider
                     slider.MoveOuttakeSlider(RobotConstants.outtakeSliderRetractPosition, 1);
                     claw.openOuttakeClaw();
                     follower.followPath(park, true);
-                    setPathState(11);
+                    setPathState(9);
                 }
                 break;
-            case 11:
+            case 9:
                 /* Urmatoarea miscare incepe doar dupa ce robotul este la 1inch dinstanta de cealalta */
                 if (follower.getPose().getX() > (parkPose.getX() - 1) && follower.getPose().getY() > (parkPose.getY() - 1)) {
                     /* Setam stagiul la ceva care nu exista pentru a opri miscarile */

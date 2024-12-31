@@ -175,7 +175,7 @@ public class autonomieBLUEPedro extends OpMode {
                 break;
             case 5:
                 /* Urmatoarea miscare incepe doar dupa ce robotul este la 1inch dinstanta de cealalta */
-                if(follower.getPose().getX() > (specimen3HPlayer.getX() - 1) && follower.getPose().getY() > (specimen3HPlayer.getY() - 1)) {
+                if(follower.getPose().getX() < (specimen3HPlayer.getX() + 1) && follower.getPose().getY() < (specimen3HPlayer.getY() + 1)) {
                     claw.closeOuttakeClaw();
                     //TODO make specimen extend slider
                     slider.MoveOuttakeSlider(RobotConstants.outtakeSliderExtendPosition, 1);
@@ -195,7 +195,7 @@ public class autonomieBLUEPedro extends OpMode {
                 break;
             case 7:
                 /* Urmatoarea miscare incepe doar dupa ce robotul este la 1inch dinstanta de cealalta */
-                if(follower.getPose().getX() > (specimen3HPlayer.getX() - 1) && follower.getPose().getY() > (specimen3HPlayer.getY() - 1)) {
+                if(follower.getPose().getX() < (specimen3HPlayer.getX() + 1) && follower.getPose().getY() < (specimen3HPlayer.getY() + 1)) {
                     claw.closeOuttakeClaw();
                     //TODO make specimen extend slider
                     slider.MoveOuttakeSlider(RobotConstants.outtakeSliderExtendPosition, 1);
@@ -215,7 +215,7 @@ public class autonomieBLUEPedro extends OpMode {
                 break;
             case 9:
                 /* Urmatoarea miscare incepe doar dupa ce robotul este la 1inch dinstanta de cealalta */
-                if(follower.getPose().getX() > (specimen3HPlayer.getX() - 1) && follower.getPose().getY() > (specimen3HPlayer.getY() - 1)) {
+                if(follower.getPose().getX() < (specimen3HPlayer.getX() + 1) && follower.getPose().getY() < (specimen3HPlayer.getY() + 1)) {
                     claw.closeOuttakeClaw();
                     //TODO make specimen extend slider
                     slider.MoveOuttakeSlider(RobotConstants.outtakeSliderExtendPosition, 1);

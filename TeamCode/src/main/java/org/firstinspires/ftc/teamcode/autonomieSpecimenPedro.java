@@ -19,7 +19,7 @@ import org.firstinspires.ftc.teamcode.config.subsystem.AxonSubsystem;
 
 
 @Autonomous(name = "AutonomieBlue")
-public class autonomieBLUEPedro extends OpMode {
+public class autonomieSpecimenPedro extends OpMode {
 
     private Follower follower;
     private Timer pathTimer, actionTimer, opmodeTimer;
@@ -144,7 +144,7 @@ public class autonomieBLUEPedro extends OpMode {
                 break;
             case 1:
                 /* Urmatoarea miscare incepe doar dupa ce robotul este la 1inch dinstanta de cealalta */
-                if(follower.getPose().getX() > (scorePosePreLoad.getX() - 1) && follower.getPose().getY() > (scorePosePreLoad.getY() - 1)) {
+                if(follower.getPose().getX() < (scorePosePreLoad.getX() + 1) && follower.getPose().getY() < (scorePosePreLoad.getY() + 1)) {
                     // TODO make specimen retract slider
                     slider.MoveOuttakeSlider(RobotConstants.outtakeSliderRetractPosition, 1);
                     claw.openOuttakeClaw();
@@ -154,7 +154,7 @@ public class autonomieBLUEPedro extends OpMode {
                 break;
             case 2:
                 /* Urmatoarea miscare incepe doar dupa ce robotul este la 1inch dinstanta de cealalta */
-                if(follower.getPose().getX() > (specimenReadyPos.getX() - 1) && follower.getPose().getY() > (specimenReadyPos.getY() - 1)) {
+                if(follower.getPose().getX() > (specimenReadyPos.getX() - 1) && follower.getPose().getY() < (specimenReadyPos.getY() + 1)) {
                     follower.followPath(specimen1,true);
                     setPathState(3);
                 }
@@ -175,7 +175,7 @@ public class autonomieBLUEPedro extends OpMode {
                 break;
             case 5:
                 /* Urmatoarea miscare incepe doar dupa ce robotul este la 1inch dinstanta de cealalta */
-                if(follower.getPose().getX() < (specimen3HPlayer.getX() + 1) && follower.getPose().getY() < (specimen3HPlayer.getY() + 1)) {
+                if(follower.getPose().getX() < (specimen3HPlayer.getX() + 1) && follower.getPose().getY() > (specimen3HPlayer.getY() - 1)) {
                     claw.closeOuttakeClaw();
                     //TODO make specimen extend slider
                     slider.MoveOuttakeSlider(RobotConstants.outtakeSliderExtendPosition, 1);
@@ -185,7 +185,7 @@ public class autonomieBLUEPedro extends OpMode {
                 break;
             case 6:
                 /* Urmatoarea miscare incepe doar dupa ce robotul este la 1inch dinstanta de cealalta */
-                if(follower.getPose().getX() > (scorePose1.getX() - 1) && follower.getPose().getY() > (scorePose1.getY() - 1)) {
+                if(follower.getPose().getX() < (scorePose1.getX() + 1) && follower.getPose().getY() < (scorePose1.getY() + 1)) {
                     // TODO make specimen retract slider
                     slider.MoveOuttakeSlider(RobotConstants.outtakeSliderRetractPosition, 1);
                     claw.openOuttakeClaw();
@@ -195,7 +195,7 @@ public class autonomieBLUEPedro extends OpMode {
                 break;
             case 7:
                 /* Urmatoarea miscare incepe doar dupa ce robotul este la 1inch dinstanta de cealalta */
-                if(follower.getPose().getX() < (specimen3HPlayer.getX() + 1) && follower.getPose().getY() < (specimen3HPlayer.getY() + 1)) {
+                if(follower.getPose().getX() < (specimen3HPlayer.getX() + 1) && follower.getPose().getY() > (specimen3HPlayer.getY() - 1)) {
                     claw.closeOuttakeClaw();
                     //TODO make specimen extend slider
                     slider.MoveOuttakeSlider(RobotConstants.outtakeSliderExtendPosition, 1);
@@ -205,7 +205,7 @@ public class autonomieBLUEPedro extends OpMode {
                 break;
             case 8:
                 /* Urmatoarea miscare incepe doar dupa ce robotul este la 1inch dinstanta de cealalta */
-                if(follower.getPose().getX() > (scorePose2.getX() - 1) && follower.getPose().getY() > (scorePose2.getY() - 1)) {
+                if(follower.getPose().getX() < (scorePose2.getX() + 1) && follower.getPose().getY() < (scorePose2.getY() + 1)) {
                     // TODO make specimen retract slider
                     slider.MoveOuttakeSlider(RobotConstants.outtakeSliderRetractPosition, 1);
                     claw.openOuttakeClaw();
@@ -215,7 +215,7 @@ public class autonomieBLUEPedro extends OpMode {
                 break;
             case 9:
                 /* Urmatoarea miscare incepe doar dupa ce robotul este la 1inch dinstanta de cealalta */
-                if(follower.getPose().getX() < (specimen3HPlayer.getX() + 1) && follower.getPose().getY() < (specimen3HPlayer.getY() + 1)) {
+                if(follower.getPose().getX() < (specimen3HPlayer.getX() + 1) && follower.getPose().getY() > (specimen3HPlayer.getY() - 1)) {
                     claw.closeOuttakeClaw();
                     //TODO make specimen extend slider
                     slider.MoveOuttakeSlider(RobotConstants.outtakeSliderExtendPosition, 1);
@@ -225,7 +225,7 @@ public class autonomieBLUEPedro extends OpMode {
                 break;
             case 10:
                 /* Urmatoarea miscare incepe doar dupa ce robotul este la 1inch dinstanta de cealalta */
-                if(follower.getPose().getX() > (scorePose3.getX() - 1) && follower.getPose().getY() > (scorePose3.getY() - 1)) {
+                if(follower.getPose().getX() < (scorePose3.getX() + 1) && follower.getPose().getY() < (scorePose3.getY() + 1)) {
                     // TODO make specimen retract slider
                     slider.MoveOuttakeSlider(RobotConstants.outtakeSliderRetractPosition, 1);
                     claw.openOuttakeClaw();
@@ -235,7 +235,7 @@ public class autonomieBLUEPedro extends OpMode {
                 break;
             case 11:
                 /* Urmatoarea miscare incepe doar dupa ce robotul este la 1inch dinstanta de cealalta */
-                if(follower.getPose().getX() > (parkPose.getX() - 1) && follower.getPose().getY() > (parkPose.getY() - 1)) {
+                if(follower.getPose().getX() > (parkPose.getX() - 1) && follower.getPose().getY() < (parkPose.getY() + 1)) {
                     /* Setam stagiul la ceva care nu exista pentru a opri miscarile */
                     setPathState(-1);
                 }

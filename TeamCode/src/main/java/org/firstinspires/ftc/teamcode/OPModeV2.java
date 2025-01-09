@@ -36,9 +36,6 @@ public class OPModeV2 extends OpMode {
 
         // Initializare servo ghiare
         claw = new ClawSubsystem(hardwareMap);
-        claw.InitIntake();
-        claw.InitOuttake();
-        claw.InitPivot();
 
         // Initializare slidere
         slider = new SliderSubsystem(hardwareMap);
@@ -47,8 +44,6 @@ public class OPModeV2 extends OpMode {
 
         // Initializare axoane
         axon = new AxonSubsystem(hardwareMap);
-        axon.InitIntake();
-        axon.InitOuttake();
 
         telemetry.addData("Status", "Initialized");
         telemetry.update();
@@ -58,8 +53,13 @@ public class OPModeV2 extends OpMode {
     public void start() {
         // Reset the runtime when the play button is pressed
         follower.startTeleopDrive();
+        claw.InitIntake();
+        claw.InitOuttake();
+        claw.InitPivot();
         slider.StartIntake();
         slider.StartOuttake();
+        axon.InitIntake();
+        axon.InitOuttake();
         runtime.reset();
     }
 

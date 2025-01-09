@@ -214,6 +214,9 @@ public class autonomieSpecimenPedro extends OpMode {
                 }
                 break;
             case 9:
+                claw.CloseOuttake();
+                axon.SetOuttakePosition(RobotConstants.outtakeMidPos);
+                slider.MoveOuttake(RobotConstants.outtakeSliderRetractPosition, 1);
                 /* Urmatoarea miscare incepe doar dupa ce robotul este la 1inch dinstanta de cealalta */
                 if (follower.getPose().getX() > (parkPose.getX() - 1) && follower.getPose().getY() > (parkPose.getY() - 1)) {
                     /* Setam stagiul la ceva care nu exista pentru a opri miscarile */

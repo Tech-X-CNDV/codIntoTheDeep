@@ -157,13 +157,13 @@ public class autonomieSpecimenPedro extends OpMode {
                 /* Urmatoarea miscare incepe doar dupa ce robotul este la 1inch dinstanta de cealalta */
                 if (follower.getPose().getX() < (specimen3HPlayer.getX() + 1) && follower.getPose().getY() < (specimen3HPlayer.getY() + 1)) {
                     claw.CloseOuttake();
-                    //TODO make specimen extend slider
-                    slider.MoveOuttake(RobotConstants.outtakeSliderExtendPosition, 1);
                     follower.followPath(subScore1, true);
                     setPathState(4);
                 }
                 break;
             case 4:
+                // TODO make specimen extend slider
+                slider.MoveOuttake(RobotConstants.outtakeSliderExtendPosition, 1);
                 /* Urmatoarea miscare incepe doar dupa ce robotul este la 1inch dinstanta de cealalta */
                 if (follower.getPose().getX() > (scorePose1.getX() - 1) && follower.getPose().getY() > (scorePose1.getY() - 1)) {
                     // TODO make specimen retract slider
@@ -177,13 +177,13 @@ public class autonomieSpecimenPedro extends OpMode {
                 /* Urmatoarea miscare incepe doar dupa ce robotul este la 1inch dinstanta de cealalta */
                 if (follower.getPose().getX() < (specimen3HPlayer.getX() + 1) && follower.getPose().getY() < (specimen3HPlayer.getY() + 1)) {
                     claw.CloseOuttake();
-                    //TODO make specimen extend slider
-                    slider.MoveOuttake(RobotConstants.outtakeSliderExtendPosition, 1);
                     follower.followPath(subScore2, true);
                     setPathState(6);
                 }
                 break;
             case 6:
+                // TODO make specimen extend slider
+                slider.MoveOuttake(RobotConstants.outtakeSliderExtendPosition, 1);
                 /* Urmatoarea miscare incepe doar dupa ce robotul este la 1inch dinstanta de cealalta */
                 if (follower.getPose().getX() > (scorePose2.getX() - 1) && follower.getPose().getY() > (scorePose2.getY() - 1)) {
                     // TODO make specimen retract slider
@@ -197,13 +197,13 @@ public class autonomieSpecimenPedro extends OpMode {
                 /* Urmatoarea miscare incepe doar dupa ce robotul este la 1inch dinstanta de cealalta */
                 if (follower.getPose().getX() < (specimen3HPlayer.getX() + 1) && follower.getPose().getY() < (specimen3HPlayer.getY() + 1)) {
                     claw.CloseOuttake();
-                    //TODO make specimen extend slider
-                    slider.MoveOuttake(RobotConstants.outtakeSliderExtendPosition, 1);
                     follower.followPath(subScore3, true);
                     setPathState(8);
                 }
                 break;
             case 8:
+                // TODO make specimen extend slider
+                slider.MoveOuttake(RobotConstants.outtakeSliderExtendPosition, 1);
                 /* Urmatoarea miscare incepe doar dupa ce robotul este la 1inch dinstanta de cealalta */
                 if (follower.getPose().getX() > (scorePose3.getX() - 1) && follower.getPose().getY() > (scorePose3.getY() - 1)) {
                     // TODO make specimen retract slider

@@ -80,12 +80,11 @@ public class OPModeV2 extends OpMode {
     boolean hPlayer = false;
     boolean lBmpPressed = false;
 
-    public void HPlayerToggler(){
+    public void HPlayerToggler() {
         if(gamepad2.left_bumper && !lBmpPressed) {
             lBmpPressed = true;
             hPlayer = !hPlayer;
-        }
-        else if(!gamepad2.left_bumper)
+        } else if(!gamepad2.left_bumper)
             lBmpPressed = false;
     }
 
@@ -116,9 +115,8 @@ public class OPModeV2 extends OpMode {
             else
                 claw.initialRotClaw();
             changedROTINT = true;
-        }else if(!gamepad1.b) {
+        } else if(!gamepad1.b)
             changedROTINT = false;
-        }
     }
 
     boolean changedINT = false;
@@ -130,12 +128,10 @@ public class OPModeV2 extends OpMode {
                 claw.openIntakeClaw();
             else
                 claw.closeIntakeClaw();
-            if(intakeAxonOn && !hPlayer) {
+            if(intakeAxonOn && !hPlayer)
                 IntakeToOuttake();
-            }
-        } else if (!gamepad1.a) {
+        } else if (!gamepad1.a)
             changedINT = false;
-        }
     }
 
     boolean changedOUT = false;
@@ -153,18 +149,16 @@ public class OPModeV2 extends OpMode {
                 outtakeAutoSlider = true;
                 slider.MoveOuttakeSlider(RobotConstants.outtakeSliderRetractPosition, 1);
             }
-        } else if (!gamepad2.a) {
+        } else if (!gamepad2.a)
             changedOUT = false;
-        }
     }
 
     private void OuttakeSliderMotion(){
         if (gamepad2.left_stick_y != 0.0) {
             outtakeAutoSlider = false;
             slider.MoveOuttakeSlider(gamepad2.left_stick_y < 0 ? RobotConstants.outtakeSliderExtendPosition : RobotConstants.outtakeSliderRetractPosition, Math.abs(gamepad2.left_stick_y));
-        } else if (!outtakeAutoSlider) {
+        } else if (!outtakeAutoSlider)
             slider.StopOuttakeSlider();
-        }
     }
 
     private void IntakeSliderMotion(){
@@ -174,28 +168,26 @@ public class OPModeV2 extends OpMode {
         } else if(gamepad1.left_trigger != 0) {
             intakeAutoSlider = false;
             slider.MoveIntakeSlider(RobotConstants.intakeSliderRetractPosition, gamepad1.left_trigger);
-        } else if(!intakeAutoSlider) {
+        } else if(!intakeAutoSlider)
             slider.StopIntakeSlider();
-        }
     }
 
     double outtakeAxonVal = 0.4;
     private void OuttakeAxonMotion(){
-        if (gamepad2.right_stick_y < 0 && outtakeAxonVal < 1) {
+        if (gamepad2.right_stick_y < 0 && outtakeAxonVal < 1)
             outtakeAxonVal += 0.005;
-        } else if (gamepad2.right_stick_y > 0 && outtakeAxonVal > 0) {
+        else if (gamepad2.right_stick_y > 0 && outtakeAxonVal > 0)
             outtakeAxonVal -= 0.005;
-        } else if (gamepad2.dpad_up) {
+        else if (gamepad2.dpad_up) {
             outtakeAxonVal = RobotConstants.outtakeUpPos;
             if (claw.getGrabOuttakePosition() == RobotConstants.closePos) {
                 outtakeAutoSlider = true;
                 slider.MoveOuttakeSlider(RobotConstants.outtakeSliderExtendPosition, 1);
             }
-        } else if (gamepad2.dpad_down) {
+        } else if (gamepad2.dpad_down)
             outtakeAxonVal = RobotConstants.outtakeMidPos;
-        } else if (gamepad2.dpad_left) {
+        else if (gamepad2.dpad_left)
             outtakeAxonVal = RobotConstants.outtakeBehindPos;
-        }
         axon.SetOuttakeAxonPosition(outtakeAxonVal);
     }
 
@@ -209,26 +201,33 @@ public class OPModeV2 extends OpMode {
             axon.SetIntakeAxonPosition(intakeMidAxonOn ? RobotConstants.intakeUpPos : RobotConstants.intakeMiddlePos);
             intakeMidAxonOn = !intakeMidAxonOn;
             intakeMidAxonMove = false;
-        }else if(!gamepad1.x) {
+        } else if(!gamepad1.x)
             intakeMidAxonMove = true;
-        }
         if(gamepad1.y && intakeAxonMove && intakeMidAxonOn) {
             axon.SetIntakeAxonPosition(intakeAxonOn ? RobotConstants.intakeMiddlePos : RobotConstants.intakeDownPos);
             intakeAxonOn = !intakeAxonOn;
             intakeAxonMove = false;
-        } else if(!gamepad1.y){
+        } else if(!gamepad1.y)
             intakeAxonMove = true;
-        }
     }
 
+    double speedLimit = 1.0;
+    boolean isG1LBumberPressed = false;
     private void Roti() {
-        // TODO add a speedlimiter
-        follower.setTeleOpMovementVectors(-gamepad1.left_stick_y, -gamepad1.left_stick_x, -gamepad1.right_stick_x, true);
+        if(gamepad1.left_bumper && !isG1LBumberPressed) {
+            speedLimit = speedLimit == 1.0 ? 0.5 : 1.0;
+            isG1LBumberPressed = true;
+        } else if(!gamepad1.left_bumper)
+            isG1LBumberPressed = false;
+        follower.setTeleOpMovementVectors(-gamepad1.left_stick_y / speedLimit, -gamepad1.left_stick_x / speedLimit, -gamepad1.right_stick_x / speedLimit, true);
         follower.update();
     }
 
     private void Telemetry() {
         telemetry.addData("Status", "Run Time: " + String.format(Locale.US, "%d:%.2f", (int)(runtime.seconds() / 60), runtime.seconds() % 60));
+        // SpeedLimit telemetry
+        if(speedLimit != 1.0)
+            telemetry.addData("SpeedLimit", "On");
         // HPlayer telemetry
         if(hPlayer)
             telemetry.addData("HPlayerMode", "On");

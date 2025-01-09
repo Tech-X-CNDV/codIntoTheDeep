@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import org.firstinspires.ftc.teamcode.config.RobotConstants;
 
 public class SliderSubsystem {
-    private DcMotor outtakeSliderUp, outtakeSliderDown, intakeSlider;
+    private final DcMotor outtakeSliderUp, outtakeSliderDown, intakeSlider;
 
     public SliderSubsystem(HardwareMap hardwareMap) {
         outtakeSliderUp = hardwareMap.get(DcMotor.class, "outtakeSliderUp");
@@ -16,7 +16,42 @@ public class SliderSubsystem {
         outtakeSliderDown.setDirection(DcMotorSimple.Direction.REVERSE);
         intakeSlider = hardwareMap.get(DcMotor.class, "intakeSlider");
         intakeSlider.setDirection(DcMotorSimple.Direction.REVERSE);
+    }
 
+    //------------------------------IntakeSlider------------------------------//
+
+    public void InitIntake(){
+        intakeSlider.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        intakeSlider.setPower(-0.1); // temp variable
+    }
+
+    public void StartIntake(){
+        intakeSlider.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        intakeSlider.setTargetPosition(0);
+        intakeSlider.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        intakeSlider.setPower(0);
+    }
+
+    public void MoveIntake(int position, double power){
+        intakeSlider.setTargetPosition(position);
+        intakeSlider.setPower(power);
+    }
+
+    public void StopIntake(){
+        intakeSlider.setPower(0);
+    }
+
+    //------------------------------OuttakeSlider------------------------------//
+
+    public void InitOuttake(){
+        outtakeSliderUp.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        outtakeSliderDown.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        outtakeSliderUp.setPower(-0.1); // temp variable
+        outtakeSliderDown.setPower(-0.1); // temp variable
+    }
+
+    public void StartOuttake(){
         outtakeSliderUp.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         outtakeSliderUp.setTargetPosition(0);
         outtakeSliderUp.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -27,62 +62,43 @@ public class SliderSubsystem {
 
         outtakeSliderUp.setPower(0);
         outtakeSliderDown.setPower(0);
-
-        intakeSlider.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        intakeSlider.setTargetPosition(0);
-        intakeSlider.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-        intakeSlider.setPower(0);
     }
 
-    //------------------------------IntakeSlider------------------------------//
-
-    public void MoveIntakeSlider(int position, double power){
-        intakeSlider.setTargetPosition(position);
-        intakeSlider.setPower(power);
-    }
-
-    public void StopIntakeSlider(){
-        intakeSlider.setPower(0);
-    }
-
-    //------------------------------OuttakeSlider------------------------------//
-
-    public void MoveOuttakeSlider(int position, double power){
+    public void MoveOuttake(int position, double power){
         outtakeSliderUp.setTargetPosition(position);
         outtakeSliderDown.setTargetPosition(position);
         outtakeSliderUp.setPower(power);
         outtakeSliderDown.setPower(power);
     }
 
-    public void StopOuttakeSlider(){
+    public void StopOuttake(){
         outtakeSliderUp.setPower(0);
         outtakeSliderDown.setPower(0);
     }
 
     //------------------------------Getters------------------------------//
 
-    public int getSliderIntakePosition() {
+    public int GetIntakePosition() {
         return intakeSlider.getCurrentPosition();
     }
 
-    public double getSliderIntakePower(){
+    public double GetIntakePower(){
         return  intakeSlider.getPower();
     }
 
-    public int getSliderUpOuttakePosition() {
+    public int GetUpOuttakePosition() {
         return outtakeSliderUp.getCurrentPosition();
     }
 
-    public int getSliderDownOuttakePosition() {
+    public int GetDownOuttakePosition() {
         return outtakeSliderDown.getCurrentPosition();
     }
 
-    public double getSliderUpOuttakePower(){
+    public double GetUpOuttakePower(){
         return  outtakeSliderUp.getPower();
     }
 
-    public double getSliderDownOuttakePower(){
+    public double GetDownOuttakePower(){
         return  outtakeSliderDown.getPower();
     }
 }

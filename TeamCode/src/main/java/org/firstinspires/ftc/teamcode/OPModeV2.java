@@ -3,8 +3,6 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.teamcode.pedroPathing.localization.Pose;
-import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.MathFunctions;
-import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.Vector;
 import org.firstinspires.ftc.teamcode.pedroPathing.follower.Follower;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.config.subsystem.ClawSubsystem;
@@ -38,12 +36,19 @@ public class OPModeV2 extends OpMode {
 
         // Initializare servo ghiare
         claw = new ClawSubsystem(hardwareMap);
+        claw.InitIntake();
+        claw.InitOuttake();
+        claw.InitPivot();
 
         // Initializare slidere
         slider = new SliderSubsystem(hardwareMap);
+        slider.InitIntake();
+        slider.InitOuttake();
 
         // Initializare axoane
         axon = new AxonSubsystem(hardwareMap);
+        axon.InitIntake();
+        axon.InitOuttake();
 
         telemetry.addData("Status", "Initialized");
         telemetry.update();
@@ -53,6 +58,8 @@ public class OPModeV2 extends OpMode {
     public void start() {
         // Reset the runtime when the play button is pressed
         follower.startTeleopDrive();
+        slider.StartIntake();
+        slider.StartOuttake();
         runtime.reset();
     }
 
@@ -93,16 +100,16 @@ public class OPModeV2 extends OpMode {
 
     public void IntakeToOuttake() {
         sleep(200);
-        axon.SetIntakeAxonPosition(RobotConstants.intakeUpPos);
-        claw.initialRotClaw();
+        axon.SetIntakePosition(RobotConstants.intakeUpPos);
+        claw.InitialRot();
         intakeMidAxonOn = false;
         intakeAxonOn = false;
         sleep(200);
-        claw.openIntakeClaw();
+        claw.OpenIntake();
         sleep(400);
         intakeAutoSlider = true;
-        slider.MoveIntakeSlider(RobotConstants.intakeSliderRetractPosition, 1);
-        axon.SetIntakeAxonPosition(RobotConstants.intakeMiddlePos);
+        slider.MoveIntake(RobotConstants.intakeSliderRetractPosition, 1);
+        axon.SetIntakePosition(RobotConstants.intakeMiddlePos);
         intakeMidAxonOn = true;
     }
 
@@ -110,10 +117,10 @@ public class OPModeV2 extends OpMode {
 
     private void ToggleGhiaraRotireIntake() {
         if (gamepad1.b && !changedROTINT) {
-            if(claw.getPivotIntakePosition() == 0.0)
-                claw.rotatedClaw();
+            if(claw.GetPivotIntakePosition() == 0.0)
+                claw.Rotated();
             else
-                claw.initialRotClaw();
+                claw.InitialRot();
             changedROTINT = true;
         } else if(!gamepad1.b)
             changedROTINT = false;
@@ -124,10 +131,10 @@ public class OPModeV2 extends OpMode {
     private void ToggleGhiaraIntake() {
         if (gamepad1.a && !changedINT) {
             changedINT = true;
-            if(claw.getGrabIntakePosition() == 0.0)
-                claw.openIntakeClaw();
+            if(claw.GetGrabIntakePosition() == 0.0)
+                claw.OpenIntake();
             else
-                claw.closeIntakeClaw();
+                claw.CloseIntake();
             if(intakeAxonOn && !hPlayer)
                 IntakeToOuttake();
         } else if (!gamepad1.a)
@@ -139,15 +146,15 @@ public class OPModeV2 extends OpMode {
     private void ToggleGhiaraOuttake() {
         if ((gamepad2.a || gamepad2.right_bumper) && !changedOUT) {
             changedOUT = true;
-            if(claw.getGrabOuttakePosition() == 0.0)
-                claw.openOuttakeClaw();
+            if(claw.GetGrabOuttakePosition() == 0.0)
+                claw.OpenOuttake();
             else
-                claw.closeOuttakeClaw();
-            if(slider.getSliderUpOuttakePosition() > RobotConstants.outtakeSliderExtendPosition - 100) {
+                claw.CloseOuttake();
+            if(slider.GetUpOuttakePosition() > RobotConstants.outtakeSliderExtendPosition - 100) {
                 sleep(300);
                 outtakeAxonVal = RobotConstants.outtakeMidPos;
                 outtakeAutoSlider = true;
-                slider.MoveOuttakeSlider(RobotConstants.outtakeSliderRetractPosition, 1);
+                slider.MoveOuttake(RobotConstants.outtakeSliderRetractPosition, 1);
             }
         } else if (!gamepad2.a)
             changedOUT = false;
@@ -156,20 +163,20 @@ public class OPModeV2 extends OpMode {
     private void OuttakeSliderMotion(){
         if (gamepad2.left_stick_y != 0.0) {
             outtakeAutoSlider = false;
-            slider.MoveOuttakeSlider(gamepad2.left_stick_y < 0 ? RobotConstants.outtakeSliderExtendPosition : RobotConstants.outtakeSliderRetractPosition, Math.abs(gamepad2.left_stick_y));
+            slider.MoveOuttake(gamepad2.left_stick_y < 0 ? RobotConstants.outtakeSliderExtendPosition : RobotConstants.outtakeSliderRetractPosition, Math.abs(gamepad2.left_stick_y));
         } else if (!outtakeAutoSlider)
-            slider.StopOuttakeSlider();
+            slider.StopOuttake();
     }
 
     private void IntakeSliderMotion(){
         if(gamepad1.right_trigger != 0 && gamepad1.left_trigger == 0) {
             intakeAutoSlider = false;
-            slider.MoveIntakeSlider(RobotConstants.intakeSliderExtendPosition, gamepad1.right_trigger);
+            slider.MoveIntake(RobotConstants.intakeSliderExtendPosition, gamepad1.right_trigger);
         } else if(gamepad1.left_trigger != 0) {
             intakeAutoSlider = false;
-            slider.MoveIntakeSlider(RobotConstants.intakeSliderRetractPosition, gamepad1.left_trigger);
+            slider.MoveIntake(RobotConstants.intakeSliderRetractPosition, gamepad1.left_trigger);
         } else if(!intakeAutoSlider)
-            slider.StopIntakeSlider();
+            slider.StopIntake();
     }
 
     double outtakeAxonVal = 0.4;
@@ -180,15 +187,15 @@ public class OPModeV2 extends OpMode {
             outtakeAxonVal -= 0.005;
         else if (gamepad2.dpad_up) {
             outtakeAxonVal = RobotConstants.outtakeUpPos;
-            if (claw.getGrabOuttakePosition() == RobotConstants.closePos) {
+            if (claw.GetGrabOuttakePosition() == RobotConstants.closePos) {
                 outtakeAutoSlider = true;
-                slider.MoveOuttakeSlider(RobotConstants.outtakeSliderExtendPosition, 1);
+                slider.MoveOuttake(RobotConstants.outtakeSliderExtendPosition, 1);
             }
         } else if (gamepad2.dpad_down)
             outtakeAxonVal = RobotConstants.outtakeMidPos;
         else if (gamepad2.dpad_left)
             outtakeAxonVal = RobotConstants.outtakeBehindPos;
-        axon.SetOuttakeAxonPosition(outtakeAxonVal);
+        axon.SetOuttakePosition(outtakeAxonVal);
     }
 
     boolean intakeAxonOn = false;
@@ -198,13 +205,13 @@ public class OPModeV2 extends OpMode {
 
     private void IntakeAxonMotion(){
         if(gamepad1.x && intakeMidAxonMove && !intakeAxonOn) {
-            axon.SetIntakeAxonPosition(intakeMidAxonOn ? RobotConstants.intakeUpPos : RobotConstants.intakeMiddlePos);
+            axon.SetIntakePosition(intakeMidAxonOn ? RobotConstants.intakeUpPos : RobotConstants.intakeMiddlePos);
             intakeMidAxonOn = !intakeMidAxonOn;
             intakeMidAxonMove = false;
         } else if(!gamepad1.x)
             intakeMidAxonMove = true;
         if(gamepad1.y && intakeAxonMove && intakeMidAxonOn) {
-            axon.SetIntakeAxonPosition(intakeAxonOn ? RobotConstants.intakeMiddlePos : RobotConstants.intakeDownPos);
+            axon.SetIntakePosition(intakeAxonOn ? RobotConstants.intakeMiddlePos : RobotConstants.intakeDownPos);
             intakeAxonOn = !intakeAxonOn;
             intakeAxonMove = false;
         } else if(!gamepad1.y)
@@ -236,28 +243,28 @@ public class OPModeV2 extends OpMode {
         telemetry.addData("Y", follower.getPose().getY());
         telemetry.addData("Heading in Degrees", Math.toDegrees(follower.getPose().getHeading()));
         // Ghiara intake telemetry
-        telemetry.addData("Intake Position", claw.getGrabIntakePosition());
-        telemetry.addData("Intake Angle", claw.getGrabIntakePosition() * 180);
+        telemetry.addData("Intake Position", claw.GetGrabIntakePosition());
+        telemetry.addData("Intake Angle", claw.GetGrabIntakePosition() * 180);
         // Ghiara outtake telemetry
-        telemetry.addData("Outtake Position", claw.getGrabOuttakePosition());
-        telemetry.addData("Outtake Angle", claw.getGrabOuttakePosition() * 180);
+        telemetry.addData("Outtake Position", claw.GetGrabOuttakePosition());
+        telemetry.addData("Outtake Angle", claw.GetGrabOuttakePosition() * 180);
         // Rotire ghiara intake telemetry
-        telemetry.addData("Intake Rotation Position", claw.getPivotIntakePosition());
-        telemetry.addData("Intake Rotation Angle", claw.getPivotIntakePosition() * 180);
+        telemetry.addData("Intake Rotation Position", claw.GetPivotIntakePosition());
+        telemetry.addData("Intake Rotation Angle", claw.GetPivotIntakePosition() * 180);
         // Intake axon telemetry
-        telemetry.addData("AxonIntake Position", axon.getAxonIntakePosition());
-        telemetry.addData("AxonIntake Rotation Angle", axon.getAxonIntakePosition() * 180);
+        telemetry.addData("AxonIntake Position", axon.GetIntakePosition());
+        telemetry.addData("AxonIntake Rotation Angle", axon.GetIntakePosition() * 180);
         // Outtake axon telemetry
-        telemetry.addData("AxonOuttake Position", axon.getAxonOuttakePosition());
-        telemetry.addData("AxonOuttake Rotation Angle", axon.getAxonOuttakePosition() * 180);
+        telemetry.addData("AxonOuttake Position", axon.GetOuttakePosition());
+        telemetry.addData("AxonOuttake Rotation Angle", axon.GetOuttakePosition() * 180);
         // Outtake slider telemetry
-        telemetry.addData("OuttakeSliderPowerUp", slider.getSliderUpOuttakePower());
-        telemetry.addData("OuttakeSliderPowerDown", slider.getSliderDownOuttakePower());
-        telemetry.addData("OuttakeSliderPositionUp", slider.getSliderUpOuttakePosition());
-        telemetry.addData("OuttakeSliderPositionDown", slider.getSliderDownOuttakePosition());
+        telemetry.addData("OuttakeSliderPowerUp", slider.GetUpOuttakePower());
+        telemetry.addData("OuttakeSliderPowerDown", slider.GetDownOuttakePower());
+        telemetry.addData("OuttakeSliderPositionUp", slider.GetUpOuttakePosition());
+        telemetry.addData("OuttakeSliderPositionDown", slider.GetDownOuttakePosition());
         // Intake slider telemetry
-        telemetry.addData("IntakeSliderPower", slider.getSliderIntakePower());
-        telemetry.addData("IntakeSliderPos", slider.getSliderIntakePosition());
+        telemetry.addData("IntakeSliderPower", slider.GetIntakePower());
+        telemetry.addData("IntakeSliderPos", slider.GetIntakePosition());
         // Send the telemetry to the driver station
         telemetry.update();
     }

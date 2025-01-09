@@ -2,13 +2,17 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import org.firstinspires.ftc.teamcode.pedroPathing.localization.Pose;
-import org.firstinspires.ftc.teamcode.pedroPathing.follower.Follower;
+import com.pedropathing.follower.Follower;
+import com.pedropathing.localization.Pose;
+import com.pedropathing.util.Constants;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.config.subsystem.ClawSubsystem;
 import org.firstinspires.ftc.teamcode.config.subsystem.SliderSubsystem;
 import org.firstinspires.ftc.teamcode.config.subsystem.AxonSubsystem;
 import org.firstinspires.ftc.teamcode.config.RobotConstants;
+
+import pedroPathing.constants.FConstants;
+import pedroPathing.constants.LConstants;
 
 import java.util.Locale;
 
@@ -31,6 +35,7 @@ public class OPModeV2 extends OpMode {
     @Override
     public void init() {
         // Initializare Pedro
+        Constants.setConstants(FConstants.class, LConstants.class);
         follower = new Follower(hardwareMap);
         follower.setStartingPose(startPose);
 

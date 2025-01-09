@@ -21,11 +21,6 @@ public class SliderSubsystem {
     //------------------------------IntakeSlider------------------------------//
 
     public void InitIntake(){
-        intakeSlider.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        intakeSlider.setPower(-0.1); // temp variable
-    }
-
-    public void StartIntake(){
         intakeSlider.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         intakeSlider.setTargetPosition(0);
         intakeSlider.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -45,13 +40,6 @@ public class SliderSubsystem {
     //------------------------------OuttakeSlider------------------------------//
 
     public void InitOuttake(){
-        outtakeSliderUp.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        outtakeSliderDown.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        outtakeSliderUp.setPower(-0.1); // temp variable
-        outtakeSliderDown.setPower(-0.1); // temp variable
-    }
-
-    public void StartOuttake(){
         outtakeSliderUp.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         outtakeSliderUp.setTargetPosition(0);
         outtakeSliderUp.setMode(DcMotor.RunMode.RUN_TO_POSITION);

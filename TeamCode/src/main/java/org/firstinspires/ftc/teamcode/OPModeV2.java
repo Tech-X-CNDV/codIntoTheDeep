@@ -39,8 +39,6 @@ public class OPModeV2 extends OpMode {
 
         // Initializare slidere
         slider = new SliderSubsystem(hardwareMap);
-        slider.InitIntake();
-        slider.InitOuttake();
 
         // Initializare axoane
         axon = new AxonSubsystem(hardwareMap);
@@ -56,8 +54,8 @@ public class OPModeV2 extends OpMode {
         claw.InitIntake();
         claw.InitOuttake();
         claw.InitPivot();
-        slider.StartIntake();
-        slider.StartOuttake();
+        slider.InitIntake();
+        slider.InitOuttake();
         axon.InitIntake();
         axon.InitOuttake();
         runtime.reset();

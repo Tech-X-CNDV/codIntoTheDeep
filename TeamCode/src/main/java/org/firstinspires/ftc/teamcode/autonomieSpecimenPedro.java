@@ -282,8 +282,6 @@ public class autonomieSpecimenPedro extends OpMode {
     @Override
     public void start() {
         opmodeTimer.resetTimer();
-        slider.StartIntake();
-        slider.StartOuttake();
         setPathState(0);
     }
 

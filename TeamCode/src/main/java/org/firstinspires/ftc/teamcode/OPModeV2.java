@@ -62,7 +62,7 @@ public class OPModeV2 extends OpMode {
         slider.InitIntake();
         slider.InitOuttake();
         axon.InitIntake();
-        axon.InitOuttake();
+        axon.InitOuttake(RobotConstants.outtakeMidPos);
         runtime.reset();
     }
 

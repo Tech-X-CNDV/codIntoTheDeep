@@ -6,21 +6,18 @@ import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 
 public class LConstants {
     static {
-        // TODO Calibration
-        ThreeWheelConstants.forwardTicksToInches = .001989436789;
-        ThreeWheelConstants.strafeTicksToInches = .001989436789;
-        ThreeWheelConstants.turnTicksToInches = .001989436789;
+        ThreeWheelConstants.forwardTicksToInches = .002;
+        ThreeWheelConstants.strafeTicksToInches = .002;
+        ThreeWheelConstants.turnTicksToInches = .002;
         ThreeWheelConstants.leftY = 4.5;
         ThreeWheelConstants.rightY = -4.5;
         ThreeWheelConstants.strafeX = -3.5;
         ThreeWheelConstants.leftEncoder_HardwareMapName = "leftFrontMotor";
         ThreeWheelConstants.rightEncoder_HardwareMapName = "rightFrontMotor";
         ThreeWheelConstants.strafeEncoder_HardwareMapName = "leftRearMotor";
-        ThreeWheelConstants.leftEncoderDirection = Encoder.REVERSE;
-        ThreeWheelConstants.rightEncoderDirection = Encoder.REVERSE;
+        ThreeWheelConstants.leftEncoderDirection = Encoder.FORWARD;
+        ThreeWheelConstants.rightEncoderDirection = Encoder.FORWARD;
         ThreeWheelConstants.strafeEncoderDirection = Encoder.FORWARD;
-        ThreeWheelIMUConstants.IMU_HardwareMapName = "imu";
-        ThreeWheelIMUConstants.IMU_Orientation = new RevHubOrientationOnRobot(RevHubOrientationOnRobot.LogoFacingDirection.RIGHT, RevHubOrientationOnRobot.UsbFacingDirection.UP);
     }
 }
 

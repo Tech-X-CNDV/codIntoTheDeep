@@ -29,9 +29,9 @@ public class AxonSubsystem {
 
     //------------------------------OuttakeAxon------------------------------//
 
-    public void InitOuttake(){
-        outtakeAxonLeft.setPosition(RobotConstants.outtakeMidPos);
-        outtakeAxonRight.setPosition(RobotConstants.outtakeMidPos);
+    public void InitOuttake(double position){
+        outtakeAxonLeft.setPosition(position);
+        outtakeAxonRight.setPosition(position);
     }
 
     public void SetOuttakePosition(double position) {

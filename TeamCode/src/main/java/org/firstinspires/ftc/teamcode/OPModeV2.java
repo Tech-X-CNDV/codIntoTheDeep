@@ -221,22 +221,23 @@ public class OPModeV2 extends OpMode {
             intakeAxonMove = true;
     }
 
-    double speedLimit = 1.0;
+    boolean speedLimit = false;
     boolean isG1LBumberPressed = false;
     private void Roti() {
         if(gamepad1.left_bumper && !isG1LBumberPressed) {
-            speedLimit = speedLimit == 1.0 ? 0.5 : 1.0;
             isG1LBumberPressed = true;
+            follower.setMaxPower(speedLimit ? 1.0 : 0.5);
+            speedLimit = !speedLimit;
         } else if(!gamepad1.left_bumper)
             isG1LBumberPressed = false;
-        follower.setTeleOpMovementVectors(-gamepad1.left_stick_y / speedLimit, -gamepad1.left_stick_x / speedLimit, -gamepad1.right_stick_x / speedLimit, true);
+        follower.setTeleOpMovementVectors(-gamepad1.left_stick_y, -gamepad1.left_stick_x, -gamepad1.right_stick_x, true);
         follower.update();
     }
 
     private void Telemetry() {
         telemetry.addData("Status", "Run Time: " + String.format(Locale.US, "%d:%.2f", (int)(runtime.seconds() / 60), runtime.seconds() % 60));
         // SpeedLimit telemetry
-        if(speedLimit != 1.0)
+        if(speedLimit)
             telemetry.addData("SpeedLimit", "On");
         // HPlayer telemetry
         if(hPlayer)

@@ -1,7 +1,7 @@
 package org.firstinspires.ftc.teamcode.config;
 
 public class RobotConstants {
-    public static final double outtakeOpenPos = 0.3;
+    public static final double outtakeOpenPos = 0.5;
     public static final double intakeOpenPos = 0.42;
     public static final double closePos = 0.0;
     public static final double minPosRotInt = 0;

@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
 
+import com.pedropathing.pathgen.Path;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import org.firstinspires.ftc.teamcode.config.RobotConstants;
@@ -46,12 +47,23 @@ public class autonomieBasketPedro extends OpMode{
     private final Pose pushThirdPart3 = new Pose(16,136);
     private final Pose getUp = new Pose (64,136);
     private final Pose Parcare = new Pose(64,94);
+    private final Pose merginparcarePose= new Pose(60,132);
+    private final Pose getMerginparcarePose1=new Pose(60,95);
     //
-    private PathChain scorePreload,pushFirst,pushSecond,pushThird,Park;
+    private PathChain scorePreload,pushFirst,pushSecond,pushThird,Park,merginparcare;
     public void buildPaths() {
         scorePreload = follower.pathBuilder()//line 1
                 .addPath(new BezierCurve(new Point(startPose),new Point(scorePoseControl1),new Point(scorePosePreLoad)))
                 .setLinearHeadingInterpolation(180,-45)
+                .setPathEndTimeoutConstraint(2.0)
+                .build();
+        merginparcare = follower.pathBuilder()
+
+
+                .addPath(new BezierLine(new Point(scorePosePreLoad),new Point(merginparcarePose)))
+                .setConstantHeadingInterpolation(Math.toRadians(135))
+                .addPath(new BezierLine(new Point(merginparcarePose),new Point(getMerginparcarePose1)))
+                .setConstantHeadingInterpolation(Math.toRadians(90))
                 .setPathEndTimeoutConstraint(2.0)
                 .build();
         pushFirst = follower.pathBuilder()
@@ -82,34 +94,46 @@ public class autonomieBasketPedro extends OpMode{
     public void autonomousPathUpdate(){
         switch (pathState) {
             case 0:
+
                 claw.CloseOuttake();
                 slider.MoveOuttake(RobotConstants.outtakeSliderExtendPosition, 1);
-                axon.SetOuttakePosition(RobotConstants.outtakeMidPos);
+                axon.SetOuttakePosition(RobotConstants.outtakeUpPos);
                 follower.followPath(scorePreload, true);
                 if(slider.GetUpOuttakePosition() > RobotConstants.outtakeSliderExtendPosition)
                     setPathState(1);
                 break;
             case 1:
+
                 if (follower.getPose().getX() > (scorePosePreLoad.getX() - 1) && follower.getPose().getY() > (scorePosePreLoad.getY() - 1)) {
+                    claw.OpenOuttake();
+                    if(pathTimer.getElapsedTimeSeconds()>2.1)
                     slider.MoveOuttake(RobotConstants.outtakeSliderRetractPosition, 1);
-                        claw.OpenOuttake();
-                        follower.followPath(pushFirst, true);
-                        setPathState(2);
+                    follower.followPath(merginparcare, true);
+                    setPathState(2);
 
                 }
                 break;
             case 2:
+                if (follower.getPose().getX() > (getMerginparcarePose1.getX() - 2) && follower.getPose().getY() < (getMerginparcarePose1.getY() + 2)) {
+                    //follower.followPath(pushSecond, true);
+                    setPathState(-1);
+                }
+                break;
+/*
+            case 2:
+
                 if (follower.getPose().getX() > (pushFirstPose.getX() - 2) && follower.getPose().getY() < (pushFirstPose.getY() + 2)) {
                     follower.followPath(pushSecond, true);
                     setPathState(3);
                 }
                 break;
-            case 3:
+/*            case 3:
                 if (follower.getPose().getX() < (pushSecondPart3.getX() + 2) && follower.getPose().getY() < (pushSecondPart3.getY() + 2)) {
                     follower.followPath(pushThird, true);
                     setPathState(4);
                 }
                 break;
+
             case 4:
                 if (follower.getPose().getX() < (pushThirdPart3.getX() + 2) && follower.getPose().getY() < (pushThirdPart3.getY() + 2)) {
                     follower.followPath(Park, true);
@@ -121,6 +145,8 @@ public class autonomieBasketPedro extends OpMode{
                     setPathState(-1);
                 }
                 break;
+
+                 */
         }
 
     }
@@ -132,7 +158,7 @@ public class autonomieBasketPedro extends OpMode{
     public void loop() {
         follower.update();
         autonomousPathUpdate();
-
+        telemetry.addData("Secunde ",pathTimer.getElapsedTimeSeconds());
         telemetry.addData("path state", pathState);
         telemetry.addData("x", follower.getPose().getX());
         telemetry.addData("y", follower.getPose().getY());
@@ -168,7 +194,7 @@ public class autonomieBasketPedro extends OpMode{
         slider.InitOuttake();
         axon = new AxonSubsystem(hardwareMap);
         axon.InitIntake();
-        axon.InitOuttake(RobotConstants.outtakeBehindPos);
+        axon.InitOuttake(RobotConstants.outtakeUpPos);
 
         buildPaths();
     }

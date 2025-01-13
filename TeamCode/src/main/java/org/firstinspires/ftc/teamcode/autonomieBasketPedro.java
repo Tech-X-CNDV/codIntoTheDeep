@@ -13,6 +13,8 @@ import com.pedropathing.pathgen.PathChain;
 import com.pedropathing.pathgen.Point;
 import com.pedropathing.util.Timer;
 import com.pedropathing.util.Constants;
+import com.qualcomm.robotcore.robot.Robot;
+
 import pedroPathing.constants.FConstants;
 import pedroPathing.constants.LConstants;
 import org.firstinspires.ftc.teamcode.config.subsystem.ClawSubsystem;
@@ -35,61 +37,60 @@ public class autonomieBasketPedro extends OpMode{
     private final Pose startPose = new Pose(8, 85, Math.toRadians(180));
     private final Pose scorePosePreLoad = new Pose(13, 130, Math.toRadians(180));
     private final Pose scorePoseControl1 = new Pose(48.6,77.7);
-    private final Pose pushFirstPose = new Pose(8,123.5);
-    private final Pose pushFirstPoseControl1 = new Pose(61.5,57);
-    private final Pose pushFirstPoseControl2 = new Pose(144,138);
-    private final Pose pushFirstPoseControl3 = new Pose(69, 120);
-    private final Pose pushSecondPart1 = new Pose(64,122);
-    private final Pose pushSecondPart2 = new Pose(64,131);
-    private final Pose pushSecondPart3 = new Pose(13,131);
-    private final Pose pushThirdPart1 = new Pose(64,131);
-    private final Pose pushThirdPart2 = new Pose(64,136);
-    private final Pose pushThirdPart3 = new Pose(16,136);
-    private final Pose getUp = new Pose (64,136);
-    private final Pose Parcare = new Pose(64,94);
-    private final Pose merginparcarePose= new Pose(60,132);
-    private final Pose getMerginparcarePose1=new Pose(60,95);
+    private final Pose pickFirstSample = new Pose(37,121);
+    private final Pose goBackFirst = new Pose(13,130);
+    private final Pose goSecondSample = new Pose(37,132);
+    private final Pose goBackSecond = new Pose(13,130);
+
+    private final Pose thirdFirstLine = new Pose(60,129);
+    private final Pose thirdSecondLine = new Pose(60,138);
+    private final Pose thirdThirdLine = new Pose(17,138);
+
+    private final Pose parkPose = new Pose(60,94);
+    private final Pose parkControl = new Pose(69,121);
+
     //
-    private PathChain scorePreload,pushFirst,pushSecond,pushThird,Park,merginparcare;
+    private PathChain scorePreload,goToFirst,goToBasketFirst,goToSecond,goToBasketSecond,pushTheThird,park;
     public void buildPaths() {
         scorePreload = follower.pathBuilder()//line 1
                 .addPath(new BezierCurve(new Point(startPose),new Point(scorePoseControl1),new Point(scorePosePreLoad)))
                 .setLinearHeadingInterpolation(180,-45)
                 .setPathEndTimeoutConstraint(2.0)
                 .build();
-        merginparcare = follower.pathBuilder()
-
-
-                .addPath(new BezierLine(new Point(scorePosePreLoad),new Point(merginparcarePose)))
-                .setConstantHeadingInterpolation(Math.toRadians(135))
-                .addPath(new BezierLine(new Point(merginparcarePose),new Point(getMerginparcarePose1)))
-                .setConstantHeadingInterpolation(Math.toRadians(90))
+        goToFirst = follower.pathBuilder()
+                .addPath(new BezierLine(new Point(scorePosePreLoad),new Point(pickFirstSample)))
+                .setLinearHeadingInterpolation(-45,360)
                 .setPathEndTimeoutConstraint(2.0)
                 .build();
-        pushFirst = follower.pathBuilder()
-                .addPath(new BezierCurve(new Point(scorePosePreLoad),new Point(pushFirstPoseControl1),new Point(pushFirstPoseControl2),new Point(pushFirstPoseControl3),new Point(pushFirstPose)))
-                .setTangentHeadingInterpolation()
+        goToBasketFirst = follower.pathBuilder()
+                .addPath(new BezierLine(new Point(pickFirstSample),new Point(goBackFirst)))
+                .setLinearHeadingInterpolation(360,-45)
                 .setPathEndTimeoutConstraint(2.0)
                 .build();
-        pushSecond = follower.pathBuilder()
-                .addPath(new BezierLine(new Point(pushFirstPose),new Point(pushSecondPart1)))
-                .setConstantHeadingInterpolation(Math.toRadians(180))
-                .addPath(new BezierLine(new Point(pushSecondPart1),new Point(pushSecondPart2)))
-                .setConstantHeadingInterpolation(Math.toRadians(180))
-                .addPath(new BezierLine(new Point(pushSecondPart2),new Point(pushSecondPart3)))
-                .setConstantHeadingInterpolation(Math.toRadians(180))
+        goToSecond = follower.pathBuilder()
+                .addPath(new BezierLine(new Point(goBackFirst),new Point(goSecondSample)))
+                .setLinearHeadingInterpolation(-45,360)
+                .setPathEndTimeoutConstraint(2.0)
                 .build();
-        pushThird = follower.pathBuilder()
-                .addPath(new BezierLine(new Point(pushThirdPart1),new Point(pushThirdPart2)))
-                .setConstantHeadingInterpolation(Math.toRadians(180))
-                .addPath(new BezierLine(new Point(pushThirdPart2),new Point(pushThirdPart3)))
-                .setConstantHeadingInterpolation(Math.toRadians(180))
+        goToBasketSecond = follower.pathBuilder()
+                .addPath(new BezierLine(new Point(goSecondSample),new Point(goBackSecond)))
+                .setLinearHeadingInterpolation(360,-45)
+                .setPathEndTimeoutConstraint(2.0)
                 .build();
-        Park = follower.pathBuilder()//getUp,Parcare
-                .addPath(new BezierLine(new Point(getUp),new Point(Parcare)))
-                .setLinearHeadingInterpolation(Math.toRadians(180),Math.toRadians(-90))
+        pushTheThird = follower.pathBuilder()
+                .addPath(new BezierLine(new Point(goBackSecond), new Point(thirdFirstLine)))
+                .setLinearHeadingInterpolation(-45,360)
+                .addPath(new BezierLine(new Point(thirdFirstLine), new Point(thirdSecondLine)))
+                .setConstantHeadingInterpolation(0)
+                .addPath(new BezierLine(new Point(thirdSecondLine), new Point(thirdThirdLine)))
+                .setConstantHeadingInterpolation(0)
+                .setPathEndTimeoutConstraint(2.0)
                 .build();
-
+        park = follower.pathBuilder()
+                .addPath(new BezierCurve(new Point(thirdThirdLine), new Point(parkControl), new Point(parkPose)))
+                .setLinearHeadingInterpolation(0,-90)
+                .setPathEndTimeoutConstraint(2.0)
+                .build();
     }
     public void autonomousPathUpdate(){
         switch (pathState) {
@@ -108,45 +109,43 @@ public class autonomieBasketPedro extends OpMode{
                     claw.OpenOuttake();
                     if(pathTimer.getElapsedTimeSeconds()>2.1)
                     slider.MoveOuttake(RobotConstants.outtakeSliderRetractPosition, 1);
-                    follower.followPath(merginparcare, true);
+                    follower.followPath(goToFirst, true);
                     setPathState(2);
 
                 }
                 break;
             case 2:
-                if (follower.getPose().getX() > (getMerginparcarePose1.getX() - 2) && follower.getPose().getY() < (getMerginparcarePose1.getY() + 2)) {
-                    //follower.followPath(pushSecond, true);
-                    setPathState(-1);
-                }
-                break;
-/*
-            case 2:
-
-                if (follower.getPose().getX() > (pushFirstPose.getX() - 2) && follower.getPose().getY() < (pushFirstPose.getY() + 2)) {
-                    follower.followPath(pushSecond, true);
+                if(follower.getPose().getHeading()>(pickFirstSample.getX()-1) && follower.getPose().getY() > (pickFirstSample.getY() - 1)){
+                    claw.OpenIntake();
+                    axon.SetIntakePosition(RobotConstants.intakeDownPos);
+                    //doar acum
+                    axon.SetOuttakePosition(RobotConstants.outtakeMidPos);
+                    //doar acum
+                    claw.Rotated();
+                    claw.CloseIntake();
+                    claw.InitialRot();
+                    axon.SetIntakePosition(RobotConstants.intakeUpPos);
+                    claw.CloseOuttake();
+                    pathTimer.resetTimer();
+                    if(pathTimer.getElapsedTimeSeconds()>3.1)
+                    slider.MoveOuttake(RobotConstants.outtakeSliderExtendPosition, 1);
+                    axon.SetOuttakePosition(RobotConstants.outtakeUpPos);
+                    follower.followPath(goToBasketFirst, true);
                     setPathState(3);
                 }
-                break;
-/*            case 3:
-                if (follower.getPose().getX() < (pushSecondPart3.getX() + 2) && follower.getPose().getY() < (pushSecondPart3.getY() + 2)) {
-                    follower.followPath(pushThird, true);
+            case 3:
+                if(follower.getPose().getHeading()>(goBackFirst.getX()-1) && follower.getPose().getY() > (goBackFirst.getY() - 1)){
+                    claw.OpenOuttake();
+                    pathTimer.resetTimer();
+                    if(pathTimer.getElapsedTimeSeconds()>2.1)
+                        slider.MoveOuttake(RobotConstants.outtakeSliderRetractPosition, 1);
+                    follower.followPath(park, true);
                     setPathState(4);
                 }
-                break;
-
             case 4:
-                if (follower.getPose().getX() < (pushThirdPart3.getX() + 2) && follower.getPose().getY() < (pushThirdPart3.getY() + 2)) {
-                    follower.followPath(Park, true);
-                    setPathState(5);
-                }
-                break;
-            case 5:
-                if (follower.getPose().getX() < (Parcare.getX() + 2) && follower.getPose().getY() < (Parcare.getY() + 2)) {
+                if(follower.getPose().getHeading()>(parkPose.getX()-1) && follower.getPose().getY() > (parkPose.getY() - 1)){
                     setPathState(-1);
                 }
-                break;
-
-                 */
         }
 
     }

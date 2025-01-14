@@ -37,6 +37,8 @@ public class autonomieBasketPedro extends OpMode{
     private final Pose startPose = new Pose(8, 85, Math.toRadians(180));
     private final Pose scorePosePreLoad = new Pose(13, 130, Math.toRadians(180));
     private final Pose scorePoseControl1 = new Pose(48.6,77.7);
+    private final Pose pushFirstSample = new Pose(63,121);
+    private final Pose pushFirstSampleControl = new Pose(43,93);
     private final Pose pickFirstSample = new Pose(37,121);
     private final Pose goBackFirst = new Pose(13,130);
     private final Pose goSecondSample = new Pose(37,132);
@@ -54,41 +56,41 @@ public class autonomieBasketPedro extends OpMode{
     public void buildPaths() {
         scorePreload = follower.pathBuilder()//line 1
                 .addPath(new BezierCurve(new Point(startPose),new Point(scorePoseControl1),new Point(scorePosePreLoad)))
-                .setLinearHeadingInterpolation(180,-45)
+                .setLinearHeadingInterpolation(Math.toRadians(180),Math.toRadians(-45))
                 .setPathEndTimeoutConstraint(2.0)
                 .build();
         goToFirst = follower.pathBuilder()
-                .addPath(new BezierLine(new Point(scorePosePreLoad),new Point(pickFirstSample)))
-                .setLinearHeadingInterpolation(-45,360)
+                .addPath(new BezierCurve(new Point(scorePosePreLoad),new Point(pushFirstSampleControl),new Point(pushFirstSample)))
+                .setLinearHeadingInterpolation(Math.toRadians(-45),Math.toRadians(360))
                 .setPathEndTimeoutConstraint(2.0)
                 .build();
         goToBasketFirst = follower.pathBuilder()
-                .addPath(new BezierLine(new Point(pickFirstSample),new Point(goBackFirst)))
-                .setLinearHeadingInterpolation(360,-45)
+                .addPath(new BezierLine(new Point(pushFirstSample),new Point(goBackFirst)))
+                .setLinearHeadingInterpolation(Math.toRadians(360),Math.toRadians(-45))
                 .setPathEndTimeoutConstraint(2.0)
                 .build();
         goToSecond = follower.pathBuilder()
                 .addPath(new BezierLine(new Point(goBackFirst),new Point(goSecondSample)))
-                .setLinearHeadingInterpolation(-45,360)
+                .setLinearHeadingInterpolation(Math.toRadians(-45),Math.toRadians(360))
                 .setPathEndTimeoutConstraint(2.0)
                 .build();
         goToBasketSecond = follower.pathBuilder()
                 .addPath(new BezierLine(new Point(goSecondSample),new Point(goBackSecond)))
-                .setLinearHeadingInterpolation(360,-45)
+                .setLinearHeadingInterpolation(Math.toRadians(360),Math.toRadians(-45))
                 .setPathEndTimeoutConstraint(2.0)
                 .build();
         pushTheThird = follower.pathBuilder()
                 .addPath(new BezierLine(new Point(goBackSecond), new Point(thirdFirstLine)))
-                .setLinearHeadingInterpolation(-45,360)
+                .setLinearHeadingInterpolation(Math.toRadians(-45),Math.toRadians(360))
                 .addPath(new BezierLine(new Point(thirdFirstLine), new Point(thirdSecondLine)))
-                .setConstantHeadingInterpolation(0)
+                .setConstantHeadingInterpolation(Math.toRadians(0))
                 .addPath(new BezierLine(new Point(thirdSecondLine), new Point(thirdThirdLine)))
-                .setConstantHeadingInterpolation(0)
+                .setConstantHeadingInterpolation(Math.toRadians(0))
                 .setPathEndTimeoutConstraint(2.0)
                 .build();
         park = follower.pathBuilder()
                 .addPath(new BezierCurve(new Point(thirdThirdLine), new Point(parkControl), new Point(parkPose)))
-                .setLinearHeadingInterpolation(0,-90)
+                .setLinearHeadingInterpolation(Math.toRadians(0),Math.toRadians(-90))
                 .setPathEndTimeoutConstraint(2.0)
                 .build();
     }
@@ -107,7 +109,7 @@ public class autonomieBasketPedro extends OpMode{
 
                 if (follower.getPose().getX() > (scorePosePreLoad.getX() - 1) && follower.getPose().getY() > (scorePosePreLoad.getY() - 1)) {
                     claw.OpenOuttake();
-                    if(pathTimer.getElapsedTimeSeconds()>2.1)
+                    if(pathTimer.getElapsedTimeSeconds()>1.5)
                     slider.MoveOuttake(RobotConstants.outtakeSliderRetractPosition, 1);
                     follower.followPath(goToFirst, true);
                     setPathState(2);
@@ -115,35 +117,40 @@ public class autonomieBasketPedro extends OpMode{
                 }
                 break;
             case 2:
-                if(follower.getPose().getHeading()>(pickFirstSample.getX()-1) && follower.getPose().getY() > (pickFirstSample.getY() - 1)){
-                    claw.OpenIntake();
-                    axon.SetIntakePosition(RobotConstants.intakeDownPos);
-                    //doar acum
-                    axon.SetOuttakePosition(RobotConstants.outtakeMidPos);
-                    //doar acum
-                    claw.Rotated();
-                    claw.CloseIntake();
-                    claw.InitialRot();
-                    axon.SetIntakePosition(RobotConstants.intakeUpPos);
-                    claw.CloseOuttake();
-                    pathTimer.resetTimer();
-                    if(pathTimer.getElapsedTimeSeconds()>3.1)
-                    slider.MoveOuttake(RobotConstants.outtakeSliderExtendPosition, 1);
-                    axon.SetOuttakePosition(RobotConstants.outtakeUpPos);
+                if(follower.getPose().getX()>(pickFirstSample.getX()-1) && follower.getPose().getY() > (pickFirstSample.getY() - 1)){
+                    //claw.OpenIntake();
+
                     follower.followPath(goToBasketFirst, true);
                     setPathState(3);
                 }
             case 3:
-                if(follower.getPose().getHeading()>(goBackFirst.getX()-1) && follower.getPose().getY() > (goBackFirst.getY() - 1)){
-                    claw.OpenOuttake();
-                    pathTimer.resetTimer();
-                    if(pathTimer.getElapsedTimeSeconds()>2.1)
-                        slider.MoveOuttake(RobotConstants.outtakeSliderRetractPosition, 1);
-                    follower.followPath(park, true);
+                if(follower.getPose().getX()<(goBackFirst.getX()+1) && follower.getPose().getY() > (goBackFirst.getY() - 1)){
+                    //claw.OpenOuttake();
+                    //pathTimer.resetTimer();
+                    //if(pathTimer.getElapsedTimeSeconds()>2.1)
+                    //    slider.MoveOuttake(RobotConstants.outtakeSliderRetractPosition, 1);
+                    //follower.followPath(park, true);
+                    follower.followPath(goToSecond, true);
                     setPathState(4);
                 }
             case 4:
-                if(follower.getPose().getHeading()>(parkPose.getX()-1) && follower.getPose().getY() > (parkPose.getY() - 1)){
+                if(follower.getPose().getX()>(goSecondSample.getX()-1) && follower.getPose().getY() > (goSecondSample.getY() - 1)){
+                    follower.followPath(goToBasketSecond, true);
+                    setPathState(5);
+                }
+            case 5:
+                if(follower.getPose().getX()<(goBackSecond.getX()+1) && follower.getPose().getY() > (goBackSecond.getY() - 1)){
+                    follower.followPath(pushTheThird, true);
+                    setPathState(5);
+                }
+            case 6:
+                if(follower.getPose().getX()>(thirdThirdLine.getX()-1) && follower.getPose().getY() > (thirdThirdLine.getY() - 1)){
+                    follower.followPath(park, true);
+                    setPathState(7);
+                }
+            case 7:
+                if(follower.getPose().getX()>(parkPose.getX()-1) && follower.getPose().getY() < (parkPose.getY() + 1)){
+                    //follower.followPath(park, true);
                     setPathState(-1);
                 }
         }

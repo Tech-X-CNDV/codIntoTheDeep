@@ -107,9 +107,9 @@ public class OPModeV2 extends OpMode {
         claw.InitialRot();
         intakeMidAxonOn = false;
         intakeAxonOn = false;
-        sleep(200);
-        claw.OpenIntake();
         sleep(400);
+        claw.OpenIntake();
+        sleep(800);
         intakeAutoSlider = true;
         slider.MoveIntake(RobotConstants.intakeSliderRetractPosition, 1);
         axon.SetIntakePosition(RobotConstants.intakeMiddlePos);
@@ -182,7 +182,7 @@ public class OPModeV2 extends OpMode {
             slider.StopIntake();
     }
 
-    double outtakeAxonVal = 0.4;
+    double outtakeAxonVal = RobotConstants.outtakeMidPos;
     private void OuttakeAxonMotion(){
         if (gamepad2.right_stick_y < 0 && outtakeAxonVal < 1)
             outtakeAxonVal += 0.005;
@@ -222,14 +222,14 @@ public class OPModeV2 extends OpMode {
     }
 
     boolean speedLimit = false;
-    boolean isG1LBumberPressed = false;
+    boolean isG1RBumberPressed = false;
     private void Roti() {
-        if(gamepad1.left_bumper && !isG1LBumberPressed) {
-            isG1LBumberPressed = true;
-            follower.setMaxPower(speedLimit ? 1.0 : 0.5);
+        if(gamepad1.right_bumper && !isG1RBumberPressed) {
+            isG1RBumberPressed = true;
+            follower.setMaxPower(speedLimit ? 1.0 : 0.2);
             speedLimit = !speedLimit;
-        } else if(!gamepad1.left_bumper)
-            isG1LBumberPressed = false;
+        } else if(!gamepad1.right_bumper)
+            isG1RBumberPressed = false;
         follower.setTeleOpMovementVectors(-gamepad1.left_stick_y, -gamepad1.left_stick_x, -gamepad1.right_stick_x, true);
         follower.update();
     }

@@ -43,8 +43,8 @@ public class autonomieSpecimenPedro extends OpMode {
     // Scor la specimen
     private final Pose scorePosePreLoad = new Pose(35, 66, Math.toRadians(180));
     private final Pose scorePose1 = new Pose(35, 71, Math.toRadians(180));
-    private final Pose scorePose2 = new Pose(38, 74, Math.toRadians(180));
-    private final Pose scorePose3 = new Pose(38, 74, Math.toRadians(180));
+    private final Pose scorePose2 = new Pose(37.5, 74, Math.toRadians(180));
+    private final Pose scorePose3 = new Pose(39, 74, Math.toRadians(180));
 
     // Pregatire pentru specimene
     private final Pose specimenReadyPos = new Pose(62, 36, Math.toRadians(0));
@@ -161,8 +161,8 @@ public class autonomieSpecimenPedro extends OpMode {
                 .build();
 
         park = follower.pathBuilder()
-                .addPath(new BezierCurve(new Point(scorePose3), /* Control Point */ new Point(parkControlPose1), new Point(parkControlPose2), new Point(parkPose)))
-                .setLinearHeadingInterpolation(scorePose3.getHeading(), parkPose.getHeading())
+                .addPath(new BezierCurve(new Point(scorePose3), new Point(specimenHPlayer2)))
+                .setConstantHeadingInterpolation(scorePose3.getHeading())
                 .build();
     }
 
@@ -238,11 +238,11 @@ public class autonomieSpecimenPedro extends OpMode {
                 break;
             case 9:
                 /* Urmatoarea miscare incepe doar dupa ce robotul este la 1inch dinstanta de cealalta */
-                if (follower.getPose().getX() < (specimenHPlayer2.getX() + 1.5) && follower.getPose().getY() > (specimenHPlayer2.getY() - 1.5)) {
+                if (follower.getPose().getX() < (specimenHPlayer2.getX() + 1.7) && follower.getPose().getY() > (specimenHPlayer2.getY() - 1.7)) {
                     if(pathTimer.getElapsedTimeSeconds() > 0.2)
                         claw.CloseOuttake();
                     if(pathTimer.getElapsedTimeSeconds() > 0.7) {
-                        slider.MoveOuttake(RobotConstants.outtakeSliderSpecimenPosition, 1);
+                        slider.MoveOuttake(RobotConstants.outtakeSliderSpecimenPosition, 0.55);
                         follower.followPath(subScore1, true);
                         setPathState(10);
                     }
@@ -268,7 +268,7 @@ public class autonomieSpecimenPedro extends OpMode {
                 break;
             case 12:
                 /* Urmatoarea miscare incepe doar dupa ce robotul este la 1inch dinstanta de cealalta */
-                if (follower.getPose().getX() < (specimenHPlayer2.getX() + 1.5) && follower.getPose().getY() < (specimenHPlayer2.getY() + 1.5)) {
+                if (follower.getPose().getX() < (specimenHPlayer2.getX() + 1.7) && follower.getPose().getY() < (specimenHPlayer2.getY() + 1.7)) {
                     if(pathTimer.getElapsedTimeSeconds() > 0.2)
                         claw.CloseOuttake();
                     if(pathTimer.getElapsedTimeSeconds() > 0.7) {
@@ -279,7 +279,7 @@ public class autonomieSpecimenPedro extends OpMode {
                 }
                 break;
             case 13:
-                slider.MoveOuttake(RobotConstants.outtakeSliderSpecimenPosition, 1);
+                slider.MoveOuttake(RobotConstants.outtakeSliderSpecimenPosition, 0.55);
                 /* Urmatoarea miscare incepe doar dupa ce robotul este la 1inch dinstanta de cealalta */
                 if (follower.getPose().getX() > (scorePose2.getX() - 1) && follower.getPose().getY() > (scorePose2.getY() - 1)) {
                     slider.MoveOuttake(RobotConstants.outtakeSliderReleasePosition, 1);
@@ -300,31 +300,33 @@ public class autonomieSpecimenPedro extends OpMode {
                 break;
             case 15:
                 /* Urmatoarea miscare incepe doar dupa ce robotul este la 1inch dinstanta de cealalta */
-                if (follower.getPose().getX() < (specimenHPlayer2.getX() + 1.5) && follower.getPose().getY() < (specimenHPlayer2.getY() + 1.5)) {
+                if (follower.getPose().getX() < (specimenHPlayer2.getX() + 1.7) && follower.getPose().getY() < (specimenHPlayer2.getY() + 1.7)) {
                     if(pathTimer.getElapsedTimeSeconds() > 0.2)
                         claw.CloseOuttake();
                     if(pathTimer.getElapsedTimeSeconds() > 0.7) {
-                        follower.setMaxPower(0.85);
+                        follower.setMaxPower(0.75);
                         follower.followPath(subScore3, true);
                         setPathState(16);
                     }
                 }
                 break;
             case 16:
-                slider.MoveOuttake(RobotConstants.outtakeSliderSpecimenPosition, 1);
+                slider.MoveOuttake(RobotConstants.outtakeSliderSpecimenPosition, 0.55);
                 /* Urmatoarea miscare incepe doar dupa ce robotul este la 1inch dinstanta de cealalta */
                 if (follower.getPose().getX() > (scorePose3.getX() - 1) && follower.getPose().getY() > (scorePose3.getY() - 1)) {
                     slider.MoveOuttake(RobotConstants.outtakeSliderReleasePosition, 1);
                     if(slider.GetUpOuttakePosition() < RobotConstants.outtakeSliderReleasePosition + 200) {
                         claw.OpenOuttake();
-//                        follower.followPath(park, true);
+                        slider.MoveIntake(RobotConstants.intakeSliderRetractPosition, 1);
+                        follower.setMaxPower(1.0);
+                        follower.followPath(park, true);
                         setPathState(17);
                     }
                 }
                 break;
             case 17:
-//                claw.CloseOuttake();
-//                axon.SetOuttakePosition(RobotConstants.outtakeMidPos);
+                claw.OpenOuttake();
+                axon.SetOuttakePosition(RobotConstants.outtakeAutoMidPos);
                 slider.MoveOuttake(RobotConstants.outtakeSliderRetractPosition, 1);
                 /* Urmatoarea miscare incepe doar dupa ce robotul este la 1inch dinstanta de cealalta */
                 if (follower.getPose().getX() > (parkPose.getX() - 1) && follower.getPose().getY() > (parkPose.getY() - 1)) {

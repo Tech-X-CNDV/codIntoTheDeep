@@ -19,6 +19,7 @@ import java.util.Locale;
 @TeleOp(name = "Basic: OPModeV2", group = "Linear OpMode")
 public class OPModeV2 extends OpMode {
     public ElapsedTime runtime = new ElapsedTime();
+    private ElapsedTime timer = new ElapsedTime();
 
     private Follower follower;
     private final Pose startPose = new Pose(0,0,0);
@@ -74,6 +75,8 @@ public class OPModeV2 extends OpMode {
         IntakeAxonMotion();
         OuttakeSliderMotion();
         IntakeSliderMotion();
+        if(intakeToOuttakeTriggered)
+            IntakeToOuttake();
         Roti();
         HPlayerToggler();
         Telemetry();
@@ -93,6 +96,11 @@ public class OPModeV2 extends OpMode {
     public void HPlayerToggler() {
         if(gamepad2.left_bumper && !lBmpPressed) {
             lBmpPressed = true;
+            if(!hPlayer) {
+                claw.OpenOuttake();
+                sleep(100);
+                outtakeAxonVal = RobotConstants.outtakeBehindPos;
+            }
             hPlayer = !hPlayer;
         } else if(!gamepad2.left_bumper)
             lBmpPressed = false;
@@ -102,18 +110,26 @@ public class OPModeV2 extends OpMode {
     boolean intakeAutoSlider = false;
 
     public void IntakeToOuttake() {
-        sleep(200);
+        if(timer.seconds() < 0.2)
+            return;
         axon.SetIntakePosition(RobotConstants.intakeUpPos);
         claw.InitialRot();
         intakeMidAxonOn = false;
         intakeAxonOn = false;
-        sleep(400);
-        claw.OpenIntake();
-        sleep(800);
+        if(!hPlayer) {
+            if(timer.seconds() < 0.8)
+                return;
+            claw.OpenIntake();
+        }
+        if(timer.seconds() > 1 && !hPlayer)
+            return;
         intakeAutoSlider = true;
         slider.MoveIntake(RobotConstants.intakeSliderRetractPosition, 1);
-        axon.SetIntakePosition(RobotConstants.intakeMiddlePos);
+        if(hPlayer && slider.GetIntakePosition() > RobotConstants.intakeSliderRetractPosition + 100)
+            return;
+        axon.SetIntakePosition(RobotConstants.intakeHPlayerMiddlePos);
         intakeMidAxonOn = true;
+        intakeToOuttakeTriggered = false;
     }
 
     boolean changedROTINT = false;
@@ -130,16 +146,24 @@ public class OPModeV2 extends OpMode {
     }
 
     boolean changedINT = false;
+    boolean intakeToOuttakeTriggered = false;
 
     private void ToggleGhiaraIntake() {
         if (gamepad1.a && !changedINT) {
             changedINT = true;
-            if(claw.GetGrabIntakePosition() == 0.0)
+            if(claw.GetGrabIntakePosition() == 0.0) {
                 claw.OpenIntake();
+                intakeMidAxonOn = true;
+                axon.SetIntakePosition(RobotConstants.intakeMiddlePos);
+            }
             else
                 claw.CloseIntake();
-            if(intakeAxonOn && !hPlayer)
-                IntakeToOuttake();
+            if(intakeAxonOn) {
+                intakeToOuttakeTriggered = true;
+                follower.setMaxPower(1.0);
+                speedLimit = false;
+                timer.reset();
+            }
         } else if (!gamepad1.a)
             changedINT = false;
     }
@@ -166,7 +190,10 @@ public class OPModeV2 extends OpMode {
     private void OuttakeSliderMotion(){
         if (gamepad2.left_stick_y != 0.0) {
             outtakeAutoSlider = false;
-            slider.MoveOuttake(gamepad2.left_stick_y < 0 ? RobotConstants.outtakeSliderExtendPosition : RobotConstants.outtakeSliderRetractPosition, Math.abs(gamepad2.left_stick_y));
+            if(hPlayer)
+                slider.MoveOuttake(gamepad2.left_stick_y < 0 ? RobotConstants.outtakeSliderHPlayerSpecimenPosition : RobotConstants.outtakeSliderRetractPosition, Math.abs(gamepad2.left_stick_y));
+            else
+                slider.MoveOuttake(gamepad2.left_stick_y < 0 ? RobotConstants.outtakeSliderExtendPosition : RobotConstants.outtakeSliderRetractPosition, Math.abs(gamepad2.left_stick_y));
         } else if (!outtakeAutoSlider)
             slider.StopOuttake();
     }
@@ -196,8 +223,10 @@ public class OPModeV2 extends OpMode {
             }
         } else if (gamepad2.dpad_down)
             outtakeAxonVal = RobotConstants.outtakeMidPos;
-        else if (gamepad2.dpad_left)
+        else if (gamepad2.dpad_left) {
             outtakeAxonVal = RobotConstants.outtakeBehindPos;
+            claw.OpenOuttake();
+        }
         axon.SetOuttakePosition(outtakeAxonVal);
     }
 
@@ -209,6 +238,8 @@ public class OPModeV2 extends OpMode {
     private void IntakeAxonMotion(){
         if(gamepad1.x && intakeMidAxonMove && !intakeAxonOn) {
             axon.SetIntakePosition(intakeMidAxonOn ? RobotConstants.intakeUpPos : RobotConstants.intakeMiddlePos);
+            if(!intakeMidAxonOn)
+                claw.OpenIntake();
             intakeMidAxonOn = !intakeMidAxonOn;
             intakeMidAxonMove = false;
         } else if(!gamepad1.x)
@@ -222,14 +253,14 @@ public class OPModeV2 extends OpMode {
     }
 
     boolean speedLimit = false;
-    boolean isG1RBumberPressed = false;
+    boolean isG1LBumberPressed = false;
     private void Roti() {
-        if(gamepad1.right_bumper && !isG1RBumberPressed) {
-            isG1RBumberPressed = true;
+        if(gamepad1.left_bumper && !isG1LBumberPressed) {
+            isG1LBumberPressed = true;
             follower.setMaxPower(speedLimit ? 1.0 : 0.2);
             speedLimit = !speedLimit;
-        } else if(!gamepad1.right_bumper)
-            isG1RBumberPressed = false;
+        } else if(!gamepad1.left_bumper)
+            isG1LBumberPressed = false;
         follower.setTeleOpMovementVectors(-gamepad1.left_stick_y, -gamepad1.left_stick_x, -gamepad1.right_stick_x, true);
         follower.update();
     }

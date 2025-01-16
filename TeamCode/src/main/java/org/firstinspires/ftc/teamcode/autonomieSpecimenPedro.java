@@ -43,8 +43,8 @@ public class autonomieSpecimenPedro extends OpMode {
     // Scor la specimen
     private final Pose scorePosePreLoad = new Pose(35, 66, Math.toRadians(180));
     private final Pose scorePose1 = new Pose(35, 71, Math.toRadians(180));
-    private final Pose scorePose2 = new Pose(37.5, 74, Math.toRadians(180));
-    private final Pose scorePose3 = new Pose(39, 74, Math.toRadians(180));
+    private final Pose scorePose2 = new Pose(38, 74, Math.toRadians(180));
+    private final Pose scorePose3 = new Pose(40, 74, Math.toRadians(180));
 
     // Pregatire pentru specimene
     private final Pose specimenReadyPos = new Pose(62, 36, Math.toRadians(0));
@@ -242,7 +242,7 @@ public class autonomieSpecimenPedro extends OpMode {
                     if(pathTimer.getElapsedTimeSeconds() > 0.2)
                         claw.CloseOuttake();
                     if(pathTimer.getElapsedTimeSeconds() > 0.7) {
-                        slider.MoveOuttake(RobotConstants.outtakeSliderSpecimenPosition, 0.55);
+                        slider.MoveOuttake(RobotConstants.outtakeSliderHPlayerSpecimenPosition, 0.55);
                         follower.followPath(subScore1, true);
                         setPathState(10);
                     }
@@ -279,7 +279,7 @@ public class autonomieSpecimenPedro extends OpMode {
                 }
                 break;
             case 13:
-                slider.MoveOuttake(RobotConstants.outtakeSliderSpecimenPosition, 0.55);
+                slider.MoveOuttake(RobotConstants.outtakeSliderHPlayerSpecimenPosition, 0.55);
                 /* Urmatoarea miscare incepe doar dupa ce robotul este la 1inch dinstanta de cealalta */
                 if (follower.getPose().getX() > (scorePose2.getX() - 1) && follower.getPose().getY() > (scorePose2.getY() - 1)) {
                     slider.MoveOuttake(RobotConstants.outtakeSliderReleasePosition, 1);
@@ -311,7 +311,7 @@ public class autonomieSpecimenPedro extends OpMode {
                 }
                 break;
             case 16:
-                slider.MoveOuttake(RobotConstants.outtakeSliderSpecimenPosition, 0.55);
+                slider.MoveOuttake(RobotConstants.outtakeSliderHPlayerSpecimenPosition, 0.55);
                 /* Urmatoarea miscare incepe doar dupa ce robotul este la 1inch dinstanta de cealalta */
                 if (follower.getPose().getX() > (scorePose3.getX() - 1) && follower.getPose().getY() > (scorePose3.getY() - 1)) {
                     slider.MoveOuttake(RobotConstants.outtakeSliderReleasePosition, 1);

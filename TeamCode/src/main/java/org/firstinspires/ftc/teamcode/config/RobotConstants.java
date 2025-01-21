@@ -9,11 +9,11 @@ public class RobotConstants {
     public static final double intakeUpPos = 0.0;
     public static final double intakeMiddlePos = 0.22;
     public static final double intakeHPlayerMiddlePos = 0.15;
-    public static final double intakeDownPos = 0.25;
+    public static final double intakeDownPos = 0.27;
     public static final double outtakeUpPos = 1;
     public static final double outtakeMidPos = 0.33;
     public static final double outtakeAutoMidPos = 0.20;
-    public static final double outtakeBehindPos = 0.015;
+    public static final double outtakeBehindPos = 0.105;
     public static final int outtakeSliderExtendPosition = 4160;
     public static final int outtakeSliderRetractPosition = 0;
     public static final int outtakeSliderSpecimenPosition = 2500;

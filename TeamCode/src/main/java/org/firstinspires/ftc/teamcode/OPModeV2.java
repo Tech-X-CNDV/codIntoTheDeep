@@ -112,7 +112,10 @@ public class OPModeV2 extends OpMode {
     public void IntakeToOuttake() {
         if(timer.seconds() < 0.2)
             return;
-        axon.SetIntakePosition(RobotConstants.intakeUpPos);
+        if(!hPlayer)
+            axon.SetIntakePosition(RobotConstants.intakeUpPos);
+        else
+            axon.SetIntakePosition(RobotConstants.intakeHPlayerMiddlePos);
         claw.InitialRot();
         intakeMidAxonOn = false;
         intakeAxonOn = false;
@@ -124,10 +127,13 @@ public class OPModeV2 extends OpMode {
         if(timer.seconds() > 1 && !hPlayer)
             return;
         intakeAutoSlider = true;
-        slider.MoveIntake(RobotConstants.intakeSliderRetractPosition, 1);
-        if(hPlayer && slider.GetIntakePosition() > RobotConstants.intakeSliderRetractPosition + 100)
+        slider.MoveIntake(!hPlayer ? RobotConstants.intakeSliderRetractPosition : RobotConstants.intakeSliderRetractPosition + 300, 1);
+        if(hPlayer && slider.GetIntakePosition() > RobotConstants.intakeSliderRetractPosition + 400)
             return;
-        axon.SetIntakePosition(RobotConstants.intakeHPlayerMiddlePos);
+        if(!hPlayer)
+            axon.SetIntakePosition(RobotConstants.intakeMiddlePos);
+        else
+            axon.SetIntakePosition(RobotConstants.intakeHPlayerMiddlePos);
         intakeMidAxonOn = true;
         intakeToOuttakeTriggered = false;
     }
@@ -155,6 +161,8 @@ public class OPModeV2 extends OpMode {
                 claw.OpenIntake();
                 intakeMidAxonOn = true;
                 axon.SetIntakePosition(RobotConstants.intakeMiddlePos);
+                intakeAutoSlider = true;
+                slider.MoveIntake(RobotConstants.intakeSliderRetractPosition, 1);
             }
             else
                 claw.CloseIntake();

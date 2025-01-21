@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.pedropathing.follower.Follower;
@@ -14,12 +15,15 @@ import org.firstinspires.ftc.teamcode.config.RobotConstants;
 import pedroPathing.constants.FConstants;
 import pedroPathing.constants.LConstants;
 
+import java.util.List;
 import java.util.Locale;
 
 @TeleOp(name = "Basic: OPModeV2", group = "Linear OpMode")
 public class OPModeV2 extends OpMode {
     public ElapsedTime runtime = new ElapsedTime();
     private ElapsedTime timer = new ElapsedTime();
+
+    private List<LynxModule> allHubs;
 
     private Follower follower;
     private final Pose startPose = new Pose(0,0,0);
@@ -35,6 +39,14 @@ public class OPModeV2 extends OpMode {
 
     @Override
     public void init() {
+        // Get all Lynx modules
+        allHubs = hardwareMap.getAll(LynxModule.class);
+
+        // Enable bulk caching for all modules
+        for (LynxModule module : allHubs) {
+            module.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
+        }
+
         // Initializare Pedro
         Constants.setConstants(FConstants.class, LConstants.class);
         follower = new Follower(hardwareMap);
@@ -305,9 +317,11 @@ public class OPModeV2 extends OpMode {
         telemetry.addData("OuttakeSliderPowerDown", slider.GetDownOuttakePower());
         telemetry.addData("OuttakeSliderPositionUp", slider.GetUpOuttakePosition());
         telemetry.addData("OuttakeSliderPositionDown", slider.GetDownOuttakePosition());
+        telemetry.addData("OuttakeSliderAmperage", slider.GetOuttakeAmperage());
         // Intake slider telemetry
         telemetry.addData("IntakeSliderPower", slider.GetIntakePower());
         telemetry.addData("IntakeSliderPos", slider.GetIntakePosition());
+        telemetry.addData("IntakeSliderAmperage", slider.GetIntakeAmperage());
         // Send the telemetry to the driver station
         telemetry.update();
     }

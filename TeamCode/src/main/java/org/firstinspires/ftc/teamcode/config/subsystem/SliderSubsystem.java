@@ -1,29 +1,30 @@
 package org.firstinspires.ftc.teamcode.config.subsystem;
 
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.DcMotor;
 
+import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.teamcode.config.RobotConstants;
 
 public class SliderSubsystem {
-    private final DcMotor outtakeSliderUp, outtakeSliderDown, intakeSlider;
+    private final DcMotorEx outtakeSliderUp, outtakeSliderDown, intakeSlider;
 
     public SliderSubsystem(HardwareMap hardwareMap) {
-        outtakeSliderUp = hardwareMap.get(DcMotor.class, "outtakeSliderUp");
+        outtakeSliderUp = hardwareMap.get(DcMotorEx.class, "outtakeSliderUp");
         outtakeSliderUp.setDirection(DcMotorSimple.Direction.FORWARD);
-        outtakeSliderDown = hardwareMap.get(DcMotor.class, "outtakeSliderDown");
+        outtakeSliderDown = hardwareMap.get(DcMotorEx.class, "outtakeSliderDown");
         outtakeSliderDown.setDirection(DcMotorSimple.Direction.REVERSE);
-        intakeSlider = hardwareMap.get(DcMotor.class, "intakeSlider");
+        intakeSlider = hardwareMap.get(DcMotorEx.class, "intakeSlider");
         intakeSlider.setDirection(DcMotorSimple.Direction.REVERSE);
     }
 
     //------------------------------IntakeSlider------------------------------//
 
     public void InitIntake(){
-        intakeSlider.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        intakeSlider.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         intakeSlider.setTargetPosition(0);
-        intakeSlider.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        intakeSlider.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
 
         intakeSlider.setPower(0);
     }
@@ -40,13 +41,13 @@ public class SliderSubsystem {
     //------------------------------OuttakeSlider------------------------------//
 
     public void InitOuttake(){
-        outtakeSliderUp.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        outtakeSliderUp.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         outtakeSliderUp.setTargetPosition(0);
-        outtakeSliderUp.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        outtakeSliderUp.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
 
-        outtakeSliderDown.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        outtakeSliderDown.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         outtakeSliderDown.setTargetPosition(0);
-        outtakeSliderDown.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        outtakeSliderDown.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
 
         outtakeSliderUp.setPower(0);
         outtakeSliderDown.setPower(0);
@@ -74,6 +75,10 @@ public class SliderSubsystem {
         return  intakeSlider.getPower();
     }
 
+    public double GetIntakeAmperage(){
+        return intakeSlider.getCurrent(CurrentUnit.AMPS);
+    }
+
     public int GetUpOuttakePosition() {
         return outtakeSliderUp.getCurrentPosition();
     }
@@ -88,5 +93,9 @@ public class SliderSubsystem {
 
     public double GetDownOuttakePower(){
         return  outtakeSliderDown.getPower();
+    }
+
+    public double GetOuttakeAmperage(){
+        return (outtakeSliderUp.getCurrent(CurrentUnit.AMPS) + outtakeSliderDown.getCurrent(CurrentUnit.AMPS)) / 2;
     }
 }

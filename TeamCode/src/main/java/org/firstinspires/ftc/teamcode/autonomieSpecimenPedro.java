@@ -244,6 +244,7 @@ public class autonomieSpecimenPedro extends OpMode {
                 break;
             case 9:
                 /* Urmatoarea miscare incepe doar dupa ce robotul este la 1inch dinstanta de cealalta */
+                // TODO Try follower.isRobotStuck()
                 if (pathTimer.getElapsedTimeSeconds() > 0.1) {
                     if(pathTimer.getElapsedTimeSeconds() > 0.3)
                         claw.CloseOuttake();
@@ -278,8 +279,7 @@ public class autonomieSpecimenPedro extends OpMode {
                     if(pathTimer.getElapsedTimeSeconds() > 0.3)
                         claw.CloseOuttake();
                     if(pathTimer.getElapsedTimeSeconds() > 0.8) {
-                        follower.setMaxPower(0.9);
-                        follower.followPath(subScore2, true);
+                        follower.followPath(subScore2, 0.9, true);
                         setPathState(13);
                     }
                 }
@@ -291,7 +291,6 @@ public class autonomieSpecimenPedro extends OpMode {
                     slider.MoveOuttake(RobotConstants.outtakeSliderReleasePosition, 1);
                     if(slider.GetUpOuttakePosition() < RobotConstants.outtakeSliderReleasePosition + 200) {
                         claw.OpenOuttake();
-                        follower.setMaxPower(1.0);
                         follower.followPath(hPlayer2, true);
                         setPathState(14);
                     }
@@ -310,8 +309,7 @@ public class autonomieSpecimenPedro extends OpMode {
                     if(pathTimer.getElapsedTimeSeconds() > 0.3)
                         claw.CloseOuttake();
                     if(pathTimer.getElapsedTimeSeconds() > 0.8) {
-                        follower.setMaxPower(0.8);
-                        follower.followPath(subScore3, true);
+                        follower.followPath(subScore3, 0.8, true);
                         setPathState(16);
                     }
                 }
@@ -324,7 +322,6 @@ public class autonomieSpecimenPedro extends OpMode {
                     if(slider.GetUpOuttakePosition() < RobotConstants.outtakeSliderReleasePosition + 200) {
                         claw.OpenOuttake();
                         slider.MoveIntake(RobotConstants.intakeSliderRetractPosition, 1);
-                        follower.setMaxPower(1.0);
                         follower.followPath(park, true);
                         setPathState(17);
                     }

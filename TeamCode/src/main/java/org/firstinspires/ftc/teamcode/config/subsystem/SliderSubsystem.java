@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.config.subsystem;
 
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -9,6 +10,7 @@ import org.firstinspires.ftc.teamcode.config.RobotConstants;
 
 public class SliderSubsystem {
     private final DcMotorEx outtakeSliderUp, outtakeSliderDown, intakeSlider;
+    boolean outtakeResseted = false;
 
     public SliderSubsystem(HardwareMap hardwareMap) {
         outtakeSliderUp = hardwareMap.get(DcMotorEx.class, "outtakeSliderUp");
@@ -37,6 +39,7 @@ public class SliderSubsystem {
     public void StopIntake(){
         intakeSlider.setPower(0);
     }
+    //TODO intake reset
 
     //------------------------------OuttakeSlider------------------------------//
 
@@ -54,15 +57,40 @@ public class SliderSubsystem {
     }
 
     public void MoveOuttake(int position, double power){
-        outtakeSliderUp.setTargetPosition(position);
-        outtakeSliderDown.setTargetPosition(position);
-        outtakeSliderUp.setPower(power);
-        outtakeSliderDown.setPower(power);
+        if(outtakeResseted) {
+            outtakeSliderUp.setTargetPosition(position);
+            outtakeSliderDown.setTargetPosition(position);
+            outtakeSliderUp.setPower(power);
+            outtakeSliderDown.setPower(power);
+        }
     }
 
     public void StopOuttake(){
+        if(outtakeResseted) {
+            outtakeSliderUp.setPower(0);
+            outtakeSliderDown.setPower(0);
+        }
+    }
+
+    public void ResetOuttake(){
+        outtakeSliderUp.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+        outtakeSliderDown.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+        outtakeSliderUp.setPower(-0.5);
+        outtakeSliderDown.setPower(-0.5);
+    }
+
+    public void ResetOuttakeEncoder(){
         outtakeSliderUp.setPower(0);
         outtakeSliderDown.setPower(0);
+        sleep(200);
+        outtakeSliderUp.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+        outtakeSliderDown.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+        outtakeSliderDown.setTargetPosition(0);
+        outtakeSliderUp.setTargetPosition(0);
+        outtakeSliderUp.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+        outtakeSliderDown.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+
+        outtakeResseted = true;
     }
 
     //------------------------------Getters------------------------------//
@@ -97,5 +125,13 @@ public class SliderSubsystem {
 
     public double GetOuttakeAmperage(){
         return (outtakeSliderUp.getCurrent(CurrentUnit.AMPS) + outtakeSliderDown.getCurrent(CurrentUnit.AMPS)) / 2;
+    }
+
+    public void sleep(long milliseconds) {
+        try {
+            Thread.sleep(milliseconds);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
     }
 }

@@ -37,6 +37,8 @@ public class OPModeV2 extends OpMode {
     // Axoane
     private AxonSubsystem axon;
 
+    boolean resetOuttakeTriggered = false;
+
     @Override
     public void init() {
         // Get all Lynx modules
@@ -76,6 +78,7 @@ public class OPModeV2 extends OpMode {
         slider.InitOuttake();
         axon.InitIntake();
         axon.InitOuttake(RobotConstants.outtakeMidPos);
+        resetOuttakeTriggered = true;
         runtime.reset();
     }
 
@@ -89,6 +92,13 @@ public class OPModeV2 extends OpMode {
         IntakeSliderMotion();
         if(intakeToOuttakeTriggered)
             IntakeToOuttake();
+        if(resetOuttakeTriggered){
+            slider.ResetOuttake();
+            if(slider.GetOuttakeAmperage() > RobotConstants.outtakeSliderStopAmperage) {
+                resetOuttakeTriggered = false;
+                slider.ResetOuttakeEncoder();
+            }
+        }
         Roti();
         HPlayerToggler();
         Telemetry();

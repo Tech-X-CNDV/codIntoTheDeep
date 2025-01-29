@@ -7,9 +7,10 @@ public class RobotConstants {
     public static final double minPosRotInt = 0;
     public static final double maxPosRotInt = 0.46;
     public static final double intakeUpPos = 0.0;
-    public static final double intakeMiddlePos = 0.22;
-    public static final double intakeHPlayerMiddlePos = 0.15;
+    public static final double intakeMiddlePos = 0.25;
+    public static final double intakeHPlayerMiddlePos = 0.17;
     public static final double intakeDownPos = 0.27;
+    public static final double outtakeStartPos = 0.27;
     public static final double outtakeUpPos = 1;
     public static final double outtakeMidPos = 0.33;
     public static final double outtakeAutoMidPos = 0.20;
@@ -20,6 +21,7 @@ public class RobotConstants {
     public static final int outtakeSliderHPlayerSpecimenPosition = 2380;
     public static final int outtakeSliderReleasePosition = 1180;
     public static final double outtakeSliderStopAmperage = 2.5;
-    public static final int intakeSliderExtendPosition = 2000;
+    public static final int intakeSliderExtendPosition = 3700;
     public static final int intakeSliderRetractPosition = 0;
+    public static final double intakeSliderStopAmperage = 2.0;
 }

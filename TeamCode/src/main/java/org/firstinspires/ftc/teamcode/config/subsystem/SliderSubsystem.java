@@ -9,7 +9,7 @@ import org.firstinspires.ftc.teamcode.config.RobotConstants;
 
 public class SliderSubsystem {
     private final DcMotorEx outtakeSliderUp, outtakeSliderDown, intakeSlider;
-    boolean outtakeResseted = false;
+    boolean outtakeResseted = false, intakeResseted = false;
 
     public SliderSubsystem(HardwareMap hardwareMap) {
         outtakeSliderUp = hardwareMap.get(DcMotorEx.class, "outtakeSliderUp");
@@ -17,7 +17,7 @@ public class SliderSubsystem {
         outtakeSliderDown = hardwareMap.get(DcMotorEx.class, "outtakeSliderDown");
         outtakeSliderDown.setDirection(DcMotorSimple.Direction.REVERSE);
         intakeSlider = hardwareMap.get(DcMotorEx.class, "intakeSlider");
-        intakeSlider.setDirection(DcMotorSimple.Direction.REVERSE);
+        intakeSlider.setDirection(DcMotorSimple.Direction.FORWARD);
     }
 
     //------------------------------IntakeSlider------------------------------//
@@ -31,14 +31,31 @@ public class SliderSubsystem {
     }
 
     public void MoveIntake(int position, double power){
-        intakeSlider.setTargetPosition(position);
-        intakeSlider.setPower(power);
+        if(intakeResseted) {
+            intakeSlider.setTargetPosition(position);
+            intakeSlider.setPower(power);
+        }
     }
 
     public void StopIntake(){
-        intakeSlider.setPower(0);
+        if(intakeResseted)
+            intakeSlider.setPower(0);
     }
-    //TODO intake reset
+
+    public void ResetIntake(){
+        intakeSlider.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+        intakeSlider.setPower(-0.5);
+    }
+
+    public void ResetIntakeEncoder(){
+        intakeSlider.setPower(0);
+        sleep(200);
+        intakeSlider.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+        intakeSlider.setTargetPosition(0);
+        intakeSlider.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+
+        intakeResseted = true;
+    }
 
     //------------------------------OuttakeSlider------------------------------//
 

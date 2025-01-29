@@ -37,7 +37,7 @@ public class OPModeV2 extends OpMode {
     // Axoane
     private AxonSubsystem axon;
 
-    boolean resetOuttakeTriggered = false;
+    boolean resetOuttakeTriggered = false, resetIntakeTriggered = false;
 
     @Override
     public void init() {
@@ -77,8 +77,9 @@ public class OPModeV2 extends OpMode {
         slider.InitIntake();
         slider.InitOuttake();
         axon.InitIntake();
-        axon.InitOuttake(RobotConstants.outtakeMidPos);
+        axon.InitOuttake(RobotConstants.outtakeStartPos);
         resetOuttakeTriggered = true;
+        resetIntakeTriggered = true;
         runtime.reset();
     }
 
@@ -97,6 +98,13 @@ public class OPModeV2 extends OpMode {
             if(slider.GetOuttakeAmperage() > RobotConstants.outtakeSliderStopAmperage) {
                 resetOuttakeTriggered = false;
                 slider.ResetOuttakeEncoder();
+            }
+        }
+        if(resetIntakeTriggered){
+            slider.ResetIntake();
+            if(slider.GetIntakeAmperage() > RobotConstants.intakeSliderStopAmperage) {
+                resetIntakeTriggered = false;
+                slider.ResetIntakeEncoder();
             }
         }
         Roti();
@@ -239,7 +247,7 @@ public class OPModeV2 extends OpMode {
             slider.StopIntake();
     }
 
-    double outtakeAxonVal = RobotConstants.outtakeMidPos;
+    double outtakeAxonVal = RobotConstants.outtakeStartPos;
     private void OuttakeAxonMotion(){
         if (gamepad2.right_stick_y < 0 && outtakeAxonVal < 1)
             outtakeAxonVal += 0.005;

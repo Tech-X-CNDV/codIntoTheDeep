@@ -134,21 +134,6 @@ public class autonomieSpecimenPedro extends OpMode {
                 .setConstantHeadingInterpolation(specimenHPlayer1.getHeading())
                 .build();
 
-        subScore1 = follower.pathBuilder()
-                .addPath(new BezierLine(new Point(specimenHPlayerFin), new Point(scorePose1)))
-                .setLinearHeadingInterpolation(specimenHPlayer2.getHeading(), scorePose1.getHeading())
-                .build();
-
-        subScore2 = follower.pathBuilder()
-                .addPath(new BezierLine(new Point(specimenHPlayerFin), new Point(scorePose2)))
-                .setLinearHeadingInterpolation(specimenHPlayer2.getHeading(), scorePose2.getHeading())
-                .build();
-
-        subScore3 = follower.pathBuilder()
-                .addPath(new BezierLine(new Point(specimenHPlayerFin), new Point(scorePose3)))
-                .setLinearHeadingInterpolation(specimenHPlayer2.getHeading(), scorePose3.getHeading())
-                .build();
-
         hPlayer1 = follower.pathBuilder()
                 .addPath(new BezierLine(new Point(scorePose1), new Point(specimenHPlayer1)))
                 .setLinearHeadingInterpolation(scorePose1.getHeading(), specimenHPlayer1.getHeading())
@@ -163,6 +148,29 @@ public class autonomieSpecimenPedro extends OpMode {
                 .addPath(new BezierCurve(new Point(scorePose3), new Point(specimenHPlayer1)))
                 .setConstantHeadingInterpolation(scorePose3.getHeading())
                 .build();
+    }
+
+    public void buildDynamicPaths(int pathNumber){
+        switch (pathNumber){
+            case 1:
+                subScore1 = follower.pathBuilder()
+                        .addPath(new BezierLine(new Point(specimenHPlayerFin), new Point(scorePose1)))
+                        .setLinearHeadingInterpolation(specimenHPlayer2.getHeading(), scorePose1.getHeading())
+                        .build();
+                break;
+            case 2:
+                subScore2 = follower.pathBuilder()
+                        .addPath(new BezierLine(new Point(specimenHPlayerFin), new Point(scorePose2)))
+                        .setLinearHeadingInterpolation(specimenHPlayer2.getHeading(), scorePose2.getHeading())
+                        .build();
+                break;
+            case 3:
+                subScore3 = follower.pathBuilder()
+                        .addPath(new BezierLine(new Point(specimenHPlayerFin), new Point(scorePose3)))
+                        .setLinearHeadingInterpolation(specimenHPlayer2.getHeading(), scorePose3.getHeading())
+                        .build();
+                break;
+        }
     }
 
     public void autonomousPathUpdate() {
@@ -243,6 +251,7 @@ public class autonomieSpecimenPedro extends OpMode {
                     if(pathTimer.getElapsedTimeSeconds() > 0.5) {
                         specimenHPlayerFin.setX(follower.getPose().getX());
                         specimenHPlayerFin.setY(follower.getPose().getY());
+                        buildDynamicPaths(1);
                         slider.MoveOuttake(RobotConstants.outtakeSliderHPlayerSpecimenPosition, 0.55);
                         follower.followPath(subScore1, true);
                         setPathState(10);
@@ -275,6 +284,7 @@ public class autonomieSpecimenPedro extends OpMode {
                     if(pathTimer.getElapsedTimeSeconds() > 0.5) {
                         specimenHPlayerFin.setX(follower.getPose().getX());
                         specimenHPlayerFin.setY(follower.getPose().getY());
+                        buildDynamicPaths(2);
                         slider.MoveOuttake(RobotConstants.outtakeSliderHPlayerSpecimenPosition, 0.55);
                         follower.followPath(subScore2, true);
                         setPathState(13);
@@ -307,6 +317,7 @@ public class autonomieSpecimenPedro extends OpMode {
                     if(pathTimer.getElapsedTimeSeconds() > 0.5) {
                         specimenHPlayerFin.setX(follower.getPose().getX());
                         specimenHPlayerFin.setY(follower.getPose().getY());
+                        buildDynamicPaths(3);
                         slider.MoveOuttake(RobotConstants.outtakeSliderHPlayerSpecimenPosition, 0.55);
                         follower.followPath(subScore3, true);
                         setPathState(16);

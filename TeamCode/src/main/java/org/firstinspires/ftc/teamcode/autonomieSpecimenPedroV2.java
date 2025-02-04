@@ -1,0 +1,446 @@
+package org.firstinspires.ftc.teamcode;
+
+
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+
+import org.firstinspires.ftc.teamcode.config.RobotConstants;
+import com.pedropathing.follower.Follower;
+import com.pedropathing.localization.Pose;
+import com.pedropathing.pathgen.BezierCurve;
+import com.pedropathing.pathgen.BezierLine;
+import com.pedropathing.pathgen.Path;
+import com.pedropathing.pathgen.PathChain;
+import com.pedropathing.pathgen.Point;
+import com.pedropathing.util.Timer;
+import com.pedropathing.util.Constants;
+
+import pedroPathing.constants.FConstants;
+import pedroPathing.constants.LConstants;
+
+import org.firstinspires.ftc.teamcode.config.subsystem.ClawSubsystem;
+import org.firstinspires.ftc.teamcode.config.subsystem.SliderSubsystem;
+import org.firstinspires.ftc.teamcode.config.subsystem.AxonSubsystem;
+
+
+@Autonomous(name = "AutonomieSpecimenV2")
+public class autonomieSpecimenPedroV2 extends OpMode {
+
+    private Follower follower;
+    private Timer pathTimer, actionTimer, opmodeTimer;
+
+    // Stagiul in care suntem momentan
+    private int pathState;
+
+    public ClawSubsystem claw;
+    public SliderSubsystem slider;
+    public AxonSubsystem axon;
+
+
+    /** Start Pose of our robot */
+    private final Pose startPose = new Pose(8, 60, Math.toRadians(180));
+
+    // Scor la specimen
+    private final Pose scorePosePreLoad = new Pose(35.5, 64, Math.toRadians(180));
+    private final Pose scorePose1 = new Pose(36, 70, Math.toRadians(180));
+    private final Pose scorePose2 = new Pose(42, 74, Math.toRadians(180));
+    private final Pose scorePose3 = new Pose(44, 77, Math.toRadians(180));
+
+    // Specimen 1
+    private final Pose specimen1Pos = new Pose(24, 35, Math.toRadians(325));
+    private final Pose specimen1HPlayer = new Pose(24, 35, Math.toRadians(220));
+
+    // Specimen 2
+    private final Pose specimen2Pos = new Pose(24, 25, Math.toRadians(325));
+    private final Pose specimen2HPlayer = new Pose(24, 25, Math.toRadians(220));
+
+    // Specimen 3
+    private final Pose specimen3Pos = new Pose(24, 15, Math.toRadians(325));
+    private final Pose specimen3HPlayer = new Pose(24, 15, Math.toRadians(220));
+    private final Pose specimenHPlayer1 = new Pose(16, 23, Math.toRadians(0));
+    private final Pose specimenHPlayer2 = new Pose(4, 23, Math.toRadians(0));
+    private final Pose specimenHPlayerFin = new Pose(5, 23, Math.toRadians(0));
+
+    // Pozitia de parcare
+    private final Pose parkPose = new Pose(59, 95, Math.toRadians(180));
+
+    // Aici stocam traiectoriile robotului
+    private PathChain scorePreload, park, specimen1, specimen2, specimen3, specimen4, specimen5, specimen6, specimenHPlayer, specimenHPlayerGet, subScore1, subScore2, subScore3, hPlayer1, hPlayer2, hPlayerGet1, hPlayerGet2;
+
+    public void buildPaths() {
+
+        /* Aici punem preload-ul cu care incepem. Folosim BezierLine pentru o linie dreapta */
+        scorePreload = follower.pathBuilder()
+                .addPath(new BezierLine(new Point(startPose), new Point(scorePosePreLoad)))
+                .setConstantHeadingInterpolation(startPose.getHeading())
+                .build();
+
+        specimen1 = follower.pathBuilder()
+                .addPath(new BezierLine(new Point(scorePosePreLoad), new Point(specimen1Pos)))
+                .setLinearHeadingInterpolation(scorePosePreLoad.getHeading(), specimen1Pos.getHeading())
+                .build();
+
+        specimen2 = follower.pathBuilder()
+                .addPath(new BezierLine(new Point(specimen1Pos), new Point(specimen1HPlayer)))
+                .setLinearHeadingInterpolation(specimen1Pos.getHeading(), specimen1HPlayer.getHeading())
+                .build();
+
+        specimen3 = follower.pathBuilder()
+                .addPath(new BezierLine(new Point(specimen1HPlayer), new Point(specimen2Pos)))
+                .setLinearHeadingInterpolation(specimen1HPlayer.getHeading(), specimen2Pos.getHeading())
+                .build();
+
+        specimen4 = follower.pathBuilder()
+                .addPath(new BezierLine(new Point(specimen2Pos), new Point(specimen2HPlayer)))
+                .setLinearHeadingInterpolation(specimen2Pos.getHeading(), specimenHPlayer2.getHeading())
+                .build();
+
+        specimen5 = follower.pathBuilder()
+                .addPath(new BezierLine(new Point(specimen2HPlayer), new Point(specimen3Pos)))
+                .setLinearHeadingInterpolation(specimen2HPlayer.getHeading(), specimen3Pos.getHeading())
+                .build();
+
+        specimen6 = follower.pathBuilder()
+                .addPath(new BezierLine(new Point(specimen3Pos), new Point(specimen3HPlayer)))
+                .setLinearHeadingInterpolation(specimen3Pos.getHeading(), specimen3HPlayer.getHeading())
+                .build();
+
+        specimenHPlayer = follower.pathBuilder()
+                .addPath(new BezierLine(new Point(specimen3HPlayer), new Point(specimenHPlayer1)))
+                .setLinearHeadingInterpolation(specimen3HPlayer.getHeading(), specimenHPlayer1.getHeading())
+                .build();
+
+        specimenHPlayerGet = follower.pathBuilder()
+                .addPath(new BezierLine(new Point(specimenHPlayer1), new Point(specimenHPlayer2)))
+                .setConstantHeadingInterpolation(specimenHPlayer1.getHeading())
+                .build();
+
+        subScore1 = follower.pathBuilder()
+                .addPath(new BezierLine(new Point(specimenHPlayer2), new Point(scorePose1)))
+                .setLinearHeadingInterpolation(specimenHPlayer2.getHeading(), scorePose1.getHeading())
+                .build();
+
+        subScore2 = follower.pathBuilder()
+                .addPath(new BezierLine(new Point(specimenHPlayer2), new Point(scorePose2)))
+                .setLinearHeadingInterpolation(specimenHPlayer2.getHeading(), scorePose2.getHeading())
+                .build();
+
+        subScore3 = follower.pathBuilder()
+                .addPath(new BezierLine(new Point(specimenHPlayer2), new Point(scorePose3)))
+                .setLinearHeadingInterpolation(specimenHPlayer2.getHeading(), scorePose3.getHeading())
+                .build();
+
+        hPlayer1 = follower.pathBuilder()
+                .addPath(new BezierLine(new Point(scorePose1), new Point(specimenHPlayer1)))
+                .setLinearHeadingInterpolation(scorePose1.getHeading(), specimenHPlayer1.getHeading())
+                .build();
+
+        hPlayer2 = follower.pathBuilder()
+                .addPath(new BezierLine(new Point(scorePose2), new Point(specimenHPlayer1)))
+                .setLinearHeadingInterpolation(scorePose2.getHeading(), specimenHPlayer1.getHeading())
+                .build();
+
+        park = follower.pathBuilder()
+                .addPath(new BezierCurve(new Point(scorePose3), new Point(specimenHPlayer2)))
+                .setConstantHeadingInterpolation(scorePose3.getHeading())
+                .build();
+    }
+
+    public void buildDynamicPaths(int pathNumber){
+        switch (pathNumber){
+            case 1:
+                subScore1 = follower.pathBuilder()
+                        .addPath(new BezierLine(new Point(specimenHPlayerFin), new Point(scorePose1)))
+                        .setLinearHeadingInterpolation(specimenHPlayer2.getHeading(), scorePose1.getHeading())
+                        .build();
+                break;
+            case 2:
+                subScore2 = follower.pathBuilder()
+                        .addPath(new BezierLine(new Point(specimenHPlayerFin), new Point(scorePose2)))
+                        .setLinearHeadingInterpolation(specimenHPlayer2.getHeading(), scorePose2.getHeading())
+                        .build();
+                break;
+            case 3:
+                subScore3 = follower.pathBuilder()
+                        .addPath(new BezierLine(new Point(specimenHPlayerFin), new Point(scorePose3)))
+                        .setLinearHeadingInterpolation(specimenHPlayer2.getHeading(), scorePose3.getHeading())
+                        .build();
+                break;
+        }
+    }
+
+    public void autonomousPathUpdate() {
+        switch (pathState) {
+            case 0:
+                follower.followPath(scorePreload, true);
+                claw.CloseOuttake();
+                slider.MoveOuttake(RobotConstants.outtakeSliderSpecimenPosition, 0.7);
+                axon.SetOuttakePosition(RobotConstants.outtakeBehindPos);
+                if(slider.GetUpOuttakePosition() > RobotConstants.outtakeSliderSpecimenPosition - 50)
+                    setPathState(1);
+                break;
+            case 1:
+                /* Urmatoarea miscare incepe doar dupa ce robotul este la 1inch dinstanta de cealalta */
+                if (!follower.isBusy()) {
+                    slider.MoveOuttake(RobotConstants.outtakeSliderReleasePosition, 0.7);
+                    if(slider.GetUpOuttakePosition() < RobotConstants.outtakeSliderReleasePosition + 200) {
+                        claw.OpenOuttake();
+                        follower.followPath(specimen1, true);
+                        setPathState(2);
+                    }
+                }
+                break;
+            case 2:
+                slider.MoveOuttake(RobotConstants.outtakeSliderRetractPosition, 0.3);
+                /* Urmatoarea miscare incepe doar dupa ce robotul este la 1inch dinstanta de cealalta */
+                if (!follower.isBusy()) {
+                    slider.MoveIntake(RobotConstants.intakeSliderExtendPosition, 1);
+                    axon.SetIntakePosition(RobotConstants.intakeDownPos);
+                    claw.OpenIntake();
+                    if(slider.GetIntakePosition() > RobotConstants.intakeSliderExtendPosition - 50){
+                        claw.CloseIntake();
+                        sleep(200);
+                        follower.followPath(specimen2, true);
+                    }
+                    setPathState(3);
+                }
+                break;
+            case 3:
+                /* Urmatoarea miscare incepe doar dupa ce robotul este la 1inch dinstanta de cealalta */
+                if (!follower.isBusy()) {
+                    claw.OpenIntake();
+                    follower.followPath(specimen3, true);
+                    setPathState(4);
+                }
+                break;
+            case 4:
+                /* Urmatoarea miscare incepe doar dupa ce robotul este la 1inch dinstanta de cealalta */
+                if (!follower.isBusy()) {
+                    slider.MoveIntake(RobotConstants.intakeSliderExtendPosition, 1);
+                    axon.SetIntakePosition(RobotConstants.intakeDownPos);
+                    claw.OpenIntake();
+                    if(slider.GetIntakePosition() > RobotConstants.intakeSliderExtendPosition - 50){
+                        claw.CloseIntake();
+                        sleep(200);
+                        follower.followPath(specimen4, true);
+                    }
+                    setPathState(5);
+                }
+                break;
+            case 5:
+                /* Urmatoarea miscare incepe doar dupa ce robotul este la 1inch dinstanta de cealalta */
+                if (!follower.isBusy()) {
+                    claw.OpenIntake();
+                    follower.followPath(specimen5, true);
+                    setPathState(6);
+                }
+                break;
+            case 6:
+                /* Urmatoarea miscare incepe doar dupa ce robotul este la 1inch dinstanta de cealalta */
+                if (!follower.isBusy()) {
+                    slider.MoveIntake(RobotConstants.intakeSliderExtendPosition, 1);
+                    axon.SetIntakePosition(RobotConstants.intakeDownPos);
+                    claw.OpenIntake();
+                    if(slider.GetIntakePosition() > RobotConstants.intakeSliderExtendPosition - 50){
+                        claw.CloseIntake();
+                        sleep(200);
+                        follower.followPath(specimen6, true);
+                    }
+                    setPathState(7);
+                }
+                break;
+            case 7:
+                /* Urmatoarea miscare incepe doar dupa ce robotul este la 1inch dinstanta de cealalta */
+                if (!follower.isBusy()) {
+                    claw.OpenIntake();
+                    sleep(200);
+                    slider.MoveIntake(RobotConstants.intakeSliderRetractPosition, 1);
+                    follower.followPath(specimenHPlayer, true);
+                    setPathState(8);
+                }
+                break;
+            case 8:
+                if (!follower.isBusy()) {
+                    follower.followPath(specimenHPlayerGet, true);
+                    setPathState(9);
+                }
+                break;
+            case 9:
+                /* Urmatoarea miscare incepe doar dupa ce robotul este la 1inch dinstanta de cealalta */
+                if (pathTimer.getElapsedTimeSeconds() > 0.1) {
+                    if(pathTimer.getElapsedTimeSeconds() > 0.3)
+                        claw.CloseOuttake();
+                    if(pathTimer.getElapsedTimeSeconds() > 0.5) {
+                        specimenHPlayerFin.setX(follower.getPose().getX());
+                        specimenHPlayerFin.setY(follower.getPose().getY());
+                        buildDynamicPaths(1);
+                        slider.MoveOuttake(RobotConstants.outtakeSliderHPlayerSpecimenPosition, 0.55);
+                        follower.followPath(subScore1, true);
+                        setPathState(10);
+                    }
+                }
+                break;
+            case 10:
+                /* Urmatoarea miscare incepe doar dupa ce robotul este la 1inch dinstanta de cealalta */
+                if (!follower.isBusy()) {
+                    slider.MoveOuttake(RobotConstants.outtakeSliderReleasePosition, 0.7);
+                    if (slider.GetUpOuttakePosition() < RobotConstants.outtakeSliderReleasePosition + 200) {
+                        claw.OpenOuttake();
+                        follower.followPath(hPlayer1, true);
+                        slider.MoveOuttake(RobotConstants.outtakeSliderRetractPosition, 0.3);
+                        setPathState(11);
+                    }
+                }
+                break;
+            case 11:
+                if (!follower.isBusy()) {
+                    follower.followPath(specimenHPlayerGet, true);
+                    setPathState(12);
+                }
+                break;
+            case 12:
+                /* Urmatoarea miscare incepe doar dupa ce robotul este la 1inch dinstanta de cealalta */
+                if (pathTimer.getElapsedTimeSeconds() > 0.1) {
+                    if(pathTimer.getElapsedTimeSeconds() > 0.3)
+                        claw.CloseOuttake();
+                    if(pathTimer.getElapsedTimeSeconds() > 0.5) {
+                        specimenHPlayerFin.setX(follower.getPose().getX());
+                        specimenHPlayerFin.setY(follower.getPose().getY());
+                        buildDynamicPaths(2);
+                        slider.MoveOuttake(RobotConstants.outtakeSliderHPlayerSpecimenPosition, 0.55);
+                        follower.followPath(subScore2, true);
+                        setPathState(13);
+                    }
+                }
+                break;
+            case 13:
+                /* Urmatoarea miscare incepe doar dupa ce robotul este la 1inch dinstanta de cealalta */
+                if (!follower.isBusy()) {
+                    slider.MoveOuttake(RobotConstants.outtakeSliderReleasePosition, 0.7);
+                    if(slider.GetUpOuttakePosition() < RobotConstants.outtakeSliderReleasePosition + 200) {
+                        claw.OpenOuttake();
+                        follower.followPath(hPlayer2, true);
+                        slider.MoveOuttake(RobotConstants.outtakeSliderRetractPosition, 0.3);
+                        setPathState(14);
+                    }
+                }
+                break;
+            case 14:
+                if (!follower.isBusy()) {
+                    follower.followPath(specimenHPlayerGet, true);
+                    setPathState(15);
+                }
+                break;
+            case 15:
+                /* Urmatoarea miscare incepe doar dupa ce robotul este la 1inch dinstanta de cealalta */
+                if (pathTimer.getElapsedTimeSeconds() > 0.1) {
+                    if(pathTimer.getElapsedTimeSeconds() > 0.3)
+                        claw.CloseOuttake();
+                    if(pathTimer.getElapsedTimeSeconds() > 0.5) {
+                        specimenHPlayerFin.setX(follower.getPose().getX());
+                        specimenHPlayerFin.setY(follower.getPose().getY());
+                        buildDynamicPaths(3);
+                        slider.MoveOuttake(RobotConstants.outtakeSliderHPlayerSpecimenPosition, 0.55);
+                        follower.followPath(subScore3, true);
+                        setPathState(16);
+                    }
+                }
+                break;
+            case 16:
+                /* Urmatoarea miscare incepe doar dupa ce robotul este la 1inch dinstanta de cealalta */
+                if (!follower.isBusy()) {
+                    slider.MoveOuttake(RobotConstants.outtakeSliderReleasePosition, 0.7);
+                    if(slider.GetUpOuttakePosition() < RobotConstants.outtakeSliderReleasePosition + 200) {
+                        claw.OpenOuttake();
+                        slider.MoveIntake(RobotConstants.intakeSliderRetractPosition, 0.3);
+                        follower.followPath(park, true);
+                        setPathState(17);
+                    }
+                }
+                break;
+            case 17:
+                claw.OpenOuttake();
+                axon.SetOuttakePosition(RobotConstants.outtakeAutoMidPos);
+                slider.MoveOuttake(RobotConstants.outtakeSliderRetractPosition, 0.3);
+                /* Urmatoarea miscare incepe doar dupa ce robotul este la 1inch dinstanta de cealalta */
+                if (follower.getPose().getX() > (parkPose.getX() - 1) && follower.getPose().getY() > (parkPose.getY() - 1)) {
+                    /* Setam stagiul la ceva care nu exista pentru a opri miscarile */
+                    setPathState(-1);
+                }
+                break;
+        }
+    }
+
+    /** Aceasta functie seteaza stagiul la care suntem si reseteaza timer-ul (optional) **/
+    public void setPathState(int pState) {
+        pathState = pState;
+        pathTimer.resetTimer();
+    }
+
+    @Override
+    public void loop() {
+        follower.update();
+        autonomousPathUpdate();
+
+        telemetry.addData("path state", pathState);
+        telemetry.addData("x", follower.getPose().getX());
+        telemetry.addData("y", follower.getPose().getY());
+        telemetry.addData("heading", follower.getPose().getHeading());
+        telemetry.addData("TimeElapsed", pathTimer.getElapsedTimeSeconds());
+        // Ghiara outtake telemetry
+        telemetry.addData("Outtake Position", claw.GetGrabOuttakePosition());
+        telemetry.addData("Outtake Angle", claw.GetGrabOuttakePosition() * 180);
+        // Outtake slider telemetry
+        telemetry.addData("OuttakeSliderPowerUp", slider.GetUpOuttakePower());
+        telemetry.addData("OuttakeSliderPowerDown", slider.GetDownOuttakePower());
+        telemetry.addData("OuttakeSliderPositionUp", slider.GetUpOuttakePosition());
+        telemetry.addData("OuttakeSliderPositionDown", slider.GetDownOuttakePosition());
+        telemetry.update();
+    }
+
+    @Override
+    public void init() {
+        pathTimer = new Timer();
+        opmodeTimer = new Timer();
+
+        opmodeTimer.resetTimer();
+
+        Constants.setConstants(FConstants.class, LConstants.class);
+        follower = new Follower(hardwareMap);
+        follower.setStartingPose(startPose);
+
+        claw = new ClawSubsystem(hardwareMap);
+        claw.InitIntake();
+        claw.InitOuttake();
+        claw.InitPivot();
+        slider = new SliderSubsystem(hardwareMap);
+        slider.InitIntake();
+        slider.InitOuttake();
+        axon = new AxonSubsystem(hardwareMap);
+        axon.InitIntake();
+        axon.InitOuttake(RobotConstants.outtakeBehindPos);
+
+        buildPaths();
+    }
+
+    @Override
+    public void init_loop() {}
+
+    @Override
+    public void start() {
+        opmodeTimer.resetTimer();
+        setPathState(0);
+    }
+
+    @Override
+    public void stop() {
+    }
+
+    public void sleep(long milliseconds) {
+        try {
+            Thread.sleep(milliseconds);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+    }
+}

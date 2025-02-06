@@ -41,10 +41,10 @@ public class autonomieSpecimenPedro extends OpMode {
     private final Pose startPose = new Pose(8, 60, Math.toRadians(180));
 
     // Scor la specimen
-    private final Pose scorePosePreLoad = new Pose(33, 64, Math.toRadians(180));
-    private final Pose scorePose1 = new Pose(36, 70, Math.toRadians(180)); // off 36 70
-    private final Pose scorePose2 = new Pose(38, 74, Math.toRadians(180)); // off 42 74
-    private final Pose scorePose3 = new Pose(39, 77, Math.toRadians(180)); // off 44 77
+    private final Pose scorePosePreLoad = new Pose(33, 63, Math.toRadians(180));
+    private final Pose scorePose1 = new Pose(34, 68, Math.toRadians(180)); // off 36 70
+    private final Pose scorePose2 = new Pose(36, 74, Math.toRadians(180)); // off 42 74
+    private final Pose scorePose3 = new Pose(37, 77, Math.toRadians(180)); // off 44 77
 
     // Pregatire pentru specimene
     private final Pose specimenReadyPos = new Pose(62, 36, Math.toRadians(0));
@@ -155,19 +155,19 @@ public class autonomieSpecimenPedro extends OpMode {
             case 1:
                 subScore1 = follower.pathBuilder()
                         .addPath(new BezierLine(new Point(specimenHPlayerFin), new Point(scorePose1)))
-                        .setLinearHeadingInterpolation(specimenHPlayer2.getHeading(), scorePose1.getHeading())
+                        .setLinearHeadingInterpolation(specimenHPlayerFin.getHeading(), scorePose1.getHeading())
                         .build();
                 break;
             case 2:
                 subScore2 = follower.pathBuilder()
                         .addPath(new BezierLine(new Point(specimenHPlayerFin), new Point(scorePose2)))
-                        .setLinearHeadingInterpolation(specimenHPlayer2.getHeading(), scorePose2.getHeading())
+                        .setLinearHeadingInterpolation(specimenHPlayerFin.getHeading(), scorePose2.getHeading())
                         .build();
                 break;
             case 3:
                 subScore3 = follower.pathBuilder()
                         .addPath(new BezierLine(new Point(specimenHPlayerFin), new Point(scorePose3)))
-                        .setLinearHeadingInterpolation(specimenHPlayer2.getHeading(), scorePose3.getHeading())
+                        .setLinearHeadingInterpolation(specimenHPlayerFin.getHeading(), scorePose3.getHeading())
                         .build();
                 break;
         }
@@ -213,7 +213,7 @@ public class autonomieSpecimenPedro extends OpMode {
                 /* Urmatoarea miscare incepe doar dupa ce robotul este la 1inch dinstanta de cealalta */
                 if (follower.getPose().getX() > (specimen2Pos.getX() - 2) && follower.getPose().getY() < (specimen2Pos.getY() + 2)) {
                     follower.followPath(specimen3, true);
-                    setPathState(5);
+                    setPathState(7);
                 }
                 break;
             case 5:
@@ -392,8 +392,8 @@ public class autonomieSpecimenPedro extends OpMode {
         claw.InitOuttake();
         claw.InitPivot();
         slider = new SliderSubsystem(hardwareMap);
-        slider.InitIntake();
-        slider.InitOuttake();
+        slider.InitIntake(true);
+        slider.InitOuttake(true);
         axon = new AxonSubsystem(hardwareMap);
         axon.InitIntake();
         axon.InitOuttake(RobotConstants.outtakeBehindPos);

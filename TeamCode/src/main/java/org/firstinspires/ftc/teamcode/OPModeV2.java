@@ -74,8 +74,8 @@ public class OPModeV2 extends OpMode {
         claw.InitIntake();
         claw.InitOuttake();
         claw.InitPivot();
-        slider.InitIntake();
-        slider.InitOuttake();
+        slider.InitIntake(false);
+        slider.InitOuttake(false);
         axon.InitIntake();
         axon.InitOuttake(RobotConstants.outtakeStartPos);
         resetOuttakeTriggered = true;
@@ -173,7 +173,7 @@ public class OPModeV2 extends OpMode {
     private void ToggleGhiaraRotireIntake() {
         if (gamepad1.b && !changedROTINT) {
             if(claw.GetPivotIntakePosition() == 0.0)
-                claw.Rotated();
+                claw.Rotated(false);
             else
                 claw.InitialRot();
             changedROTINT = true;
@@ -295,7 +295,7 @@ public class OPModeV2 extends OpMode {
     private void Roti() {
         if(gamepad1.left_bumper && !isG1LBumberPressed) {
             isG1LBumberPressed = true;
-            follower.setMaxPower(speedLimit ? 1.0 : 0.2);
+            follower.setMaxPower(speedLimit ? 1.0 : 0.3);
             speedLimit = !speedLimit;
         } else if(!gamepad1.left_bumper)
             isG1LBumberPressed = false;

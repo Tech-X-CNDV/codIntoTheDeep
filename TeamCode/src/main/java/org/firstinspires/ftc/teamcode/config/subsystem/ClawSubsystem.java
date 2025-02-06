@@ -49,8 +49,8 @@ public class ClawSubsystem {
         pivotIntake.setPosition(RobotConstants.minPosRotInt);
     }
 
-    public void Rotated() {
-        pivotIntake.setPosition(RobotConstants.maxPosRotInt);
+    public void Rotated(boolean auto) {
+        pivotIntake.setPosition(auto ? RobotConstants.autoPosRotInt : RobotConstants.maxPosRotInt);
     }
 
     //------------------------------Getters------------------------------//

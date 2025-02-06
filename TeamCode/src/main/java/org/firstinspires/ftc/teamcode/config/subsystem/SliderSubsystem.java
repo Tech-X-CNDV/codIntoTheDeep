@@ -22,12 +22,14 @@ public class SliderSubsystem {
 
     //------------------------------IntakeSlider------------------------------//
 
-    public void InitIntake(){
+    public void InitIntake(boolean auto){
         intakeSlider.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         intakeSlider.setTargetPosition(0);
         intakeSlider.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
 
         intakeSlider.setPower(0);
+        if(auto)
+            intakeResseted = true;
     }
 
     public void MoveIntake(int position, double power){
@@ -49,7 +51,6 @@ public class SliderSubsystem {
 
     public void ResetIntakeEncoder(){
         intakeSlider.setPower(0);
-        sleep(200);
         intakeSlider.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         intakeSlider.setTargetPosition(0);
         intakeSlider.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
@@ -59,7 +60,7 @@ public class SliderSubsystem {
 
     //------------------------------OuttakeSlider------------------------------//
 
-    public void InitOuttake(){
+    public void InitOuttake(boolean auto){
         outtakeSliderUp.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         outtakeSliderUp.setTargetPosition(0);
         outtakeSliderUp.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
@@ -70,6 +71,8 @@ public class SliderSubsystem {
 
         outtakeSliderUp.setPower(0);
         outtakeSliderDown.setPower(0);
+        if(auto)
+            outtakeResseted = true;
     }
 
     public void MoveOuttake(int position, double power){
@@ -98,7 +101,6 @@ public class SliderSubsystem {
     public void ResetOuttakeEncoder(){
         outtakeSliderUp.setPower(0);
         outtakeSliderDown.setPower(0);
-        sleep(200);
         outtakeSliderUp.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         outtakeSliderDown.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         outtakeSliderDown.setTargetPosition(0);

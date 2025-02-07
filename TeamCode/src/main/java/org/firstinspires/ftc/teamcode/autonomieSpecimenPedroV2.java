@@ -42,7 +42,7 @@ public class autonomieSpecimenPedroV2 extends OpMode {
 
     // Scor la specimen
     private final Pose scorePosePreLoad = new Pose(35, 63, Math.toRadians(180));
-    private final Pose scorePose1 = new Pose(35, 68, Math.toRadians(180)); // off 36 70
+    private final Pose scorePose1 = new Pose(36, 68, Math.toRadians(180)); // off 36 70
     private final Pose scorePose2 = new Pose(36.5, 74, Math.toRadians(180)); // off 42 74
     private final Pose scorePose3 = new Pose(37.5, 77, Math.toRadians(180)); // off 44 77
 
@@ -55,14 +55,14 @@ public class autonomieSpecimenPedroV2 extends OpMode {
     private final Pose specimen2HPlayer = new Pose(25, 36, Math.toRadians(240));
 
     // Specimen 3
-    private final Pose specimen3Pos = new Pose(34, 15, Math.toRadians(322));
+    private final Pose specimen3Pos = new Pose(35, 14, Math.toRadians(320));
     private final Pose specimen3HPlayer = new Pose(25, 36, Math.toRadians(240));
     private final Pose specimenHPlayer1 = new Pose(16, 23, Math.toRadians(0));
     private final Pose specimenHPlayer2 = new Pose(4, 23, Math.toRadians(0));
     private final Pose specimenHPlayerFin = new Pose(5, 23, Math.toRadians(0));
 
     // Pozitia de parcare
-    private final Pose parkPose = new Pose(59, 95, Math.toRadians(340));
+    private final Pose parkPose = new Pose(59, 95, Math.toRadians(270));
 
     // Aici stocam traiectoriile robotului
     private PathChain scorePreload, park, specimen1, specimen2, specimen3, specimen4, specimen5, specimen6, specimenHPlayer, specimenHPlayerGet, subScore1, subScore2, subScore3, hPlayer1, hPlayer2, hPlayerGet1, hPlayerGet2;
@@ -182,7 +182,7 @@ public class autonomieSpecimenPedroV2 extends OpMode {
             case 1:
                 /* Urmatoarea miscare incepe doar dupa ce robotul este la 1inch dinstanta de cealalta */
                 if (follower.getPose().getX() > (scorePosePreLoad.getX() - 1) && follower.getPose().getY() > (scorePosePreLoad.getY() - 1)) {
-                    slider.MoveOuttake(RobotConstants.outtakeSliderReleasePosition, 0.7);
+                    slider.MoveOuttake(RobotConstants.outtakeSliderReleasePosition, 0.9);
                     if(slider.GetUpOuttakePosition() < RobotConstants.outtakeSliderReleasePosition + 200) {
                         claw.OpenOuttake();
                         follower.followPath(specimen1, 0.9, true);
@@ -252,7 +252,7 @@ public class autonomieSpecimenPedroV2 extends OpMode {
                 /* Urmatoarea miscare incepe doar dupa ce robotul este la 1inch dinstanta de cealalta */
                 if (follower.getPose().getHeading() <= Math.toRadians(260)) {
                     claw.OpenIntake();
-                    slider.MoveIntake(RobotConstants.intakeSliderExtendPosition - 500, 1);
+                    slider.MoveIntake(RobotConstants.intakeSliderExtendPosition - 600, 1);
                     axon.SetIntakePosition(RobotConstants.intakeMiddlePos);
                     timerReseted = false;
                     follower.followPath(specimen5, 0.9, true);
@@ -262,7 +262,8 @@ public class autonomieSpecimenPedroV2 extends OpMode {
             case 6:
                 /* Urmatoarea miscare incepe doar dupa ce robotul este la 1inch dinstanta de cealalta */
                 if (!follower.isBusy()) {
-                    if(slider.GetIntakePosition() < RobotConstants.intakeSliderExtendPosition - 480){
+                    slider.MoveIntake(RobotConstants.intakeSliderExtendPosition - 480, 1);
+                    if(slider.GetIntakePosition() < RobotConstants.intakeSliderExtendPosition - 450){
                         if(!timerReseted){
                             pathTimer.resetTimer();
                             timerReseted = true;
@@ -283,7 +284,7 @@ public class autonomieSpecimenPedroV2 extends OpMode {
                 if(pathTimer.getElapsedTimeSeconds() > 1.0 && pathTimer.getElapsedTimeSeconds() < 1.2)
                     slider.MoveIntake(RobotConstants.intakeSliderExtendPosition, 1);
                 /* Urmatoarea miscare incepe doar dupa ce robotul este la 1inch dinstanta de cealalta */
-                if (follower.getPose().getHeading() <= Math.toRadians(260)) {
+                if (follower.getPose().getHeading() <= Math.toRadians(250)) {
                     claw.OpenIntake();
                     slider.MoveIntake(RobotConstants.intakeSliderRetractPosition, 1);
                     follower.followPath(specimenHPlayer, true);
@@ -311,7 +312,7 @@ public class autonomieSpecimenPedroV2 extends OpMode {
                         specimenHPlayerFin.setX(follower.getPose().getX());
                         specimenHPlayerFin.setY(follower.getPose().getY());
                         buildDynamicPaths(1);
-                        slider.MoveOuttake(RobotConstants.outtakeSliderHPlayerSpecimenPosition, 0.55);
+                        slider.MoveOuttake(RobotConstants.outtakeSliderHPlayerSpecimenPosition, 0.65);
                         follower.followPath(subScore1, true);
                         setPathState(10);
                     }
@@ -399,7 +400,7 @@ public class autonomieSpecimenPedroV2 extends OpMode {
                     slider.MoveOuttake(RobotConstants.outtakeSliderReleasePosition, 0.9);
                     if(slider.GetUpOuttakePosition() < RobotConstants.outtakeSliderReleasePosition + 200) {
                         claw.OpenOuttake();
-//                        follower.followPath(park, true); Not Possible rn
+                        follower.followPath(park, true);
                         setPathState(17);
                     }
                 }

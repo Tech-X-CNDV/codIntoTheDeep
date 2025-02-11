@@ -21,7 +21,7 @@ public class RobotConstants {
     public static final int outtakeSliderSpecimenPosition = 2500;
     public static final int outtakeSliderHPlayerSpecimenPosition = 2480;
     public static final int outtakeSliderReleasePosition = 1180;
-    public static final double outtakeSliderStopAmperage = 2.5;
+    public static final double outtakeSliderStopAmperage = 1.4;
     public static final int intakeSliderExtendPosition = 890;
     public static final int intakeSliderRetractPosition = 0;
     public static final double intakeSliderStopAmperage = 3.5;

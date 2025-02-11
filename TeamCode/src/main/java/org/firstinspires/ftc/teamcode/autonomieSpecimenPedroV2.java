@@ -42,20 +42,20 @@ public class autonomieSpecimenPedroV2 extends OpMode {
 
     // Scor la specimen
     private final Pose scorePosePreLoad = new Pose(35, 63, Math.toRadians(180));
-    private final Pose scorePose1 = new Pose(36, 68, Math.toRadians(180)); // off 36 70
-    private final Pose scorePose2 = new Pose(36.5, 74, Math.toRadians(180)); // off 42 74
-    private final Pose scorePose3 = new Pose(37.5, 77, Math.toRadians(180)); // off 44 77
+    private final Pose scorePose1 = new Pose(38, 67, Math.toRadians(180)); // off 36 70
+    private final Pose scorePose2 = new Pose(41, 73, Math.toRadians(180)); // off 42 74
+    private final Pose scorePose3 = new Pose(43, 77, Math.toRadians(180)); // off 44 77
 
     // Specimen 1
     private final Pose specimen1Pos = new Pose(34, 35, Math.toRadians(322));
     private final Pose specimen1HPlayer = new Pose(25, 36, Math.toRadians(240));
 
     // Specimen 2
-    private final Pose specimen2Pos = new Pose(34, 25, Math.toRadians(325));
+    private final Pose specimen2Pos = new Pose(33, 25, Math.toRadians(325));
     private final Pose specimen2HPlayer = new Pose(25, 36, Math.toRadians(240));
 
     // Specimen 3
-    private final Pose specimen3Pos = new Pose(35, 14, Math.toRadians(320));
+    private final Pose specimen3Pos = new Pose(34.5, 14, Math.toRadians(318));
     private final Pose specimen3HPlayer = new Pose(25, 36, Math.toRadians(240));
     private final Pose specimenHPlayer1 = new Pose(16, 23, Math.toRadians(0));
     private final Pose specimenHPlayer2 = new Pose(4, 23, Math.toRadians(0));
@@ -325,7 +325,7 @@ public class autonomieSpecimenPedroV2 extends OpMode {
                     if (slider.GetUpOuttakePosition() < RobotConstants.outtakeSliderReleasePosition + 200) {
                         claw.OpenOuttake();
                         follower.followPath(hPlayer1, true);
-                        slider.MoveOuttake(RobotConstants.outtakeSliderRetractPosition, 0.3);
+                        slider.MoveOuttake(RobotConstants.outtakeSliderRetractPosition, 0.4);
                         setPathState(11);
                     }
                 }
@@ -363,7 +363,7 @@ public class autonomieSpecimenPedroV2 extends OpMode {
                     if(slider.GetUpOuttakePosition() < RobotConstants.outtakeSliderReleasePosition + 200) {
                         claw.OpenOuttake();
                         follower.followPath(hPlayer2, true);
-                        slider.MoveOuttake(RobotConstants.outtakeSliderRetractPosition, 0.3);
+                        slider.MoveOuttake(RobotConstants.outtakeSliderRetractPosition, 0.4);
                         setPathState(14);
                     }
                 }
@@ -406,7 +406,7 @@ public class autonomieSpecimenPedroV2 extends OpMode {
                 }
                 break;
             case 17:
-                slider.MoveOuttake(RobotConstants.outtakeSliderRetractPosition, 0.3);
+                slider.MoveOuttake(RobotConstants.outtakeSliderRetractPosition, 0.4);
                 claw.OpenOuttake();
                 axon.SetOuttakePosition(RobotConstants.outtakeAutoMidPos);
                 /* Urmatoarea miscare incepe doar dupa ce robotul este la 1inch dinstanta de cealalta */

@@ -71,77 +71,77 @@ public class autonomieSpecimenPedroV2 extends OpMode {
 
         /* Aici punem preload-ul cu care incepem. Folosim BezierLine pentru o linie dreapta */
         scorePreload = follower.pathBuilder()
-                .addPath(new BezierLine(new Point(startPose), new Point(scorePosePreLoad)))
+                .addPath(new BezierLine(startPose, scorePosePreLoad))
                 .setConstantHeadingInterpolation(startPose.getHeading())
                 .build();
 
         specimen1 = follower.pathBuilder()
-                .addPath(new BezierLine(new Point(scorePosePreLoad), new Point(specimen1Pos)))
+                .addPath(new BezierLine(scorePosePreLoad, specimen1Pos))
                 .setLinearHeadingInterpolation(scorePosePreLoad.getHeading(), specimen1Pos.getHeading())
                 .build();
 
         specimen2 = follower.pathBuilder()
-                .addPath(new BezierLine(new Point(specimen1Pos), new Point(specimen1HPlayer)))
+                .addPath(new BezierLine(specimen1Pos, specimen1HPlayer))
                 .setLinearHeadingInterpolation(specimen1Pos.getHeading(), specimen1HPlayer.getHeading())
                 .build();
 
         specimen3 = follower.pathBuilder()
-                .addPath(new BezierLine(new Point(specimen1HPlayer), new Point(specimen2Pos)))
+                .addPath(new BezierLine(specimen1HPlayer, specimen2Pos))
                 .setLinearHeadingInterpolation(specimen1HPlayer.getHeading(), specimen2Pos.getHeading())
                 .build();
 
         specimen4 = follower.pathBuilder()
-                .addPath(new BezierLine(new Point(specimen2Pos), new Point(specimen2HPlayer)))
+                .addPath(new BezierLine(specimen2Pos, specimen2HPlayer))
                 .setLinearHeadingInterpolation(specimen2Pos.getHeading(), specimen2HPlayer.getHeading())
                 .build();
 
         specimen5 = follower.pathBuilder()
-                .addPath(new BezierLine(new Point(specimen2HPlayer), new Point(specimen3Pos)))
+                .addPath(new BezierLine(specimen2HPlayer, specimen3Pos))
                 .setLinearHeadingInterpolation(specimen2HPlayer.getHeading(), specimen3Pos.getHeading())
                 .build();
 
         specimen6 = follower.pathBuilder()
-                .addPath(new BezierLine(new Point(specimen3Pos), new Point(specimen3HPlayer)))
+                .addPath(new BezierLine(specimen3Pos, specimen3HPlayer))
                 .setLinearHeadingInterpolation(specimen3Pos.getHeading(), specimen3HPlayer.getHeading())
                 .build();
 
         specimenHPlayer = follower.pathBuilder()
-                .addPath(new BezierLine(new Point(specimen3HPlayer), new Point(specimenHPlayer1)))
+                .addPath(new BezierLine(specimen3HPlayer, specimenHPlayer1))
                 .setLinearHeadingInterpolation(specimen3HPlayer.getHeading(), specimenHPlayer1.getHeading())
                 .build();
 
         specimenHPlayerGet = follower.pathBuilder()
-                .addPath(new BezierLine(new Point(specimenHPlayer1), new Point(specimenHPlayer2)))
+                .addPath(new BezierLine(specimenHPlayer1, specimenHPlayer2))
                 .setConstantHeadingInterpolation(specimenHPlayer1.getHeading())
                 .build();
 
         subScore1 = follower.pathBuilder()
-                .addPath(new BezierLine(new Point(specimenHPlayer2), new Point(scorePose1)))
+                .addPath(new BezierLine(specimenHPlayer2, scorePose1))
                 .setLinearHeadingInterpolation(specimenHPlayer2.getHeading(), scorePose1.getHeading())
                 .build();
 
         subScore2 = follower.pathBuilder()
-                .addPath(new BezierLine(new Point(specimenHPlayer2), new Point(scorePose2)))
+                .addPath(new BezierLine(specimenHPlayer2, scorePose2))
                 .setLinearHeadingInterpolation(specimenHPlayer2.getHeading(), scorePose2.getHeading())
                 .build();
 
         subScore3 = follower.pathBuilder()
-                .addPath(new BezierLine(new Point(specimenHPlayer2), new Point(scorePose3)))
+                .addPath(new BezierLine(specimenHPlayer2, scorePose3))
                 .setLinearHeadingInterpolation(specimenHPlayer2.getHeading(), scorePose3.getHeading())
                 .build();
 
         hPlayer1 = follower.pathBuilder()
-                .addPath(new BezierLine(new Point(scorePose1), new Point(specimenHPlayer1)))
+                .addPath(new BezierLine(scorePose1, specimenHPlayer1))
                 .setLinearHeadingInterpolation(scorePose1.getHeading(), specimenHPlayer1.getHeading())
                 .build();
 
         hPlayer2 = follower.pathBuilder()
-                .addPath(new BezierLine(new Point(scorePose2), new Point(specimenHPlayer1)))
+                .addPath(new BezierLine(scorePose2, specimenHPlayer1))
                 .setLinearHeadingInterpolation(scorePose2.getHeading(), specimenHPlayer1.getHeading())
                 .build();
 
         park = follower.pathBuilder()
-                .addPath(new BezierCurve(new Point(scorePose3), new Point(specimenHPlayer2)))
+                .addPath(new BezierCurve(scorePose3, specimenHPlayer2))
                 .setLinearHeadingInterpolation(scorePose3.getHeading(), parkPose.getHeading())
                 .build();
     }
@@ -150,19 +150,19 @@ public class autonomieSpecimenPedroV2 extends OpMode {
         switch (pathNumber){
             case 1:
                 subScore1 = follower.pathBuilder()
-                        .addPath(new BezierLine(new Point(specimenHPlayerFin), new Point(scorePose1)))
+                        .addPath(new BezierLine(specimenHPlayerFin, scorePose1))
                         .setLinearHeadingInterpolation(specimenHPlayer2.getHeading(), scorePose1.getHeading())
                         .build();
                 break;
             case 2:
                 subScore2 = follower.pathBuilder()
-                        .addPath(new BezierLine(new Point(specimenHPlayerFin), new Point(scorePose2)))
+                        .addPath(new BezierLine(specimenHPlayerFin, scorePose2))
                         .setLinearHeadingInterpolation(specimenHPlayer2.getHeading(), scorePose2.getHeading())
                         .build();
                 break;
             case 3:
                 subScore3 = follower.pathBuilder()
-                        .addPath(new BezierLine(new Point(specimenHPlayerFin), new Point(scorePose3)))
+                        .addPath(new BezierLine(specimenHPlayerFin, scorePose3))
                         .setLinearHeadingInterpolation(specimenHPlayer2.getHeading(), scorePose3.getHeading())
                         .build();
                 break;

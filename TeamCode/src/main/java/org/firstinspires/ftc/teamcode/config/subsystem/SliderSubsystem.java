@@ -13,9 +13,9 @@ public class SliderSubsystem {
 
     public SliderSubsystem(HardwareMap hardwareMap) {
         outtakeSliderUp = hardwareMap.get(DcMotorEx.class, "outtakeSliderUp");
-        outtakeSliderUp.setDirection(DcMotorSimple.Direction.FORWARD);
+        outtakeSliderUp.setDirection(DcMotorSimple.Direction.REVERSE);
         outtakeSliderDown = hardwareMap.get(DcMotorEx.class, "outtakeSliderDown");
-        outtakeSliderDown.setDirection(DcMotorSimple.Direction.REVERSE);
+        outtakeSliderDown.setDirection(DcMotorSimple.Direction.FORWARD);
         intakeSlider = hardwareMap.get(DcMotorEx.class, "intakeSlider");
         intakeSlider.setDirection(DcMotorSimple.Direction.FORWARD);
     }

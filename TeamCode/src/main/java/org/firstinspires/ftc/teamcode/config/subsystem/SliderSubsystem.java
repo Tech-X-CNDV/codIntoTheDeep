@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.config.subsystem;
 
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -14,10 +15,13 @@ public class SliderSubsystem {
     public SliderSubsystem(HardwareMap hardwareMap) {
         outtakeSliderUp = hardwareMap.get(DcMotorEx.class, "outtakeSliderUp");
         outtakeSliderUp.setDirection(DcMotorSimple.Direction.REVERSE);
+        outtakeSliderUp.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         outtakeSliderDown = hardwareMap.get(DcMotorEx.class, "outtakeSliderDown");
         outtakeSliderDown.setDirection(DcMotorSimple.Direction.FORWARD);
+        outtakeSliderDown.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         intakeSlider = hardwareMap.get(DcMotorEx.class, "intakeSlider");
         intakeSlider.setDirection(DcMotorSimple.Direction.FORWARD);
+        intakeSlider.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
 
     //------------------------------IntakeSlider------------------------------//

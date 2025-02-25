@@ -41,24 +41,24 @@ public class autonomieSpecimenPedroV2 extends OpMode {
     private final Pose startPose = new Pose(8, 60, Math.toRadians(180));
 
     // Scor la specimen
-    private final Pose scorePosePreLoad = new Pose(36.2, 70, Math.toRadians(180));
+    private final Pose scorePosePreLoad = new Pose(37.5, 70, Math.toRadians(180));
     private final Pose scorePose = new Pose(38, 67, Math.toRadians(180)); // off 36 70
     private final Pose moveHangedSpecimenPose = new Pose(38, 70, Math.toRadians(180));
 
     // Specimen 1
-    private final Pose specimen1Pos = new Pose(32, 33, Math.toRadians(325));
+    private final Pose specimen1Pos = new Pose(32, 33, Math.toRadians(329));
     private final Pose specimen1HPlayer = new Pose(25, 36, Math.toRadians(240));
 
     // Specimen 2
-    private final Pose specimen2Pos = new Pose(31, 23, Math.toRadians(325));
+    private final Pose specimen2Pos = new Pose(32, 23, Math.toRadians(330));
     private final Pose specimen2HPlayer = new Pose(25, 36, Math.toRadians(240));
 
     // Specimen 3
-    private final Pose specimen3Pos = new Pose(34, 16, Math.toRadians(312));
+    private final Pose specimen3Pos = new Pose(35, 16, Math.toRadians(312));
     private final Pose specimen3HPlayer = new Pose(25, 36, Math.toRadians(240));
-    private final Pose specimenHPlayer1 = new Pose(16, 23, Math.toRadians(0));
-    private final Pose specimenHPlayer2 = new Pose(4, 23, Math.toRadians(0));
-    private final Pose specimenHPlayerFin = new Pose(5, 23, Math.toRadians(0));
+    private final Pose specimenHPlayer1 = new Pose(16, 34, Math.toRadians(0));
+    private final Pose specimenHPlayer2 = new Pose(4, 34, Math.toRadians(0));
+    private final Pose specimenHPlayerFin = new Pose(5, 34, Math.toRadians(0));
 
     // Pozitia de parcare
     private final Pose parkPose = new Pose(4, 23, Math.toRadians(270));
@@ -153,11 +153,11 @@ public class autonomieSpecimenPedroV2 extends OpMode {
                     slider.MoveOuttake(RobotConstants.outtakeSliderReleasePosition, 0.9);
                     if(slider.GetUpOuttakePosition() < RobotConstants.outtakeSliderReleasePosition + 10) {
                         claw.OpenOuttake();
-                        follower.followPath(specimen1, 0.9, true);
+                        follower.followPath(specimen1, 0.75, true);
                         setPathState(2);
                     }
                 }else{
-                    slider.MoveOuttake(RobotConstants.outtakeSliderSpecimenPosition, 1);
+                    slider.MoveOuttake(RobotConstants.outtakeSliderHPlayerSpecimenPosition, 1);
                 }
                 break;
             case 2:
@@ -166,22 +166,23 @@ public class autonomieSpecimenPedroV2 extends OpMode {
                 if (!follower.isBusy()) {
                     if(slider.GetIntakePosition() > RobotConstants.intakeSliderExtendPosition - 520){
                         claw.Rotated(true);
-                        if(pathTimer.getElapsedTimeSeconds() > 0.1)
+                        if(pathTimer.getElapsedTimeSeconds() > 0.05)
                             axon.SetIntakePosition(RobotConstants.intakeDownPos + 0.01);
-                        if(pathTimer.getElapsedTimeSeconds() > 0.4)
+                        if(pathTimer.getElapsedTimeSeconds() > 0.35)
                             claw.CloseIntake();
-                        if(pathTimer.getElapsedTimeSeconds() > 0.6) {
+                        if(pathTimer.getElapsedTimeSeconds() > 0.55) {
                             slider.MoveIntake(RobotConstants.intakeSliderExtendPosition, 1);
                             axon.SetIntakePosition(RobotConstants.intakeHPlayerMiddlePos);
-                            follower.followPath(specimen2, 0.9, true);
+                            follower.followPath(specimen2, true);
                             setPathState(3);
                         }
-                    }else{
-                        slider.MoveIntake(RobotConstants.intakeSliderExtendPosition - 500, 1);
-                        axon.SetIntakePosition(RobotConstants.intakeMiddlePos);
-                        claw.OpenIntake();
+                    }else
                         pathTimer.resetTimer();
-                    }
+                }else{
+                    slider.MoveIntake(RobotConstants.intakeSliderExtendPosition - 500, 1);
+                    axon.SetIntakePosition(RobotConstants.intakeMiddlePos);
+                    claw.OpenIntake();
+                    pathTimer.resetTimer();
                 }
                 break;
             case 3:
@@ -191,7 +192,7 @@ public class autonomieSpecimenPedroV2 extends OpMode {
                     slider.MoveIntake(RobotConstants.intakeSliderExtendPosition - 500, 1);
                     axon.SetIntakePosition(RobotConstants.intakeMiddlePos);
                     timerReseted = false;
-                    follower.followPath(specimen3, 0.9, true);
+                    follower.followPath(specimen3, 0.7, true);
                     setPathState(4);
                 }
                 break;
@@ -203,14 +204,14 @@ public class autonomieSpecimenPedroV2 extends OpMode {
                             pathTimer.resetTimer();
                             timerReseted = true;
                         }
-                        if(pathTimer.getElapsedTimeSeconds() > 0.1)
+                        if(pathTimer.getElapsedTimeSeconds() > 0.05)
                             axon.SetIntakePosition(RobotConstants.intakeDownPos + 0.01);
-                        if(pathTimer.getElapsedTimeSeconds() > 0.4)
+                        if(pathTimer.getElapsedTimeSeconds() > 0.35)
                             claw.CloseIntake();
-                        if(pathTimer.getElapsedTimeSeconds() > 0.6) {
+                        if(pathTimer.getElapsedTimeSeconds() > 0.55) {
                             slider.MoveIntake(RobotConstants.intakeSliderExtendPosition, 1);
                             axon.SetIntakePosition(RobotConstants.intakeHPlayerMiddlePos);
-                            follower.followPath(specimen4, 0.8, true);
+                            follower.followPath(specimen4, true);
                             setPathState(5);
                         }
                     }
@@ -223,7 +224,7 @@ public class autonomieSpecimenPedroV2 extends OpMode {
                     slider.MoveIntake(RobotConstants.intakeSliderExtendPosition - 800, 1);
                     axon.SetIntakePosition(RobotConstants.intakeMiddlePos);
                     timerReseted = false;
-                    follower.followPath(specimen5, 0.9, true);
+                    follower.followPath(specimen5, 0.8, true);
                     setPathState(6);
                 }
                 break;
@@ -236,13 +237,13 @@ public class autonomieSpecimenPedroV2 extends OpMode {
                             pathTimer.resetTimer();
                             timerReseted = true;
                         }
-                        if(pathTimer.getElapsedTimeSeconds() > 0.1)
+                        if(pathTimer.getElapsedTimeSeconds() > 0.05)
                             axon.SetIntakePosition(RobotConstants.intakeDownPos + 0.01);
-                        if(pathTimer.getElapsedTimeSeconds() > 0.4)
+                        if(pathTimer.getElapsedTimeSeconds() > 0.35)
                             claw.CloseIntake();
-                        if(pathTimer.getElapsedTimeSeconds() > 0.6) {
+                        if(pathTimer.getElapsedTimeSeconds() > 0.55) {
                             axon.SetIntakePosition(RobotConstants.intakeHPlayerMiddlePos);
-                            follower.followPath(specimen6, 0.9, true);
+                            follower.followPath(specimen6, true);
                             setPathState(7);
                         }
                     }
@@ -256,6 +257,7 @@ public class autonomieSpecimenPedroV2 extends OpMode {
                     claw.OpenIntake();
                     slider.MoveIntake(RobotConstants.intakeSliderRetractPosition, 1);
                     follower.followPath(specimenHPlayer, true);
+                    timerReseted = false;
                     setPathState(8);
                 }
                 break;
@@ -263,9 +265,15 @@ public class autonomieSpecimenPedroV2 extends OpMode {
                 axon.SetIntakePosition(RobotConstants.intakeUpPos);
                 /* Urmatoarea miscare incepe doar dupa ce robotul este la 1inch dinstanta de cealalta */
                 if (follower.getPose().getX() < (specimenHPlayer1.getX() + 1) && follower.getPose().getY() < (specimenHPlayer1.getY() + 1)) {
-                    follower.followPath(specimenHPlayerGet, true);
-                    timerReseted = false;
-                    setPathState(9);
+                    if(!timerReseted){
+                        pathTimer.resetTimer();
+                        timerReseted = true;
+                    }
+                    if(pathTimer.getElapsedTimeSeconds() > 0.5) {
+                        follower.followPath(specimenHPlayerGet, true);
+                        timerReseted = false;
+                        setPathState(9);
+                    }
                 }
                 break;
             case 9:
@@ -280,7 +288,8 @@ public class autonomieSpecimenPedroV2 extends OpMode {
                     specimenHPlayerFin.setX(follower.getPose().getX());
                     specimenHPlayerFin.setY(follower.getPose().getY());
                     buildDynamicPaths();
-                    slider.MoveOuttake(RobotConstants.outtakeSliderHPlayerSpecimenPosition, 0.65);
+                    slider.MoveOuttake(RobotConstants.outtakeSliderHPlayerSpecimenPosition, 0.85);
+                    timerReseted = false;
                     follower.followPath(subScore, true);
                     setPathState(10);
                 }
@@ -288,10 +297,16 @@ public class autonomieSpecimenPedroV2 extends OpMode {
             case 10:
                 /* Urmatoarea miscare incepe doar dupa ce robotul este la 1inch dinstanta de cealalta */
                 if (follower.getPose().getX() > (scorePose.getX() - 1) && follower.getPose().getY() > (scorePose.getY() - 1)) {
-                    slider.MoveOuttake(RobotConstants.outtakeSliderReleasePosition, 0.9);
-                    if (slider.GetUpOuttakePosition() < RobotConstants.outtakeSliderReleasePosition + 10) {
-                        follower.followPath(moveHangedSpecimen, true);
-                        setPathState(11);
+                    if(!timerReseted){
+                        pathTimer.resetTimer();
+                        timerReseted = true;
+                    }
+                    if(pathTimer.getElapsedTimeSeconds() > 0.2) {
+                        slider.MoveOuttake(RobotConstants.outtakeSliderReleasePosition, 0.9);
+                        if (slider.GetUpOuttakePosition() < RobotConstants.outtakeSliderReleasePosition + 600) {
+                            follower.followPath(moveHangedSpecimen, true);
+                            setPathState(11);
+                        }
                     }
                 }
                 break;
@@ -300,7 +315,7 @@ public class autonomieSpecimenPedroV2 extends OpMode {
                 if (follower.getPose().getX() > (moveHangedSpecimenPose.getX() - 1) && follower.getPose().getY() > (moveHangedSpecimenPose.getY() - 1)) {
                     claw.OpenOuttake();
                     slider.MoveOuttake(RobotConstants.outtakeSliderRetractPosition, 0.4);
-                    follower.followPath(hPlayer);
+                    follower.followPath(hPlayer, true);
                     setPathState(12);
                 }
                 break;
@@ -324,7 +339,8 @@ public class autonomieSpecimenPedroV2 extends OpMode {
                     specimenHPlayerFin.setX(follower.getPose().getX());
                     specimenHPlayerFin.setY(follower.getPose().getY());
                     buildDynamicPaths();
-                    slider.MoveOuttake(RobotConstants.outtakeSliderHPlayerSpecimenPosition, 0.65);
+                    slider.MoveOuttake(RobotConstants.outtakeSliderHPlayerSpecimenPosition, 0.85);
+                    timerReseted = false;
                     follower.followPath(subScore, true);
                     setPathState(14);
                 }
@@ -332,10 +348,16 @@ public class autonomieSpecimenPedroV2 extends OpMode {
             case 14:
                 /* Urmatoarea miscare incepe doar dupa ce robotul este la 1inch dinstanta de cealalta */
                 if (follower.getPose().getX() > (scorePose.getX() - 1) && follower.getPose().getY() > (scorePose.getY() - 1)) {
-                    slider.MoveOuttake(RobotConstants.outtakeSliderReleasePosition, 0.9);
-                    if(slider.GetUpOuttakePosition() < RobotConstants.outtakeSliderReleasePosition + 10) {
-                        follower.followPath(moveHangedSpecimen, true);
-                        setPathState(15); 
+                    if(!timerReseted){
+                        pathTimer.resetTimer();
+                        timerReseted = true;
+                    }
+                    if(pathTimer.getElapsedTimeSeconds() > 0.2) {
+                        slider.MoveOuttake(RobotConstants.outtakeSliderReleasePosition, 0.9);
+                        if (slider.GetUpOuttakePosition() < RobotConstants.outtakeSliderReleasePosition + 600) {
+                            follower.followPath(moveHangedSpecimen, true);
+                            setPathState(15);
+                        }
                     }
                 }
                 break;
@@ -344,7 +366,7 @@ public class autonomieSpecimenPedroV2 extends OpMode {
                 if (follower.getPose().getX() > (moveHangedSpecimenPose.getX() - 1) && follower.getPose().getY() > (moveHangedSpecimenPose.getY() - 1)) {
                     claw.OpenOuttake();
                     slider.MoveOuttake(RobotConstants.outtakeSliderRetractPosition, 0.4);
-                    follower.followPath(hPlayer);
+                    follower.followPath(hPlayer, true);
                     setPathState(16); 
                 }
                 break;
@@ -369,7 +391,8 @@ public class autonomieSpecimenPedroV2 extends OpMode {
                     specimenHPlayerFin.setY(follower.getPose().getY());
                     scorePose.setX(scorePose.getX() + 0.5);
                     buildDynamicPaths();
-                    slider.MoveOuttake(RobotConstants.outtakeSliderHPlayerSpecimenPosition, 0.65);
+                    slider.MoveOuttake(RobotConstants.outtakeSliderHPlayerSpecimenPosition, 0.85);
+                    timerReseted = false;
                     follower.followPath(subScore, true);
                     setPathState(18);
                 }
@@ -377,11 +400,17 @@ public class autonomieSpecimenPedroV2 extends OpMode {
             case 18:
                 /* Urmatoarea miscare incepe doar dupa ce robotul este la 1inch dinstanta de cealalta */
                 if (follower.getPose().getX() > (scorePose.getX() - 1) && follower.getPose().getY() > (scorePose.getY() - 1)) {
-                    slider.MoveOuttake(RobotConstants.outtakeSliderReleasePosition, 0.9);
-                    if(slider.GetUpOuttakePosition() < RobotConstants.outtakeSliderReleasePosition + 10) {
-                        claw.OpenOuttake();
-                        follower.followPath(park, true);
-                        setPathState(19); 
+                    if(!timerReseted){
+                        pathTimer.resetTimer();
+                        timerReseted = true;
+                    }
+                    if(pathTimer.getElapsedTimeSeconds() > 0.2) {
+                        slider.MoveOuttake(RobotConstants.outtakeSliderReleasePosition, 0.9);
+                        if (slider.GetUpOuttakePosition() < RobotConstants.outtakeSliderReleasePosition + 10) {
+                            claw.OpenOuttake();
+                            follower.followPath(park, true);
+                            setPathState(19);
+                        }
                     }
                 }
                 break;
@@ -432,8 +461,7 @@ public class autonomieSpecimenPedroV2 extends OpMode {
 
         opmodeTimer.resetTimer();
 
-        Constants.setConstants(FConstants.class, LConstants.class);
-        follower = new Follower(hardwareMap);
+        follower = new Follower(hardwareMap, FConstants.class, LConstants.class);
         follower.setStartingPose(startPose);
 
         claw = new ClawSubsystem(hardwareMap);

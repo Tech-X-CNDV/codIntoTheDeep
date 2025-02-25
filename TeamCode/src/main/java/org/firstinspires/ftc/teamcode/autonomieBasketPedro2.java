@@ -40,12 +40,12 @@ public class autonomieBasketPedro2 extends OpMode{
     private final Pose startPose = new Pose(7,84);
     private final Pose scorePosePreLoad = new Pose(12.5,128.5);
     private final Pose scorePoseControl = new Pose(50,89);
-    private final Pose ReachFirstPose = new Pose(18,121);
+    private final Pose ReachFirstPose = new Pose(20,119);
     //10.5,126.5
     private final Pose scorePoseFirst = new Pose(10.5,126.5 );
 
     //test
-    private final Pose ReachSecondPose = new Pose(18,131);
+    private final Pose ReachSecondPose = new Pose(20,129);
     //test
     private final Pose NextToSecondPose = new Pose(58,131);
     private final Pose NextToSecondControl = new Pose(72,88);
@@ -124,7 +124,7 @@ public class autonomieBasketPedro2 extends OpMode{
                     if (pathTimer.getElapsedTimeSeconds() > 8) {
                         slider.MoveOuttake(0, 1);
                         axon.SetIntakePosition(RobotConstants.intakeMiddlePos);
-                        axon.SetOuttakePosition(0.38);
+                        axon.SetOuttakePosition(0.345);
 
                     }
                     if (slider.GetUpOuttakePosition() > 1000) {
@@ -143,13 +143,13 @@ public class autonomieBasketPedro2 extends OpMode{
                         axon.SetIntakePosition(0.15);
                         claw.OpenIntake();
                         slider.MoveIntake(800, 1);
-                        axon.SetOuttakePosition(0.38);
+                        axon.SetOuttakePosition(0.345);
                     }
                     if (slider.GetUpOuttakePosition() < 100 && pathTimer.getElapsedTimeSeconds() > 3.4) {
 
                         if (pathTimer.getElapsedTimeSeconds() > 5.0 && pathTimer.getElapsedTimeSeconds() < (6.5))
                             axon.SetIntakePosition(0.27); //axondownpos-2
-                        if (pathTimer.getElapsedTimeSeconds() > (6.5) && pathTimer.getElapsedTimeSeconds() < 7.4) {
+                        if (pathTimer.getElapsedTimeSeconds() > (6.9) && pathTimer.getElapsedTimeSeconds() < 7.4) {
                             claw.CloseIntake();
                             //axon.SetIntakePosition(0.38);
                         }
@@ -161,13 +161,11 @@ public class autonomieBasketPedro2 extends OpMode{
                             if (pathTimer.getElapsedTimeSeconds() >9.1)
                                 slider.MoveIntake(0, 1);
                             if (pathTimer.getElapsedTimeSeconds() > 9.4){
-
                                 slider.MoveOuttake(0, 1);
-
-                                claw.CloseOuttake();
                             }
                             if (pathTimer.getElapsedTimeSeconds() > 9.5) {
                                 axon.SetIntakePosition(RobotConstants.intakeMiddlePos);
+                                claw.CloseOuttake();
                                 setPathState(3);
                                 follower.followPath(ScoreFirst);
                             }
@@ -178,15 +176,17 @@ public class autonomieBasketPedro2 extends OpMode{
                 break;
             case 3:
                 if (!follower.isBusy()) {
-                    if (pathTimer.getElapsedTimeSeconds() < 0.8 && pathTimer.getElapsedTimeSeconds() > 0.1)
-                        axon.SetIntakePosition(RobotConstants.intakeMiddlePos);
+                    if (pathTimer.getElapsedTimeSeconds() < 0.8 && pathTimer.getElapsedTimeSeconds() > 0.1) {
+                        axon.SetIntakePosition(RobotConstants.intakeMiddlePos - 0.01);
+                        claw.OpenIntake();
+                    }
                     if (pathTimer.getElapsedTimeSeconds() < 2.5 && pathTimer.getElapsedTimeSeconds() > 0.8)
                         slider.MoveOuttake(RobotConstants.outtakeSliderExtendPosition, 1);
                     if (pathTimer.getElapsedTimeSeconds() < 3.9 && pathTimer.getElapsedTimeSeconds() > 2.5)
                         axon.SetOuttakePosition(RobotConstants.outtakeUpPos);
                     if (pathTimer.getElapsedTimeSeconds() < 4.4 && pathTimer.getElapsedTimeSeconds() > 3.9) {
                         claw.OpenOuttake();
-                        claw.OpenIntake();
+
                         axon.SetIntakePosition(RobotConstants.intakeMiddlePos);
                         setPathState(4);
                         //aici am pus in cos prima piesa din cele trei
@@ -203,7 +203,7 @@ public class autonomieBasketPedro2 extends OpMode{
                         axon.SetIntakePosition(0.21);
                     }
                     if (pathTimer.getElapsedTimeSeconds() < 3.1 && pathTimer.getElapsedTimeSeconds() > 0.9) {
-                        axon.SetOuttakePosition(0.38);
+                        axon.SetOuttakePosition(0.345);
                         axon.SetIntakePosition(RobotConstants.intakeDownPos);
                     }
                     if (pathTimer.getElapsedTimeSeconds() < 3.7 && pathTimer.getElapsedTimeSeconds() > 3.1)
@@ -299,8 +299,7 @@ public class autonomieBasketPedro2 extends OpMode{
 
         opmodeTimer.resetTimer();
 
-        Constants.setConstants(FConstants.class, LConstants.class);
-        follower = new Follower(hardwareMap);
+        follower = new Follower(hardwareMap, FConstants.class, LConstants.class);
         follower.setStartingPose(startPose);
         //axon.InitIntake();
         claw = new ClawSubsystem(hardwareMap);

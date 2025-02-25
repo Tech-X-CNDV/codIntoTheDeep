@@ -50,8 +50,7 @@ public class OPModeV2 extends OpMode {
         }
 
         // Initializare Pedro
-        Constants.setConstants(FConstants.class, LConstants.class);
-        follower = new Follower(hardwareMap);
+        follower = new Follower(hardwareMap, FConstants.class, LConstants.class);
         follower.setStartingPose(startPose);
 
         // Initializare servo ghiare
@@ -187,7 +186,7 @@ public class OPModeV2 extends OpMode {
     private void ToggleGhiaraIntake() {
         if (gamepad1.a && !changedINT) {
             changedINT = true;
-            if(claw.GetGrabIntakePosition() == 0.0) {
+            if(claw.GetGrabIntakePosition() == RobotConstants.closePos) {
                 claw.OpenIntake();
                 intakeMidAxonOn = true;
                 axon.SetIntakePosition(RobotConstants.intakeMiddlePos);
@@ -211,7 +210,7 @@ public class OPModeV2 extends OpMode {
     private void ToggleGhiaraOuttake() {
         if ((gamepad2.a || gamepad2.right_bumper) && !changedOUT) {
             changedOUT = true;
-            if(claw.GetGrabOuttakePosition() == 0.0)
+            if(claw.GetGrabOuttakePosition() == RobotConstants.outtakeClosePos)
                 claw.OpenOuttake();
             else
                 claw.CloseOuttake();

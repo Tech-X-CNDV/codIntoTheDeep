@@ -28,11 +28,11 @@ public class ClawSubsystem {
     }
 
     public void InitOuttake(){
-        grabOuttake.setPosition(RobotConstants.closePos);
+        grabOuttake.setPosition(RobotConstants.outtakeClosePos);
     }
 
     public void CloseOuttake() {
-        grabOuttake.setPosition(RobotConstants.closePos);
+        grabOuttake.setPosition(RobotConstants.outtakeClosePos);
     }
 
     public void OpenOuttake() {

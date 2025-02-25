@@ -190,8 +190,7 @@ public class autonomieBasketPedro extends OpMode{
 
         opmodeTimer.resetTimer();
 
-        Constants.setConstants(FConstants.class, LConstants.class);
-        follower = new Follower(hardwareMap);
+        follower = new Follower(hardwareMap, FConstants.class, LConstants.class);
         follower.setStartingPose(startPose);
 
         claw = new ClawSubsystem(hardwareMap);
@@ -199,8 +198,8 @@ public class autonomieBasketPedro extends OpMode{
         claw.InitOuttake();
         claw.InitPivot();
         slider = new SliderSubsystem(hardwareMap);
-        slider.InitIntake();
-        slider.InitOuttake();
+//        slider.InitIntake();
+//        slider.InitOuttake();
         axon = new AxonSubsystem(hardwareMap);
         axon.InitIntake();
         axon.InitOuttake(RobotConstants.outtakeMidPos);
